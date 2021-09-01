@@ -18,10 +18,13 @@ const prisma = new PrismaClient();
 (async () => {
 
     let city = await prisma.city.findFirst()
+    let users = await prisma.user.findMany()
   // Start your app
   await app.start(process.env.PORT || 3000);
   let list = await app.client.users.list()
-  let other_list = list.members.map((member) => {
+  let channel = await app.client.conversations.members({'channel': 'CSPHFDZH8'})
+  let filtered_members = list.members.filter(member => channel.members.indexOf(member.id) > -1)
+  let other_list = filtered_members.map((member) => {
       if(member.profile.email == 'tim@posthog.com') {
           askUpdateLocation(app, member)
       }
