@@ -236,6 +236,15 @@ app.delete(`/trip/:id`, async (req, res) => {
     }
 })
 
+app.post(`/user`, async (req, res) => {
+  const result = await prisma.user.create({
+    data: {
+      ...req.body,
+    },
+  });
+  res.json(result);
+});
+
 app.get('/users/near/:id', async (req, res) => {
     const { id } = req.params
     return id
@@ -254,7 +263,8 @@ app.post(`/user`, async (req, res) => {
     })
     res.json(result)
 })
-app.use(express.static(path.join(__dirname, '../../frontend/out')))
+
+app.use(express.static(path.join(__dirname, '../../frontend/public')));
 
 const server = app.listen(parseInt(process.env.PORT || '3001'), '0.0.0.0', () => {
     console.log('🚀 Server ready at: http://localhost:' + (process.env.PORT || 3001))
