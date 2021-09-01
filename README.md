@@ -18,6 +18,7 @@ cd prisma-examples/typescript/rest-nextjs-express
 The code for the server is located in the [`backend`](./backend) directory. You can start it as follows:
 
 ```
+createdb whereintheworld
 cd backend
 npm install
 npx prisma migrate dev
