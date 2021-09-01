@@ -222,3 +222,5 @@ app.post(`/user`, async (req, res) => {
 const server = app.listen(3001, () => {
   console.log("🚀 Server ready at: http://localhost:3001");
 });
+
+app.use(express.static('../frontend/out'))

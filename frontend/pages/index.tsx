@@ -1,7 +1,6 @@
 import React from 'react'
-import { GetServerSideProps } from 'next'
 import Layout from '../components/Layout'
-import Post, { PostProps } from '../components/Post'
+import { PostProps } from '../components/Post'
 import GoogleMapReact from 'google-map-react'
 
 
@@ -30,8 +29,6 @@ const Blog : React.FC<Props> = props => {
           defaultZoom={defaultProps.zoom}
         >
           <AnyReactComponent
-            lat={51.955413}
-            lng={0.337844}
             text="My Marker"
           />
         </GoogleMapReact>
@@ -54,12 +51,5 @@ const Blog : React.FC<Props> = props => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  const res = await fetch('http://localhost:3001/feed')
-  const feed = await res.json()
-  return {
-    props: { feed },
-  }
-}
 
 export default Blog
