@@ -22,13 +22,13 @@ function Home(): JSX.Element {
                 <MapPin
                     lat={51.50460015249271}
                     lng={-0.08650000172720783}
-                    imageUrl="https://ca.slack-edge.com/TSS5W8YQZ-UT2B67BA4-88a6594579ca-72"
+                    avatarUrl="https://ca.slack-edge.com/TSS5W8YQZ-UT2B67BA4-88a6594579ca-72"
                     travelState="away"
                 />
                 <MapPin
                     lat={58.37169235205909}
                     lng={26.72945371754314}
-                    imageUrl="https://ca.slack-edge.com/TSS5W8YQZ-U015ZLK65AQ-g0402ff51a64-72"
+                    avatarUrl="https://ca.slack-edge.com/TSS5W8YQZ-U015ZLK65AQ-g0402ff51a64-72"
                     travelState="home"
                 />
             </GoogleMapReact>
