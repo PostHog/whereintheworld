@@ -3,3 +3,5 @@ dist/
 *.env*
 *.db
 user_bootstrap.tsv
+.vscode
+.next
