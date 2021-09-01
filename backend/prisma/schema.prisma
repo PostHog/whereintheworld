@@ -7,31 +7,30 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Team {
-  id    Int    @id @default(autoincrement())
-  name  String @unique
+  id          Int    @id @default(autoincrement())
+  name        String @unique
   description String
-  users User[]
+  users       User[]
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
+  id       Int     @id @default(autoincrement())
   fullName String
-  email    String @unique
+  email    String  @unique
   city     String
-  county   String?
+  state    String?
   country  String
   posts    Post[]
-  team     Team?  @relation(fields: [teamId], references: [id])
+  team     Team?   @relation(fields: [teamId], references: [id])
   teamId   Int?
 }
 
-model LocationOverride {
-  id      Int    @id @default(autoincrement())
-  user_id  Int    @unique
+model Trip {
+  id      Int      @id @default(autoincrement())
+  user_id Int
   country String
-  county  String
+  state   String
   city    String
   start   DateTime
   end     DateTime

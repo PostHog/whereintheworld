@@ -42,7 +42,7 @@ async function addCity(row: any) {
 }
 
 async function loadCities() {
-  if (await prisma.city.count() > 0) {
+  if ((await prisma.city.count()) > 0) {
     console.log("cities already loaded - skipping");
     return;
   } else {
@@ -70,7 +70,7 @@ async function addTeam(team: any) {
 }
 
 async function bootstrapTeam() {
-  if (await prisma.team.count() > 0) {
+  if ((await prisma.team.count()) > 0) {
     console.log("team already loaded - skipping");
     return;
   } else {
@@ -90,7 +90,7 @@ async function addUser(user: any, team = 1) {
       fullName: user.full_name,
       email: user.email,
       city: user.city,
-      county: user.county,
+      state: user.county,
       country: user.country,
       team: {
         connect: {
@@ -102,7 +102,7 @@ async function addUser(user: any, team = 1) {
 }
 
 async function loadUsersFromTSV(usersTSV = "user_bootstrap.tsv", team = 1) {
-  if (await prisma.user.count() > 0) {
+  if ((await prisma.user.count()) > 0) {
     console.log("users already loaded - skipping");
     return;
   } else {
@@ -130,84 +130,103 @@ bootstrapTeam();
 
 app.use(express.json());
 
-app.get("/drafts", async (req, res) => {
-  const posts = await prisma.post.findMany({
-    where: { published: false },
-    include: { author: true },
-  });
-  res.json(posts);
+app.get("/trips", async (req, res) => {
+  const trips = await prisma.trip.findMany();
+  res.json(trips);
 });
 
-app.get("/feed", async (req, res) => {
-  const posts = await prisma.post.findMany({
-    where: { published: true },
-    include: { author: true },
-  });
-  res.json(posts);
-});
-
-app.get("/filterPosts", async (req, res) => {
-  const { searchString }: { searchString?: string } = req.query;
-  const filteredPosts = await prisma.post.findMany({
-    where: {
-      OR: [
-        {
-          title: {
-            contains: searchString,
-          },
-        },
-        {
-          content: {
-            contains: searchString,
-          },
-        },
-      ],
-    },
-  });
-  res.json(filteredPosts);
-});
-
-app.post(`/post`, async (req, res) => {
-  const { title, content, authorEmail } = req.body;
-  const result = await prisma.post.create({
-    data: {
-      title,
-      content,
-      published: false,
-      author: { connect: { email: authorEmail } },
-    },
-  });
-  res.json(result);
-});
-
-app.delete(`/post/:id`, async (req, res) => {
+app.get("/trip/:id", async (req, res) => {
   const { id } = req.params;
-  const post = await prisma.post.delete({
+  const trip = await prisma.trip.findUnique({
     where: {
       id: Number(id),
     },
   });
-  res.json(post);
+  res.json(trip);
 });
 
-app.get(`/post/:id`, async (req, res) => {
-  const { id } = req.params;
-  const post = await prisma.post.findUnique({
-    where: {
-      id: Number(id),
-    },
-    include: { author: true },
-  });
-  res.json(post);
+app.post(`/trip`, async (req, res) => {
+  const { user_id, country, state, city, start, end } = req.body;
+  const startDate = new Date(start)
+  const endDate = new Date(end) 
+  const scheduledTrips = await prisma.trip.findMany({
+    where: {user_id: Number(user_id)},
+  }); 
+  for (let scheduledTrip of scheduledTrips) {
+    // check if the about to be scheduled trip overlaps with any of the scheduled trips 
+    if (scheduledTrip.start <= startDate || endDate <= scheduledTrip.end) {
+      res.json({"error": "overlapping trip"});
+      return;
+    }
+  }
+  try {
+    const trip = await prisma.trip.create({
+      data: {
+        user_id: Number(user_id),
+        country: country,
+        state: state,
+        city: city,
+        start: startDate,
+        end: endDate,
+      },
+    });
+    res.json(trip);
+  } catch (e) {
+    console.log(e);
+    res.json({ error: "check console" });
+  }
 });
 
-app.put("/publish/:id", async (req, res) => {
+app.put("/trip/:id", async (req, res) => {
   const { id } = req.params;
-  const post = await prisma.post.update({
+  const { user_id, country, state, city, start, end } = req.body;
+  const scheduledTrips = await prisma.trip.findMany({
+    where: {user_id: Number(user_id)},
+  }); 
+  for (let scheduledTrip of scheduledTrips) {
+    // check if the about to be scheduled trip overlaps with any of the scheduled trips 
+    if (scheduledTrip.start <= start || end <= scheduledTrip.end) {
+      res.json({"error": "overlapping trip"});
+      return;
+    }
+  }
+  const trip = await prisma.trip.update({
     where: { id: Number(id) },
-    data: { published: true },
+    data: {
+      user_id: Number(user_id),
+      country: country,
+      state: state,
+      city: city,
+      start: new Date(start),
+      end: new Date(end),
+    },
+  });
+  res.json(trip);
+});
+
+app.delete(`/trip/:id`, async (req, res) => {
+  const { id } = req.params;
+  try {
+  const post = await prisma.trip.delete({
+    where: {
+      id: Number(id),
+    },
   });
   res.json(post);
+  } catch (e) {
+    console.log(e);
+    res.json({ error: "check console" });
+  }
+});
+
+app.get("/users/near/:id", async (req, res) => {
+  const { id } = req.params;
+  return id;
+});
+
+app.get("/users/location/:date", async (req, res) => {
+  const { date } = req.params;
+  return date;
 });
 
 app.post(`/user`, async (req, res) => {
