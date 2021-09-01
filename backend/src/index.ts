@@ -155,7 +155,8 @@ app.post(`/trip`, async (req, res) => {
   }); 
   for (let scheduledTrip of scheduledTrips) {
     // check if the about to be scheduled trip overlaps with any of the scheduled trips 
-    if (scheduledTrip.start <= startDate || endDate <= scheduledTrip.end) {
+    if ((scheduledTrip.start <= start || end <= scheduledTrip.end) ||
+    (scheduledTrip.end < start) || (scheduledTrip.start < end)) {
       res.json({"error": "overlapping trip"});
       return;
     }
@@ -186,7 +187,8 @@ app.put("/trip/:id", async (req, res) => {
   }); 
   for (let scheduledTrip of scheduledTrips) {
     // check if the about to be scheduled trip overlaps with any of the scheduled trips 
-    if (scheduledTrip.start <= start || end <= scheduledTrip.end) {
+    if ((scheduledTrip.start <= start || end <= scheduledTrip.end) ||
+    (scheduledTrip.end < start) || (scheduledTrip.start < end)) {
       res.json({"error": "overlapping trip"});
       return;
     }
