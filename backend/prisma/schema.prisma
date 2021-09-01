@@ -22,6 +22,7 @@ model User {
   state    String?
   country  String
   posts    Post[]
+  avatar   String?
   team     Team?   @relation(fields: [teamId], references: [id])
   teamId   Int?
 }
