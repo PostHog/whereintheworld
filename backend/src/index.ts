@@ -15,14 +15,7 @@ function parseIntNullable(string: string) {
   return parseInt(string);
 }
 
-function parseFloatNullable(string: string) {
-  if (isNaN(parseFloat(string))) {
-    return undefined;
-  }
-  return parseFloat(string);
-}
-
-async function loadCity(row: any) {
+async function addCity(row: any) {
   await prisma.city.create({
     data: {
       geonameid: parseInt(row.geonameid),
@@ -53,13 +46,11 @@ async function loadCities() {
     console.log("cities already loaded - skipping");
     return;
   } else {
+    console.log("Bootstrapping Cities");
     fs.createReadStream("../cities/cities15000.tsv")
       .pipe(csv({ separator: "\t" }))
       .on("data", (row) => {
-        if (row.geonameid == 3040051) {
-          console.log(row);
-        }
-        loadCity(row);
+        addCity(row);
       })
       .on("end", () => {
         console.log("cities file successfully processed and loaded into db");
@@ -67,8 +58,73 @@ async function loadCities() {
   }
 }
 
-// load cities
+// load the only team (for now)
+
+async function addTeam(team: any) {
+  await prisma.team.create({
+    data: {
+      name: team.name,
+      description: team.description,
+    },
+  });
+}
+
+async function bootstrapTeam() {
+  if (await prisma.team.count() > 0) {
+    console.log("team already loaded - skipping");
+    return;
+  } else {
+    console.log("Bootstrapping PostHog team");
+    addTeam({
+      name: "PostHog",
+      description: "PostHog is going places",
+    });
+  }
+}
+
+// load users
+
+async function addUser(user: any, team = 1) {
+  await prisma.user.create({
+    data: {
+      fullName: user.full_name,
+      email: user.email,
+      city: user.city,
+      county: user.county,
+      country: user.country,
+      team: {
+        connect: {
+          id: team,
+        },
+      },
+    },
+  });
+}
+
+async function loadUsersFromTSV(usersTSV = "user_bootstrap.tsv", team = 1) {
+  if (await prisma.user.count() > 0) {
+    console.log("users already loaded - skipping");
+    return;
+  } else {
+    fs.createReadStream(usersTSV)
+      .pipe(csv({ separator: "\t" }))
+      .on("data", (row) => {
+        addUser(row, team);
+      })
+      .on("end", () => {
+        console.log("users file successfully processed and loaded into db");
+      });
+  }
+}
+
+// bootstrap cities
 loadCities();
+
+// bootstrap the only team
+bootstrapTeam();
+
+// bootstrap users
+loadUsersFromTSV("user_bootstrap.tsv", 1);
 
 // Webapp configs beyond here
 
@@ -166,3 +222,5 @@ app.post(`/user`, async (req, res) => {
 const server = app.listen(3001, () => {
   console.log("🚀 Server ready at: http://localhost:3001");
 });
+
+app.use(express.static('../frontend/out'))

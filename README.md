@@ -18,7 +18,9 @@ cd prisma-examples/typescript/rest-nextjs-express
 The code for the server is located in the [`backend`](./backend) directory. You can start it as follows:
 
 ```
+createdb whereintheworld
 cd backend
+echo 'DATABASE_URL="postgresql://james:james@localhost:5432/whereintheworld?schema=public' > .env
 yarn install
 npx prisma migrate dev
 yarn dev
@@ -70,29 +72,29 @@ You can also access the REST API of the API server directly. It is running [`loc
 
 ### `GET`
 
-- `/api/post/:id`: Fetch a single post by its `id`
-- `/api/feed`: Fetch all _published_ posts
-- `/api/filterPosts?searchString={searchString}`: Filter posts by `title` or `content`
+-   `/api/post/:id`: Fetch a single post by its `id`
+-   `/api/feed`: Fetch all _published_ posts
+-   `/api/filterPosts?searchString={searchString}`: Filter posts by `title` or `content`
 
 ### `POST`
 
-- `/api/post`: Create a new post
-  - Body:
-    - `title: String` (required): The title of the post
-    - `content: String` (optional): The content of the post
-    - `authorEmail: String` (required): The email of the user that creates the post
-- `/api/user`: Create a new user
-  - Body:
-    - `email: String` (required): The email address of the user
-    - `name: String` (optional): The name of the user
+-   `/api/post`: Create a new post
+    -   Body:
+        -   `title: String` (required): The title of the post
+        -   `content: String` (optional): The content of the post
+        -   `authorEmail: String` (required): The email of the user that creates the post
+-   `/api/user`: Create a new user
+    -   Body:
+        -   `email: String` (required): The email address of the user
+        -   `name: String` (optional): The name of the user
 
 ### `PUT`
 
-- `/api/publish/:id`: Publish a post by its `id`
+-   `/api/publish/:id`: Publish a post by its `id`
 
 ### `DELETE`
-  
-- `/api/post/:id`: Delete a post by its `id`
+
+-   `/api/post/:id`: Delete a post by its `id`
 
 ## Evolving the app
 
@@ -190,44 +192,44 @@ Here are some examples for some Prisma Client operations:
 
 ```ts
 const profile = await prisma.profile.create({
-  data: {
-    bio: "Hello World",
-    user: {
-      connect: { email: "alice@prisma.io" },
+    data: {
+        bio: 'Hello World',
+        user: {
+            connect: { email: 'alice@prisma.io' },
+        },
     },
-  },
-});
+})
 ```
 
 #### Create a new user with a new profile
 
 ```ts
 const user = await prisma.user.create({
-  data: {
-    email: "john@prisma.io",
-    name: "John",
-    profile: {
-      create: {
-        bio: "Hello World",
-      },
+    data: {
+        email: 'john@prisma.io',
+        name: 'John',
+        profile: {
+            create: {
+                bio: 'Hello World',
+            },
+        },
     },
-  },
-});
+})
 ```
 
 #### Update the profile of an existing user
 
 ```ts
 const userWithUpdatedProfile = await prisma.user.update({
-  where: { email: "alice@prisma.io" },
-  data: {
-    profile: {
-      update: {
-        bio: "Hello Friends",
-      },
+    where: { email: 'alice@prisma.io' },
+    data: {
+        profile: {
+            update: {
+                bio: 'Hello Friends',
+            },
+        },
     },
-  },
-});
+})
 ```
 
 ### 5. Build new UI features in React
@@ -238,7 +240,6 @@ In the application code, you can access the new endpoint via `fetch` operations 
 
 ## Next steps
 
-- Check out the [Prisma docs](https://www.prisma.io/docs)
-- Share your feedback in the [`prisma2`](https://prisma.slack.com/messages/CKQTGR6T0/) channel on the [Prisma Slack](https://slack.prisma.io/)
-- Create issues and ask questions on [GitHub](https://github.com/prisma/prisma/)
-
+-   Check out the [Prisma docs](https://www.prisma.io/docs)
+-   Share your feedback in the [`prisma2`](https://prisma.slack.com/messages/CKQTGR6T0/) channel on the [Prisma Slack](https://slack.prisma.io/)
+-   Create issues and ask questions on [GitHub](https://github.com/prisma/prisma/)

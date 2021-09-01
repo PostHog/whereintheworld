@@ -1,8 +1,8 @@
-node_modules
+node_modules/
 dist/
 *.env*
 *.db
-slack.env
-node_modules
+user_bootstrap.tsv
 .vscode
-frontend/.next
+.next
+frontend/out

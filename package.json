@@ -1,0 +1,12 @@
+{
+  "name": "whereintheworld",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:PostHog/whereintheworld.git",
+  "author": "Tim Glaser <tim@glsr.nl>",
+  "license": "MIT",
+  "scripts": {
+      "heroku-prebuild": "cd frontend && npm install && npm run next build && npm run next export && cd ../backend && npm install"
+  }
+
+}
