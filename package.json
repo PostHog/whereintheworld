@@ -6,7 +6,7 @@
   "author": "Tim Glaser <tim@glsr.nl>",
   "license": "MIT",
   "scripts": {
-      "heroku-prebuild": "cd frontend && npm install && cd ../backend && npm install"
+      "heroku-prebuild": "cd frontend && npm install && npm next build && cd ../backend && npm install"
   }
 
 }

@@ -1,2 +1,2 @@
-backend: cd backend && npm start
+backend: cd backend && npm dev
 frontend: cd frontend && npm start
