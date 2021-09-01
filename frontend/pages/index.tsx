@@ -1,6 +1,7 @@
 import React from 'react'
 import GoogleMapReact from 'google-map-react'
 import { MapPin } from '../components/MapPin'
+import { MainOverlay } from '../components/MainOverlay'
 
 function Home(): JSX.Element {
     const defaultProps = {
@@ -12,6 +13,7 @@ function Home(): JSX.Element {
     }
     return (
         <div className="map-container">
+            <MainOverlay />
             <GoogleMapReact
                 bootstrapURLKeys={{ key: '' }}
                 defaultCenter={defaultProps.center}
