@@ -20,6 +20,7 @@ The code for the server is located in the [`backend`](./backend) directory. You 
 ```
 cd backend
 npm install
+npx prisma migrate dev
 npm run dev
 ```
 
