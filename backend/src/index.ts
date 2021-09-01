@@ -124,7 +124,7 @@ loadCities();
 bootstrapTeam();
 
 // bootstrap users
-loadUsersFromTSV("user_bootstrap.tsv", 1);
+// loadUsersFromTSV("user_bootstrap.tsv", 1);
 
 // Webapp configs beyond here
 
