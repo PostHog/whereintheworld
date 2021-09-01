@@ -17,11 +17,18 @@ cd prisma-examples/typescript/rest-nextjs-express
 
 The code for the server is located in the [`backend`](./backend) directory. You can start it as follows:
 
+Install PostGIS
+```
+brew install postgis
+psql -d whereintheworld -C 'CREATE EXTENSION postgis;'
+```
+
+Start the server:
 ```
 createdb whereintheworld
 cd backend
-echo 'DATABASE_URL="postgresql://james:james@localhost:5432/whereintheworld?schema=public' > .env
-yarn install
+echo 'DATABASE_URL="postgresql://`whoami`:`whoami`@localhost:5432/whereintheworld?schema=public' > .env
+npm install
 npx prisma migrate dev
 yarn dev
 ```
