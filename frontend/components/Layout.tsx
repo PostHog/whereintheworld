@@ -1,5 +1,4 @@
 import React,{ ReactNode } from 'react'
-import Header from './Header'
 
 type Props = {
   children: ReactNode
@@ -7,7 +6,6 @@ type Props = {
 
 const Layout: React.FC<Props> = ( props ) => (
   <div>
-    <Header />
     <div className="layout">{props.children}</div>
     <style jsx global>{`
       html {
@@ -28,6 +26,7 @@ const Layout: React.FC<Props> = ( props ) => (
           Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
           'Segoe UI Symbol';
         background: rgba(0, 0, 0, 0.05);
+        overflow: hidden;
       }
 
       input,
