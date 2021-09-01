@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import express from "express";
 import csv from "csv-parser";
 import fs from "fs";
+import path from "path";
 
 const prisma = new PrismaClient();
 const app = express();
@@ -237,9 +238,11 @@ app.post(`/user`, async (req, res) => {
   });
   res.json(result);
 });
+app.use(express.static(path.join(__dirname, '../../frontend/out')));
 
-const server = app.listen(process.env.PORT || 3001, () => {
+const server = app.listen(parseInt(process.env.PORT || '3001'), '0.0.0.0', () => {
   console.log("🚀 Server ready at: http://localhost:" + (process.env.PORT || 3001));
 });
 
-app.use(express.static('../frontend/out'))
+
+
