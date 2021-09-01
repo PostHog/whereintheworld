@@ -2,23 +2,39 @@ import React from 'react'
 import { GetServerSideProps } from 'next'
 import Layout from '../components/Layout'
 import Post, { PostProps } from '../components/Post'
+import GoogleMapReact from 'google-map-react'
+
 
 type Props = {
   feed: PostProps[]
 }
 
+const AnyReactComponent = ({ text }) => <div>{text}</div>;
+
 const Blog : React.FC<Props> = props => {
+    const defaultProps = {
+        center: {
+          lat: 51.5,
+          lng: 0.0
+        },
+        zoom: 1
+      };
   return (
     <Layout>
       <div className="page">
-        <h1>My Blog</h1>
-        <main>
-          {props.feed.map(post => (
-            <div key={post.id} className="post">
-              <Post post={post} />
-            </div>
-          ))}
-        </main>
+      </div>
+      <div style={{ height: '100vh', width: '100%' }}>
+        <GoogleMapReact
+          bootstrapURLKeys={{ key: ''}}
+          defaultCenter={defaultProps.center}
+          defaultZoom={defaultProps.zoom}
+        >
+          <AnyReactComponent
+            lat={51.955413}
+            lng={0.337844}
+            text="My Marker"
+          />
+        </GoogleMapReact>
       </div>
       <style jsx>{`
         .post {

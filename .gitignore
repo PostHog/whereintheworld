@@ -1,0 +1,8 @@
+node_modules
+dist/
+*.env*
+*.db
+slack.env
+node_modules
+.vscode
+frontend/.next
