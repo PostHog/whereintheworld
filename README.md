@@ -19,9 +19,9 @@ The code for the server is located in the [`backend`](./backend) directory. You 
 
 ```
 cd backend
-npm install
+yarn install
 npx prisma migrate dev
-npm run dev
+yarn dev
 ```
 
 The server is now running at [`http://localhost:3001/`](http://localhost:3001/).
@@ -32,8 +32,8 @@ The code for the Next.js app is located in the [`frontend`](./frontend) director
 
 ```
 cd ../frontend
-npm install
-npm run dev
+yarn install
+yarn dev
 ```
 
 The app is now running, navigate to [`http://localhost:3000/`](http://localhost:3000/) in your browser to explore its UI.
