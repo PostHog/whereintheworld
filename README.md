@@ -23,16 +23,12 @@ brew install postgis
 psql -d whereintheworld -C 'CREATE EXTENSION postgis;'
 ```
 
+Start the server:
 ```
 createdb whereintheworld
 cd backend
-<<<<<<< Updated upstream
-echo 'DATABASE_URL="postgresql://james:james@localhost:5432/whereintheworld?schema=public' > .env
-yarn install
-=======
 echo 'DATABASE_URL="postgresql://`whoami`:`whoami`@localhost:5432/whereintheworld?schema=public' > .env
 npm install
->>>>>>> Stashed changes
 npx prisma migrate dev
 yarn dev
 ```
