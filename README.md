@@ -20,6 +20,7 @@ The code for the server is located in the [`backend`](./backend) directory. You 
 ```
 createdb whereintheworld
 cd backend
+echo 'DATABASE_URL="postgresql://james:james@localhost:5432/whereintheworld?schema=public' > .env
 npm install
 npx prisma migrate dev
 npm run dev
