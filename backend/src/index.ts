@@ -48,18 +48,23 @@ async function loadCity(row: any) {
   });
 }
 
-function loadCities() {
-  fs.createReadStream("../cities/cities15000.tsv")
-    .pipe(csv({ separator: "\t" }))
-    .on("data", (row) => {
-      if (row.geonameid == 3040051) {
-        console.log(row); 
-      }
-      loadCity(row);
-    })
-    .on("end", () => {
-      console.log("cities file successfully processed and loaded into db");
-    });
+async function loadCities() {
+  if (await prisma.city.count() > 0) {
+    console.log("cities already loaded - skipping");
+    return;
+  } else {
+    fs.createReadStream("../cities/cities15000.tsv")
+      .pipe(csv({ separator: "\t" }))
+      .on("data", (row) => {
+        if (row.geonameid == 3040051) {
+          console.log(row);
+        }
+        loadCity(row);
+      })
+      .on("end", () => {
+        console.log("cities file successfully processed and loaded into db");
+      });
+  }
 }
 
 // load cities
