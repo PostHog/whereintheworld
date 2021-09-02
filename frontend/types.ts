@@ -1,6 +1,12 @@
 // TODO
 export interface TripType {
-    destination: string
+    id: number
+    cityId: number
+    start: string
+    end: string
+    userId: number
+    City: CityType
+    matches: TripMatchType[]
 }
 
 export interface TripMatchType {

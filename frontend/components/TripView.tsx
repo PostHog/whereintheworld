@@ -10,6 +10,7 @@ import clsx from 'clsx'
 import { CityType } from '../types'
 import { API } from '../pages/_app'
 import Flag from 'react-flagkit'
+import { formatCity } from '../utils'
 
 export function TripView(): JSX.Element {
     const { saveTrip } = useActions(tripLogic)
@@ -65,9 +66,7 @@ export function TripView(): JSX.Element {
                             getOptionLabel={(option: CityType) => (
                                 <>
                                     <Flag size={12} country={option.country_code} style={{ marginRight: 4 }} />
-                                    {`${option.name}, ${option.country_code === 'US' ? `${option.admin1_code},` : ''} ${
-                                        option.country_code
-                                    }`}
+                                    {formatCity(option)}
                                 </>
                             )}
                             getOptionValue={(option: CityType) => option.id}

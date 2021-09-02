@@ -87,8 +87,8 @@ app.get('/trips/:id', async (req, res) => {
 })
 
 app.post(`/trips`, async (req, res) => {
-    const { optionalUserId, cityId, start, end } = req.body
-    var userId = 1
+    const { userId: optionalUserId, cityId, start, end } = req.body
+    let userId = 1
     if (optionalUserId) {
         userId = Number(optionalUserId)
     }
@@ -100,7 +100,7 @@ app.post(`/trips`, async (req, res) => {
                 id: Number(cityId),
             },
         },
-        User: {
+        user: {
             connect: {
                 id: Number(userId),
             },
@@ -193,9 +193,9 @@ app.get('/users', async (req, res) => {
     res.json(users)
 })
 
-app.get('/users/:id', async(req, res) => {
+app.get('/users/:id', async (req, res) => {
     const userId = Number(req.params.id)
-    const user = await prisma.user.findUnique({where: {id: userId}, include: {City: true}})
+    const user = await prisma.user.findUnique({ where: { id: userId }, include: { City: true } })
     res.json(user)
 })
 
@@ -223,7 +223,7 @@ app.post(`/users`, async (req, res) => {
 })
 
 app.put(`/users/:id`, async (req, res) => {
-    const userId = Number(req.params.id) 
+    const userId = Number(req.params.id)
     const { fullName, email, cityId, avatar, teamId } = req.body
     const newUser = {
         fullName: fullName,
@@ -241,7 +241,7 @@ app.put(`/users/:id`, async (req, res) => {
         },
     }
     const result = await prisma.user.update({
-        where: {id: userId},
+        where: { id: userId },
         data: newUser,
     })
     res.json(result)
@@ -254,7 +254,7 @@ app.get('/users/near/:id', async (req, res) => {
 
 app.get('/users/:user/location/:date', async (req, res) => {
     var { date, user } = req.params
-    const dateDate = new Date(date) 
+    const dateDate = new Date(date)
     const locations = await userLocationForDay(Number(user), dateDate)
     res.json(locations)
 })
