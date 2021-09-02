@@ -42,7 +42,7 @@ export async function findNearbyUsers(trip, distanceThreshold = 1609.34 * 200) {
                 nearbyUsers.push(location)
             }
         }
-        nearbyUsersByDate[d] = nearbyUsers
+        nearbyUsersByDate[d.toISOString().split('T')[0]] = nearbyUsers
     }
     return nearbyUsersByDate
 }
