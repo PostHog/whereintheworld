@@ -26,19 +26,21 @@ export function isOverlappingTrip(newTrip: Trip, scheduledTrip: any) {
     return false
 }
 
-export async function findNearbyUsers(trip, distanceThreshold = 1609.34 * 200) {
+export async function findNearbyUsers(trip, distanceThreshold) {
     var nearbyUsersByDate = {}
     const tripLatLon = { latitude: trip.City.latitude, longitude: trip.City.longitude }
     for (var d = trip.start; d <= trip.end; d.setDate(d.getDate() + 1)) {
         const locations = await allLocationsForDay(d)
         var nearbyUsers = []
-        for (let location of locations) {
+        for (var location of locations) {
             const userLatLon = {
                 latitude: location.location.latitude,
                 longitude: location.location.longitude,
             }
             const userDistanceToTrip = haversine(tripLatLon, userLatLon)
-            if (userDistanceToTrip > distanceThreshold) {
+            if (userDistanceToTrip < distanceThreshold) {
+                location['distance'] = userDistanceToTrip 
+                console.log(userDistanceToTrip) 
                 nearbyUsers.push(location)
             }
         }

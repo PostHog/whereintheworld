@@ -93,7 +93,8 @@ app.get('/trips/:id', async (req, res) => {
             City: true,
         },
     })
-    const nearbyUsers = await findNearbyUsers(trip) 
+    const miles = (1609.34 * 200) 
+    const nearbyUsers = await findNearbyUsers(trip, miles) 
     trip['nearbyUsers'] = nearbyUsers 
     res.json(trip)
 })
