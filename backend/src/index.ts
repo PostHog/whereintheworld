@@ -6,7 +6,6 @@ import { loadCities } from './controllers/cities'
 import { bootstrapTeam } from './controllers/teams'
 import { loadUsersFromTSV } from './controllers/users'
 import { isOverlappingTrip, isValidTrip } from './controllers/trips'
-import { networkInterfaces } from 'os'
 
 const prisma = new PrismaClient()
 const app = express()
@@ -30,6 +29,7 @@ app.get('/cities', async (req, res) => {
         cityName = String(cityName).toLowerCase()
         const likeBit = `${cityName}%`
         const query = `SELECT * FROM "City" WHERE lower(name) like '${likeBit}';`
+        console.log(query) 
         const cities = await prisma.$queryRaw(query)
         res.json(cities)
     } else {
@@ -54,12 +54,13 @@ app.get('/trips/:id', async (req, res) => {
 })
 
 app.post(`/trips`, async (req, res) => {
-    const { userId, country, state, city, cityId, start, end } = req.body
+    const { optionalUserId, cityId, start, end } = req.body
+    var userId = 1 
+    if (optionalUserId) {
+        userId = Number(optionalUserId) 
+    }
     const newTrip = {
-        userId: Number(userId),
-        country: country,
-        state: state,
-        city: city,
+        userId: userId,
         cityId: Number(cityId),
         start: new Date(start),
         end: new Date(end),
@@ -91,15 +92,16 @@ app.post(`/trips`, async (req, res) => {
 
 app.put('/trip/:id', async (req, res) => {
     const { id } = req.params
-    const { userId, country, state, city, cityId, start, end } = req.body
+    const { optionalUserId, cityId, start, end } = req.body
+    var userId = 1 
+    if (optionalUserId) {
+        userId = Number(optionalUserId) 
+    }
     const scheduledTrips = await prisma.trip.findMany({
         where: { userId: Number(userId) },
     })
     const newTrip = {
-        userId: Number(userId),
-        country: country,
-        state: state,
-        city: city,
+        userId: userId,
         cityID: Number(cityId),
         start: new Date(start),
         end: new Date(end),
@@ -137,7 +139,12 @@ app.delete(`/trip/:id`, async (req, res) => {
     }
 })
 
-app.post(`/user`, async (req, res) => {
+app.get('/users', async (req, res) => {
+    const users = await prisma.user.findMany({})
+    res.json(users)
+})
+
+app.post(`/users`, async (req, res) => {
     const result = await prisma.user.create({
         data: {
             ...req.body,
