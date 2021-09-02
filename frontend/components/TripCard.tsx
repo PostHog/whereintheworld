@@ -2,12 +2,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEdit } from '@fortawesome/free-solid-svg-icons'
 import React from 'react'
 import Flag from 'react-flagkit'
-import { TripMatch } from '../types'
+import { TripMatchType } from '../types'
 import clsx from 'clsx'
 import { Button } from './Button'
 
 interface TripCardProps {
-    tripMatches?: TripMatch[]
+    tripMatches?: TripMatchType[]
 }
 
 export function TripCard({ tripMatches }: TripCardProps): JSX.Element {

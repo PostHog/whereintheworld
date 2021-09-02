@@ -1,5 +1,7 @@
 @use 'sass:math';
 @import '_vars';
+@import 'node_modules/@wojtekmaj/react-daterange-picker/dist/DateRangePicker.css';
+@import 'node_modules/react-calendar/dist/Calendar.css';
 
 // Root styles
 :root {
@@ -7,6 +9,7 @@
     --secondary: #{$secondary};
     --orange: #{$orange};
     --danger: #{$danger};
+    --text-muted: #{$text_muted};
 }
 
 // Reset styles
@@ -69,6 +72,14 @@ button {
     text-align: right;
 }
 
+.text-muted {
+    color: $text_muted;
+}
+
+.text-danger {
+    color: $danger;
+}
+
 // Button styles
 .btn {
     border-radius: $radius_sm;
@@ -124,6 +135,10 @@ button {
         font-weight: bold;
         padding-bottom: math.div($default_spacing, 2);
     }
+    .help-text {
+        padding-top: 4px;
+        font-size: 0.75em;
+    }
 }
 
 .avatar {
@@ -158,9 +173,9 @@ button {
     margin-left: $default_spacing;
     text-align: center;
     .location-text {
+        @extend .text-muted;
         font-weight: bold;
         font-size: 0.7em;
-        color: #adaeb9;
     }
 }
 
@@ -200,6 +215,7 @@ button {
     background-color: $bg;
     width: 320px;
     height: 85vh;
+    min-height: 500px;
     z-index: 400;
     margin-left: $default_spacing * 2;
     top: 10vh;
@@ -280,6 +296,7 @@ button {
     width: 320px;
     height: 85vh;
     z-index: 380;
+    min-height: 500px;
     top: 10vh;
     left: 320 + $default_spacing * 2 - $default_spacing; // 320px (width of .main-overlay) + margin left of .main-overlay - position adjustment
     display: flex;
@@ -328,5 +345,95 @@ button {
             height: 24px;
             margin-right: math.div($default_spacing, 2);
         }
+    }
+}
+
+// Date range picker
+.react-daterange-picker {
+    width: 100%;
+    .react-daterange-picker__wrapper {
+        border-radius: $radius_sm;
+        border-color: $border_default;
+        padding: 8px;
+        font-size: 0.85em;
+    }
+    .react-daterange-picker__inputGroup__month {
+        width: 44px;
+    }
+
+    &.errored {
+        .react-daterange-picker__wrapper {
+            border-color: $danger;
+        }
+    }
+}
+
+.react-calendar {
+    @extend .mixin-elevated;
+    margin-top: $default_spacing * 0.5;
+    border-radius: $radius_sm;
+    border-color: $border_default;
+
+    .react-calendar__tile {
+        border-radius: $radius_sm;
+        color: $text_default;
+
+        &.react-calendar__tile--active {
+            border-radius: 0;
+            background-color: $primary;
+            color: white;
+        }
+
+        &.react-calendar__tile--hover {
+            border-radius: 0;
+        }
+
+        &.react-calendar__tile--rangeStart {
+            border-top-left-radius: $radius_sm;
+            border-bottom-left-radius: $radius_sm;
+        }
+
+        &.react-calendar__tile--rangeEnd {
+            border-top-right-radius: $radius_sm;
+            border-bottom-right-radius: $radius_sm;
+        }
+
+        &.react-calendar__month-view__days__day--weekend {
+            color: rgba($text_default, 0.6);
+        }
+
+        &.react-calendar__tile--now {
+            background-color: $bg;
+        }
+    }
+}
+
+// React select
+
+.react-select__control {
+    font-size: 0.85em;
+    border-color: $border_default !important;
+    .react-select__placeholder {
+        color: $text_muted;
+    }
+
+    &.react-select__control--is-focused {
+        border-color: darken($border_default, 20%) !important;
+        box-shadow: none !important;
+    }
+
+    .react-select__clear-indicator {
+        color: $text_muted;
+        cursor: pointer;
+    }
+
+    .react-select__indicator-separator {
+        background-color: $border_default;
+    }
+}
+
+.react-select__errored {
+    .react-select__control {
+        border-color: $danger !important;
     }
 }
