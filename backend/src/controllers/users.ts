@@ -50,9 +50,10 @@ export async function loadUsersFromTSV(usersTSV = 'user_bootstrap.tsv', team = 1
 
 export async function allLocationsForDay(date: Date) {
 	const users = await prisma.user.findMany()
-	var locations = {}	
+	var locations = []
 	for (let user of users) {
-		locations[user.id] = await userLocationForDay(user.id, date)
+		user['location'] = await userLocationForDay(user.id, date)
+		locations.push(user) 
 	}
 	return locations
 }
