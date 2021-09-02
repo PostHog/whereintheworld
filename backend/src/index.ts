@@ -54,17 +54,21 @@ const config = {
 
 // auth router attaches /login, /logout, and /callback routes to the baseURL
 app.use(auth(config))
-
-// req.isAuthenticated is provided from the auth router
-app.get('/', (req, res) => {
-    res.send((req as any).oidc.isAuthenticated() ? 'Logged in' : 'Logged out')
-})
+app.use(require('body-parser').urlencoded({ extended: true }))
+app.use(function(req, res, next) {
+    if (!(req as any).oidc.isAuthenticated()){
+        res.redirect('/login');
+    }   else{
+        next();
+    }
+});
 
 app.get('/profile', requiresAuth(), (req, res) => {
     res.send(JSON.stringify((req as any).oidc.user))
 })
 
-app.use(require('body-parser').urlencoded({ extended: true }))
+
+
 
 app.get('/trips', async (req, res) => {
     const trips = await prisma.trip.findMany({
