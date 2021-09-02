@@ -18,7 +18,7 @@ async function bootstrap() {
     // bootstrap the only team
     await bootstrapTeam()
     // bootstrap users
-    await loadUsersFromTSV('user_bootstrap.tsv', 1)
+    // await loadUsersFromTSV('user_bootstrap.tsv', 1)
 }
 
 // Webapp configs beyond here
