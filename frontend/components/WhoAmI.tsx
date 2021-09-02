@@ -25,9 +25,9 @@ export function WhoAmI(): JSX.Element {
             </div>
             <div>
                 {profile.name}
-                <div className="text-muted" style={{ fontSize: '0.75em' }}>
-                    <b>Barcelona, ES</b>
-                </div>
+                {profile.location && <div className="text-muted" style={{ fontSize: '0.75em' }}>
+                    <b>{profile.location.name}, {profile.location.country_code}</b>
+                </div>}
             </div>
             <div style={{ cursor: 'pointer', marginLeft: 16, color: 'var(--primary)' }}>
                 <FontAwesomeIcon icon={faSignOutAlt} />
