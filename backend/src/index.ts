@@ -101,7 +101,7 @@ app.get('/trips/:id', async (req, res) => {
 
 app.post(`/trips`, async (req, res) => {
     const { userId: optionalUserId, cityId, start, end } = req.body
-    let userId = 1
+    let userId = 25
     if (optionalUserId) {
         userId = Number(optionalUserId)
     }
