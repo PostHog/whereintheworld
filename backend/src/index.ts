@@ -63,16 +63,16 @@ app.use(require('body-parser').urlencoded({ extended: true }))
 //     }
 // });
 
-app.get('/profile', requiresAuth(), async (req, res) => {
-    let location = {}
-    try {
-        const user = await prisma.user.findFirst({where: {email: (req as any).oidc.user.email}})
-        location = await userLocationForDay(user.id, new Date())
-    } catch {
-    }
+app.get('/profile', async (req, res) => {
+    // let location = {}
+    // try {
+    //     const user = await prisma.user.findFirst({where: {email: (req as any).oidc.user.email}})
+    //     location = await userLocationForDay(user.id, new Date())
+    // } catch {
+    // }
     res.send(JSON.stringify({
-        location: location,
-        ...(req as any).oidc.user
+        location: {name: 'London', country_code: 'ENG'},
+        "nickname":"tim","name":"Tim Glaser","picture":"https://avatars.slack-edge.com/2020-02-25/958778681153_88a6594579ca01e8bd4a_1024.jpg","updated_at":"2021-09-02T11:42:20.198Z","email":"tim@posthog.com","sub":"oauth2|slack-oauth-2|TSS5W8YQZ-UT2B67BA4"
     }))
 })
 
