@@ -28,7 +28,7 @@ app.get('/cities', async (req, res) => {
     var cityName = req.query.name
     if (cityName) {
         cityName = String(cityName).toLowerCase()
-        const likeBit = `%${cityName}%`
+        const likeBit = `${cityName}%`
         const query = `SELECT * FROM "City" WHERE lower(name) like '${likeBit}';`
         const cities = await prisma.$queryRaw(query)
         res.json(cities)
