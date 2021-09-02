@@ -4,8 +4,9 @@ import path from 'path'
 
 import { loadCities } from './controllers/cities'
 import { bootstrapTeam } from './controllers/teams'
-import { loadUsersFromTSV } from './controllers/users'
+import { loadUsersFromTSV, userLocationForDay } from './controllers/users'
 import { isOverlappingTrip, isValidTrip } from './controllers/trips'
+import { createEmitAndSemanticDiagnosticsBuilderProgram } from 'typescript'
 const cors = require('cors')
 const { auth, requiresAuth } = require('express-openid-connect')
 
@@ -18,7 +19,7 @@ async function bootstrap() {
     // bootstrap the only team
     await bootstrapTeam()
     // bootstrap users
-    await loadUsersFromTSV('user_bootstrap.tsv', 1)
+    // await loadUsersFromTSV('user_bootstrap.tsv', 1)
 }
 
 // Webapp configs beyond here
@@ -65,9 +66,6 @@ app.get('/profile', requiresAuth(), (req, res) => {
 
 app.use(require('body-parser').urlencoded({ extended: true }))
 
-app.get('/login', (req, res) => {
-    res.send("<h2>Where in the world</h2><br/>Please log in <a href='/auth/slack'>here</a>")
-})
 app.get('/trips', async (req, res) => {
     const trips = await prisma.trip.findMany({
         include: { City: true },
@@ -195,11 +193,56 @@ app.get('/users', async (req, res) => {
     res.json(users)
 })
 
+app.get('/users/:id', async(req, res) => {
+    const userId = Number(req.params.id)
+    const user = await prisma.user.findUnique({where: {id: userId}, include: {City: true}})
+    res.json(user)
+})
+
 app.post(`/users`, async (req, res) => {
-    const result = await prisma.user.create({
-        data: {
-            ...req.body,
+    const { fullName, email, cityId, avatar, teamId } = req.body
+    const newUser = {
+        fullName: fullName,
+        email: email,
+        avatar: avatar,
+        City: {
+            connect: {
+                id: Number(cityId),
+            },
         },
+        team: {
+            connect: {
+                id: Number(teamId),
+            },
+        },
+    }
+    const result = await prisma.user.create({
+        data: newUser,
+    })
+    res.json(result)
+})
+
+app.put(`/users/:id`, async (req, res) => {
+    const userId = Number(req.params.id) 
+    const { fullName, email, cityId, avatar, teamId } = req.body
+    const newUser = {
+        fullName: fullName,
+        email: email,
+        avatar: avatar,
+        City: {
+            connect: {
+                id: Number(cityId),
+            },
+        },
+        team: {
+            connect: {
+                id: Number(teamId),
+            },
+        },
+    }
+    const result = await prisma.user.update({
+        where: {id: userId},
+        data: newUser,
     })
     res.json(result)
 })
@@ -209,30 +252,11 @@ app.get('/users/near/:id', async (req, res) => {
     return id
 })
 
-app.get('/users/location/:date', async (req, res) => {
-    const { date } = req.params
-    const users = await prisma.user.findMany()
-    var locations = []
-    for (let user of users) {
-        // find trips that contain the search date
-        const trip = await prisma.trip.findFirst({
-            where: {
-                userId: user.id,
-                start: {
-                    lt: new Date(date),
-                },
-                end: {
-                    gt: new Date(date),
-                },
-            },
-        })
-        if (trip) {
-            locations[user.id] = {
-                cityId: trip.cityId,
-            }
-        }
-        res.json(locations)
-    }
+app.get('/users/:user/location/:date', async (req, res) => {
+    var { date, user } = req.params
+    const dateDate = new Date(date) 
+    const locations = await userLocationForDay(Number(user), dateDate)
+    res.json(locations)
 })
 
 app.use(express.static(path.join(__dirname, '../../frontend/public')))
