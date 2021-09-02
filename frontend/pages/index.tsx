@@ -7,6 +7,7 @@ import { tripLogic } from '../logics/tripLogic'
 import { useValues } from 'kea'
 import clsx from 'clsx'
 import { WhoAmI } from '../components/WhoAmI'
+import { TimeTravel } from '../components/TimeTravel'
 
 function Home(): JSX.Element {
     const { openTripId } = useValues(tripLogic)
@@ -21,6 +22,7 @@ function Home(): JSX.Element {
         <div className="map-container">
             <WhoAmI />
             <MainOverlay />
+            <TimeTravel />
             <div className={clsx('trip-view-wrapper', { hidden: !openTripId })}>{openTripId && <TripView />}</div>
 
             <GoogleMapReact

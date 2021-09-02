@@ -4,7 +4,7 @@ import path from 'path'
 
 import { loadCities } from './controllers/cities'
 import { bootstrapTeam } from './controllers/teams'
-import { loadUsersFromTSV, userLocationForDay } from './controllers/users'
+import { allLocationsForDay, loadUsersFromTSV, userLocationForDay } from './controllers/users'
 import { isOverlappingTrip, isValidTrip } from './controllers/trips'
 import { createEmitAndSemanticDiagnosticsBuilderProgram } from 'typescript'
 const cors = require('cors')
@@ -260,6 +260,13 @@ app.get('/users/:user/location/:date', async (req, res) => {
     var { date, user } = req.params
     const dateDate = new Date(date) 
     const locations = await userLocationForDay(Number(user), dateDate)
+    res.json(locations)
+})
+
+app.get('/users/location/:date', async (req, res) => {
+    const { date } = req.params
+    const dateDate = new Date(date)
+    const locations = await allLocationsForDay(dateDate)
     res.json(locations)
 })
 
