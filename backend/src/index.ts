@@ -5,7 +5,7 @@ import path from 'path'
 import { loadCities } from './controllers/cities'
 import { bootstrapTeam } from './controllers/teams'
 import { allLocationsForDay, loadUsersFromTSV, userLocationForDay } from './controllers/users'
-import { isOverlappingTrip, isValidTrip } from './controllers/trips'
+import { findNearbyUsers, isOverlappingTrip, isValidTrip } from './controllers/trips'
 import { createEmitAndSemanticDiagnosticsBuilderProgram } from 'typescript'
 const cors = require('cors')
 const { auth, requiresAuth } = require('express-openid-connect')
@@ -96,6 +96,8 @@ app.get('/trips/:id', async (req, res) => {
             City: true,
         },
     })
+    const nearbyUsers = await findNearbyUsers(trip) 
+    trip['nearbyUsers'] = nearbyUsers 
     res.json(trip)
 })
 
