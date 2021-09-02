@@ -64,10 +64,10 @@ export async function userLocationForDay(userId: number, date: Date) {
             userId: userId,
 
             start: {
-                lt: date,
+                lte: date,
             },
             end: {
-                gt: date,
+                gte: date,
             },
         },
 				include: {
