@@ -2,6 +2,7 @@ import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faThumbtack } from '@fortawesome/free-solid-svg-icons'
 import { LocationAvatar } from './LocationAvatar'
+import { TripCard } from './TripCard'
 
 export function MainOverlay(): JSX.Element {
     return (
@@ -41,6 +42,17 @@ export function MainOverlay(): JSX.Element {
             <div className="content-wrapper">
                 <div className="trips">
                     <h2>My Trips</h2>
+                    <TripCard
+                        tripMatches={[
+                            {
+                                avatarUrl: 'https://ca.slack-edge.com/TSS5W8YQZ-U015X6QQN0N-b6ea1c7bb618-48',
+                                personName: 'Michael',
+                            },
+                        ]}
+                    />
+                    <TripCard />
+                    <TripCard />
+                    <TripCard />
                 </div>
                 <div className="footer">
                     Home Location

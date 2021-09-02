@@ -1,6 +1,12 @@
 @use 'sass:math';
 @import '_vars';
 
+:root {
+    --primary: #{$primary};
+    --secondary: #{$secondary};
+    --orange: #{$orange};
+}
+
 html {
     box-sizing: border-box;
 }
@@ -119,7 +125,7 @@ button {
     border-radius: $radius;
     background-color: $bg;
     width: 320px;
-    height: 80vh;
+    height: 85vh;
     z-index: 400;
     margin-left: $default_spacing * 2;
     top: 10vh;
@@ -170,17 +176,65 @@ button {
     .content-wrapper {
         padding: $default_spacing;
         flex-grow: 1;
+        max-height: 60%;
         display: flex;
         flex-direction: column;
 
         .trips {
             flex-grow: 1;
             overflow-y: auto;
+
+            .trip-card {
+                margin-bottom: $default_spacing;
+            }
         }
 
         .footer {
+            padding-top: math.div($default_spacing, 2);
             text-align: center;
             font-size: 0.9em;
+        }
+    }
+}
+
+.trip-card {
+    &.highlighted {
+        border-radius: $radius;
+        background-color: $primary;
+    }
+
+    .trip-card-inner {
+        background-color: white;
+        border-radius: $radius;
+        padding: 8px $default_spacing;
+        z-index: 950;
+
+        .trip-card-header {
+            border-bottom: 1px solid $border_default;
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+            padding-bottom: 8px;
+            font-size: 0.85em;
+
+            div {
+                flex-grow: 1;
+            }
+        }
+    }
+
+    .highlighter {
+        padding: $default_spacing * 0.33 $default_spacing * 0.5;
+        color: white;
+        display: flex;
+        align-items: center;
+        font-size: 0.85em;
+        font-weight: bold;
+        .avatar-highlight {
+            border-radius: $radius_sm;
+            width: 24px;
+            height: 24px;
+            margin-right: math.div($default_spacing, 2);
         }
     }
 }
