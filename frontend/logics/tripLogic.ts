@@ -2,6 +2,7 @@ import { kea } from 'kea'
 import { API } from '../pages/_app'
 import { TripType } from '../types'
 import { tripLogicType } from './tripLogicType'
+import { userLogic } from './userLogic'
 
 type TripPayload = Pick<TripType, 'cityId' | 'start' | 'end'>
 
@@ -34,6 +35,7 @@ export const tripLogic = kea<tripLogicType<TripPayload>>({
                             },
                         })
                         actions.loadTrips()
+                        userLogic.actions.loadUsers()
                         return 'new'
                     }
                     return null
@@ -44,6 +46,7 @@ export const tripLogic = kea<tripLogicType<TripPayload>>({
                         method: 'DELETE',
                     })
                     actions.loadTrips()
+                    userLogic.actions.loadUsers()
                     return null
                 },
             },

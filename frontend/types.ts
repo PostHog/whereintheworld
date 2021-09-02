@@ -23,3 +23,16 @@ export interface CityType {
     country_code: string
     timezone: string
 }
+
+interface LocationType extends CityType {
+    isHome: boolean
+}
+
+export interface UserType {
+    id: number
+    fullName: string
+    email: string
+    avatar: string | null
+    cityId: number
+    location: LocationType
+}
