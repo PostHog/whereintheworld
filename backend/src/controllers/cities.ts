@@ -40,14 +40,16 @@ export async function loadCities() {
     } else {
         console.log('Bootstrapping Cities')
         await new Promise((resolve, reject) => {
+            const promises = []
             fs.createReadStream('../cities/cities15000.tsv')
                 .pipe(csv({ separator: '\t' }))
                 .on('data', (row) => {
-                    addCity(row)
+                    promises.push(addCity(row))
                 })
                 .on('end', () => {
                     console.log('cities file successfully processed and loaded into db')
-                    setTimeout(() => {
+                    setTimeout(async () => {
+                        await Promise.all(promises)
                         resolve(0)
                     }, 5000)
                 })

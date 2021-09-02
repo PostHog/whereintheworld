@@ -4,7 +4,7 @@ import path from 'path'
 
 import { loadCities } from './controllers/cities'
 import { bootstrapTeam } from './controllers/teams'
-import { loadUsersFromTSV } from './controllers/users'
+import { loadUsersFromTSV, userLocationForDay } from './controllers/users'
 import { isOverlappingTrip, isValidTrip } from './controllers/trips'
 import { createEmitAndSemanticDiagnosticsBuilderProgram } from 'typescript'
 const cors = require('cors')
@@ -252,30 +252,11 @@ app.get('/users/near/:id', async (req, res) => {
     return id
 })
 
-app.get('/users/location/:date', async (req, res) => {
-    const { date } = req.params
-    const users = await prisma.user.findMany()
-    var locations = []
-    for (let user of users) {
-        // find trips that contain the search date
-        const trip = await prisma.trip.findFirst({
-            where: {
-                userId: user.id,
-                start: {
-                    lt: new Date(date),
-                },
-                end: {
-                    gt: new Date(date),
-                },
-            },
-        })
-        if (trip) {
-            locations[user.id] = {
-                cityId: trip.cityId,
-            }
-        }
-        res.json(locations)
-    }
+app.get('/users/:user/location/:date', async (req, res) => {
+    var { date, user } = req.params
+    const dateDate = new Date(date) 
+    const locations = userLocationForDay(Number(user), dateDate)
+    res.json(locations)
 })
 
 app.use(express.static(path.join(__dirname, '../../frontend/public')))
