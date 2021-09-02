@@ -63,8 +63,17 @@ app.use(require('body-parser').urlencoded({ extended: true }))
 //     }
 // });
 
-app.get('/profile', requiresAuth(), (req, res) => {
-    res.send(JSON.stringify((req as any).oidc.user))
+app.get('/profile', requiresAuth(), async (req, res) => {
+    let location = {}
+    try {
+        const user = await prisma.user.findFirst({where: {email: (req as any).oidc.user.email}})
+        location = await userLocationForDay(user.id, new Date())
+    } catch {
+    }
+    res.send(JSON.stringify({
+        location: location,
+        ...(req as any).oidc.user
+    }))
 })
 
 app.get('/trips', async (req, res) => {
