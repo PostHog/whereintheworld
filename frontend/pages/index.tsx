@@ -3,8 +3,12 @@ import GoogleMapReact from 'google-map-react'
 import { MapPin } from '../components/MapPin'
 import { MainOverlay } from '../components/MainOverlay'
 import { TripView } from '../components/TripView'
+import { tripLogic } from '../logics/tripLogic'
+import { useValues } from 'kea'
+import clsx from 'clsx'
 
 function Home(): JSX.Element {
+    const { openTripId } = useValues(tripLogic)
     const defaultProps = {
         center: {
             lat: 51.5,
@@ -15,7 +19,8 @@ function Home(): JSX.Element {
     return (
         <div className="map-container">
             <MainOverlay />
-            <TripView />
+            <div className={clsx('trip-view-wrapper', { hidden: !openTripId })}>{openTripId && <TripView />}</div>
+
             <GoogleMapReact
                 bootstrapURLKeys={{ key: 'AIzaSyBD94P3QxagpftpsB-BZ--c4kNIou76PkI' }}
                 defaultCenter={defaultProps.center}
