@@ -2,6 +2,7 @@
 @import '_vars';
 @import 'node_modules/@wojtekmaj/react-daterange-picker/dist/DateRangePicker.css';
 @import 'node_modules/react-calendar/dist/Calendar.css';
+@import 'node_modules/rc-slider/assets/index.css';
 
 // Root styles
 :root {
@@ -356,6 +357,14 @@ button {
     }
 }
 
+.time-travel-wrapper {
+    position: fixed;
+    bottom: $default_spacing * 2;
+    width: calc(100% - 320px - 48px - 60px);
+    left: 320 + $default_spacing * 3;
+    z-index: 360;
+}
+
 // Date range picker
 .react-daterange-picker {
     width: 100%;
@@ -465,5 +474,18 @@ button {
             width: 32px;
             height: 32px;
         }
+    }
+}
+
+// Slider
+
+.rc-slider {
+    .rc-slider-track,
+    .rc-slider-rail {
+        background-color: white;
+    }
+    .rc-slider-handle {
+        border-color: $primary;
+        background-color: $primary;
     }
 }
