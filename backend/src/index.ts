@@ -38,8 +38,8 @@ app.get('/cities', async (req, res) => {
         const cities = await prisma.$queryRaw(query)
         res.json(cities)
     } else {
-        const cities = await prisma.city.findMany()
-        res.json(cities)
+        // const cities = await prisma.city.findMany()
+        res.json({})
     }
 })
 
