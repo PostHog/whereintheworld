@@ -1,17 +1,23 @@
 import { PrismaClient } from '@prisma/client'
 import csv from 'csv-parser'
 import fs from 'fs'
+import { parseIntNullable } from './utils'
 
 const prisma = new PrismaClient()
 
 // load users
 
 export async function addUser(user: any, team = 1) {
+	try {
 	await prisma.user.create({
 			data: {
 					fullName: user.full_name,
 					email: user.email,
-					cityId: parseInt(user.city_id),
+					City: {
+						connect: {
+							id: Number(user.city_id)
+						}
+					},	
 					team: {
 							connect: {
 									id: team,
@@ -19,6 +25,10 @@ export async function addUser(user: any, team = 1) {
 					},
 			},
 	})
+	}	catch (e) {
+		console.log(e)
+		console.log(user)	
+	}
 }
 
 export async function loadUsersFromTSV(usersTSV = 'user_bootstrap.tsv', team = 1) {

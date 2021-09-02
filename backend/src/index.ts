@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+var cors = require('cors')
 import express from 'express'
 import path from 'path'
 
@@ -10,18 +11,20 @@ import { isOverlappingTrip, isValidTrip } from './controllers/trips'
 const prisma = new PrismaClient()
 const app = express()
 
-// bootstrap cities
-loadCities()
-
-// bootstrap the only team
-bootstrapTeam()
-
-// bootstrap users
-loadUsersFromTSV('user_bootstrap.tsv', 1)
+async function bootstrap() {
+    // bootstrap cities
+    await loadCities()
+    // bootstrap the only team
+    await bootstrapTeam()
+    // bootstrap users
+    await loadUsersFromTSV('user_bootstrap.tsv', 1)
+}
 
 // Webapp configs beyond here
 
 app.use(express.json())
+
+app.use(cors())
 
 app.get('/cities', async (req, res) => {
     var cityName = req.query.name
@@ -29,7 +32,7 @@ app.get('/cities', async (req, res) => {
         cityName = String(cityName).toLowerCase()
         const likeBit = `${cityName}%`
         const query = `SELECT * FROM "City" WHERE lower(name) like '${likeBit}';`
-        console.log(query) 
+        console.log(query)
         const cities = await prisma.$queryRaw(query)
         res.json(cities)
     } else {
@@ -39,7 +42,9 @@ app.get('/cities', async (req, res) => {
 })
 
 app.get('/trips', async (req, res) => {
-    const trips = await prisma.trip.findMany()
+    const trips = await prisma.trip.findMany({
+        include: { City: true },
+    })
     res.json(trips)
 })
 
@@ -49,15 +54,18 @@ app.get('/trips/:id', async (req, res) => {
         where: {
             id: Number(id),
         },
+        include: {
+            City: true,
+        },
     })
     res.json(trip)
 })
 
 app.post(`/trips`, async (req, res) => {
     const { optionalUserId, cityId, start, end } = req.body
-    var userId = 1 
+    var userId = 1
     if (optionalUserId) {
-        userId = Number(optionalUserId) 
+        userId = Number(optionalUserId)
     }
     const newTrip = {
         userId: userId,
@@ -93,9 +101,9 @@ app.post(`/trips`, async (req, res) => {
 app.put('/trip/:id', async (req, res) => {
     const { id } = req.params
     const { optionalUserId, cityId, start, end } = req.body
-    var userId = 1 
+    var userId = 1
     if (optionalUserId) {
-        userId = Number(optionalUserId) 
+        userId = Number(optionalUserId)
     }
     const scheduledTrips = await prisma.trip.findMany({
         where: { userId: Number(userId) },
@@ -186,6 +194,7 @@ app.get('/users/location/:date', async (req, res) => {
 
 app.use(express.static(path.join(__dirname, '../../frontend/public')))
 
-const server = app.listen(parseInt(process.env.PORT || '3001'), '0.0.0.0', () => {
+const server = app.listen(parseInt(process.env.PORT || '3001'), '0.0.0.0', async () => {
     console.log('🚀 Server ready at: http://localhost:' + (process.env.PORT || 3001))
+    await bootstrap()
 })
