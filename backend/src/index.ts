@@ -6,22 +6,26 @@ import { loadCities } from './controllers/cities'
 import { bootstrapTeam } from './controllers/teams'
 import { loadUsersFromTSV } from './controllers/users'
 import { isOverlappingTrip, isValidTrip } from './controllers/trips'
+const cors = require('cors')
+const { auth, requiresAuth } = require('express-openid-connect')
 
 const prisma = new PrismaClient()
 const app = express()
 
-// bootstrap cities
-loadCities()
-
-// bootstrap the only team
-bootstrapTeam()
-
-// bootstrap users
-loadUsersFromTSV('user_bootstrap.tsv', 1)
+async function bootstrap() {
+    // bootstrap cities
+    await loadCities()
+    // bootstrap the only team
+    await bootstrapTeam()
+    // bootstrap users
+    await loadUsersFromTSV('user_bootstrap.tsv', 1)
+}
 
 // Webapp configs beyond here
 
 app.use(express.json())
+
+app.use(cors())
 
 app.get('/cities', async (req, res) => {
     var cityName = req.query.name
@@ -29,7 +33,7 @@ app.get('/cities', async (req, res) => {
         cityName = String(cityName).toLowerCase()
         const likeBit = `${cityName}%`
         const query = `SELECT * FROM "City" WHERE lower(name) like '${likeBit}';`
-        console.log(query) 
+        console.log(query)
         const cities = await prisma.$queryRaw(query)
         res.json(cities)
     } else {
@@ -38,8 +42,36 @@ app.get('/cities', async (req, res) => {
     }
 })
 
+const config = {
+    authRequired: false,
+    auth0Logout: true,
+    secret: process.env.CLIENT_SECRET,
+    baseURL: 'https://whereintheworld.posthog.com',
+    clientID: process.env.CLIENT_ID,
+    issuerBaseURL: 'https://dev-7z1md7yt.us.auth0.com',
+}
+
+// auth router attaches /login, /logout, and /callback routes to the baseURL
+app.use(auth(config))
+
+// req.isAuthenticated is provided from the auth router
+app.get('/', (req, res) => {
+    res.send((req as any).oidc.isAuthenticated() ? 'Logged in' : 'Logged out')
+})
+
+app.get('/profile', requiresAuth(), (req, res) => {
+    res.send(JSON.stringify((req as any).oidc.user))
+})
+
+app.use(require('body-parser').urlencoded({ extended: true }))
+
+app.get('/login', (req, res) => {
+    res.send("<h2>Where in the world</h2><br/>Please log in <a href='/auth/slack'>here</a>")
+})
 app.get('/trips', async (req, res) => {
-    const trips = await prisma.trip.findMany()
+    const trips = await prisma.trip.findMany({
+        include: { City: true },
+    })
     res.json(trips)
 })
 
@@ -49,21 +81,32 @@ app.get('/trips/:id', async (req, res) => {
         where: {
             id: Number(id),
         },
+        include: {
+            City: true,
+        },
     })
     res.json(trip)
 })
 
 app.post(`/trips`, async (req, res) => {
     const { optionalUserId, cityId, start, end } = req.body
-    var userId = 1 
+    var userId = 1
     if (optionalUserId) {
-        userId = Number(optionalUserId) 
+        userId = Number(optionalUserId)
     }
     const newTrip = {
-        userId: userId,
-        cityId: Number(cityId),
         start: new Date(start),
         end: new Date(end),
+        City: {
+            connect: {
+                id: Number(cityId),
+            },
+        },
+        User: {
+            connect: {
+                id: Number(userId),
+            },
+        },
     }
     if (!isValidTrip(newTrip)) {
         res.json({ error: 'end must be after start of your trip' })
@@ -93,18 +136,26 @@ app.post(`/trips`, async (req, res) => {
 app.put('/trip/:id', async (req, res) => {
     const { id } = req.params
     const { optionalUserId, cityId, start, end } = req.body
-    var userId = 1 
+    var userId = 1
     if (optionalUserId) {
-        userId = Number(optionalUserId) 
+        userId = Number(optionalUserId)
     }
     const scheduledTrips = await prisma.trip.findMany({
         where: { userId: Number(userId) },
     })
     const newTrip = {
-        userId: userId,
-        cityID: Number(cityId),
         start: new Date(start),
         end: new Date(end),
+        City: {
+            connect: {
+                id: Number(cityId),
+            },
+        },
+        User: {
+            connect: {
+                id: Number(userId),
+            },
+        },
     }
     if (!isValidTrip(newTrip)) {
         res.json({ error: 'end must be after start of your trip' })
@@ -140,7 +191,7 @@ app.delete(`/trip/:id`, async (req, res) => {
 })
 
 app.get('/users', async (req, res) => {
-    const users = await prisma.user.findMany({})
+    const users = await prisma.user.findMany({ include: { City: true, trips: true } })
     res.json(users)
 })
 
@@ -186,6 +237,7 @@ app.get('/users/location/:date', async (req, res) => {
 
 app.use(express.static(path.join(__dirname, '../../frontend/public')))
 
-const server = app.listen(parseInt(process.env.PORT || '3001'), '0.0.0.0', () => {
+const server = app.listen(parseInt(process.env.PORT || '3001'), '0.0.0.0', async () => {
     console.log('🚀 Server ready at: http://localhost:' + (process.env.PORT || 3001))
+    await bootstrap()
 })

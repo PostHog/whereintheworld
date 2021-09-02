@@ -25,14 +25,11 @@ const prisma = new PrismaClient();
   let channel = await app.client.conversations.members({'channel': 'CSPHFDZH8'})
   let filtered_members = list.members.filter(member => channel.members.indexOf(member.id) > -1)
   let other_list = filtered_members.map((member) => {
-      if(member.profile.email == 'tim@posthog.com') {
-          askUpdateLocation(app, member)
-      }
-      return {
-            email: member.profile.email,
-            image: member.profile.image_1024,
-            current_tz: member.tz,
-      }
+        prisma.user.upda
+        prisma.user.update({
+            where: { email: member.email },
+            data: { avatar: member.profile.image_1024}
+        })
   })
   console.log('hi');
   console.log('⚡️ Bolt app is running!');
