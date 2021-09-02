@@ -287,8 +287,7 @@ button {
     }
 }
 
-.trip-view {
-    // Full trip page to add/edit trip
+.trip-view-wrapper {
     background-color: white;
     @extend .mixin-elevated;
     position: fixed;
@@ -299,10 +298,19 @@ button {
     min-height: 500px;
     top: 10vh;
     left: 320 + $default_spacing * 2 - $default_spacing; // 320px (width of .main-overlay) + margin left of .main-overlay - position adjustment
+    transition: all 0.5s ease-out;
+    &.hidden {
+        left: $default_spacing * 2;
+    }
+}
+
+.trip-view {
+    // Full trip page to add/edit trip
     display: flex;
     flex-direction: column;
     padding: $default_spacing;
     padding-left: $default_spacing * 2;
+    height: 100%;
 }
 
 .trip-card {

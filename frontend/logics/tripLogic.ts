@@ -1,5 +1,4 @@
 import { kea } from 'kea'
-import { TripType } from '../types'
 import { tripLogicType } from './tripLogicType'
 
 interface TripPayload {
@@ -10,23 +9,27 @@ interface TripPayload {
 export const tripLogic = kea<tripLogicType<TripPayload>>({
     actions: {
         setOpenTripId: (tripId: number | null | 'new') => ({ tripId }),
+        toggleTripView: true,
+        clearSavedtrip: true,
     },
     reducers: {
         openTripId: [
             null as number | null | 'new',
             {
                 setOpenTripId: (_, { tripId }) => tripId,
+                toggleTripView: (state) => (state ? null : 'new'),
             },
         ],
     },
     loaders: {
         savedTrip: [
-            null as TripType | null,
+            null as 'new' | 'updated' | null,
             {
-                saveTrip: async (payload: TripPayload) => {
+                saveTrip: async (payload: TripPayload): Promise<'new' | 'updated' | null> => {
                     console.log(payload)
-                    return { destination: 'todo' }
+                    return 'new'
                 },
+                clearSavedtrip: async () => null,
             },
         ],
     },

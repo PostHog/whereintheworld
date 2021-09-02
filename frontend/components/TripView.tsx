@@ -34,8 +34,7 @@ const loadOptions = (inputValue, callback) => {
     }, 1000)
 }
 
-export function TripView(): JSX.Element | null {
-    const { openTripId } = useValues(tripLogic)
+export function TripView(): JSX.Element {
     const { saveTrip } = useActions(tripLogic)
     const [destSearch, setDestSearch] = useState('')
     const [formValues, setFormValues] = useState({ dates: [new Date(), new Date()], destination: null })
@@ -50,16 +49,14 @@ export function TripView(): JSX.Element | null {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         setFormState('submitted')
-        saveTrip(formValues)
+        if (formValues.destination && formValues.dates[0] && formValues.dates[1]) {
+            saveTrip(formValues)
+        }
     }
 
     const destErrored = formState === 'submitted' && !formValues.destination
     const datesErrored =
         formState === 'submitted' && (!formValues.dates?.length || !formValues.dates[0] || !formValues.dates[1])
-
-    if (!openTripId) {
-        return null
-    }
 
     return (
         <div className="trip-view">

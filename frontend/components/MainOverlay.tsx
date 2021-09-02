@@ -4,11 +4,23 @@ import { faThumbtack, faPlusCircle } from '@fortawesome/free-solid-svg-icons'
 import { LocationAvatar } from './LocationAvatar'
 import { TripCard } from './TripCard'
 import { Button } from './Button'
-import { useActions } from 'kea'
+import { useActions, useValues } from 'kea'
 import { tripLogic } from '../logics/tripLogic'
+import { useEffect } from 'react'
+import { useRef } from 'react'
 
 export function MainOverlay(): JSX.Element {
-    const { setOpenTripId } = useActions(tripLogic)
+    const { toggleTripView, clearSavedtrip } = useActions(tripLogic)
+    const { savedTrip } = useValues(tripLogic)
+    const tripListRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        if (savedTrip) {
+            tripListRef.current?.scrollTo({ behavior: 'smooth', top: tripListRef.current.scrollHeight })
+            clearSavedtrip()
+        }
+    }, [savedTrip])
+
     return (
         <div className="main-overlay">
             <div className="header">
@@ -44,10 +56,10 @@ export function MainOverlay(): JSX.Element {
                 </div>
             </div>
             <div className="content-wrapper">
-                <div className="trips">
+                <div className="trips" ref={tripListRef}>
                     <div className="flex-center">
                         <h2 style={{ flexGrow: 1 }}>My Trips</h2>
-                        <Button onClick={() => setOpenTripId('new')}>
+                        <Button onClick={toggleTripView}>
                             <FontAwesomeIcon icon={faPlusCircle} /> Add a trip
                         </Button>
                     </div>
