@@ -59,7 +59,7 @@ export async function allLocationsForDay(date: Date) {
 }
 
 export async function userLocationForDay(userId: number, date: Date) {
-    const trip = await prisma.trip.findFirst({
+    var trip = await prisma.trip.findFirst({
         where: {
             userId: userId,
 
@@ -75,11 +75,13 @@ export async function userLocationForDay(userId: number, date: Date) {
 				}
     })
 		if (trip) {
+			trip.City['isHome'] = false
     	return trip.City
 		}
-		const home = await prisma.user.findUnique({
+		var home = await prisma.user.findUnique({
 			where: {id: userId},
 			include: {City: true}
 		})
+		home.City['isHome'] = true 
 		return home.City
 }
