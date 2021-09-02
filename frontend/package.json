@@ -11,7 +11,8 @@
         "build": "next build",
         "export": "next export",
         "start": "concurrently \"yarn start:app\" \"kea-typegen watch\" -n APP,KEA -c blue,green",
-        "start:app": "next"
+        "start:app": "next",
+        "typegen:write": "kea-typegen write"
     },
     "dependencies": {
         "@fortawesome/fontawesome-svg-core": "^1.2.36",
