@@ -21,7 +21,7 @@ Install PostGIS
 
 ```
 brew install postgis
-psql -d whereintheworld -C 'CREATE EXTENSION postgis;'
+psql -d whereintheworld -c 'CREATE EXTENSION postgis;'
 ```
 
 Start the server:
