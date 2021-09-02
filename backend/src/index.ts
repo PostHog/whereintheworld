@@ -18,6 +18,9 @@ bootstrapTeam()
 
 // bootstrap users
 loadUsersFromTSV('user_bootstrap.tsv', 1)
+// loadUsersFromTSV("user_bootstrap.tsv", 1);
+
+  const { auth, requiresAuth } = require('express-openid-connect');
 
 // Webapp configs beyond here
 
@@ -38,6 +41,35 @@ app.get('/cities', async (req, res) => {
     }
 })
 
+
+const config = {
+    authRequired: false,
+    auth0Logout: true,
+    secret: process.env.CLIENT_SECRET,
+    baseURL: 'https://whereintheworld.posthog.com',
+    clientID: process.env.CLIENT_ID,
+    issuerBaseURL: 'https://dev-7z1md7yt.us.auth0.com'
+  };
+  
+
+  // auth router attaches /login, /logout, and /callback routes to the baseURL
+  app.use(auth(config));
+  
+  // req.isAuthenticated is provided from the auth router
+  app.get('/', (req, res) => {
+    res.send((req as any).oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
+  });
+
+  app.get('/profile', requiresAuth(), (req, res) => {
+    res.send(JSON.stringify((req as any).oidc.user));
+  });
+
+app.use(require('body-parser').urlencoded({ extended: true }));
+
+
+app.get('/login', (req, res) => {
+    res.send("<h2>Where in the world</h2><br/>Please log in <a href='/auth/slack'>here</a>")
+})
 app.get('/trips', async (req, res) => {
     const trips = await prisma.trip.findMany()
     res.json(trips)
