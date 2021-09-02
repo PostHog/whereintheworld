@@ -39,7 +39,8 @@ function Home(): JSX.Element {
                         lat={user.location.latitude}
                         lng={user.location.longitude}
                         avatarUrl={user.avatar}
-                        travelState="away"
+                        travelState={user.location.isHome ? 'home' : 'away'}
+                        key={user.id}
                     />
                 ))}
             </GoogleMapReact>

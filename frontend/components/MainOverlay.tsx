@@ -8,11 +8,14 @@ import { useActions, useValues } from 'kea'
 import { tripLogic } from '../logics/tripLogic'
 import { useEffect } from 'react'
 import { useRef } from 'react'
+import { userLogic } from '../logics/userLogic'
+import { formatCity } from '../utils'
 
 export function MainOverlay(): JSX.Element {
     const { toggleTripView, clearSavedtrip } = useActions(tripLogic)
     const { savedTrip, trips } = useValues(tripLogic)
     const tripListRef = useRef<HTMLDivElement>(null)
+    const { users } = useValues(userLogic)
 
     useEffect(() => {
         if (savedTrip) {
@@ -28,30 +31,19 @@ export function MainOverlay(): JSX.Element {
                 <div className="today">
                     <h2>Today</h2>
                     <div className="away-today">
-                        <LocationAvatar
-                            avatarUrl="https://ca.slack-edge.com/TSS5W8YQZ-U01403VS4MQ-6ae8013dc1bc-72"
-                            country="ES"
-                            personName="James"
-                            locationText="Toledo, ES"
-                        />
-                        <LocationAvatar
-                            avatarUrl="https://ca.slack-edge.com/TSS5W8YQZ-U018VMZBKQ8-a6b4316ff00a-48"
-                            country="SE"
-                            personName="Yakko"
-                            locationText="Stockholm, SE"
-                        />
-                        <LocationAvatar
-                            avatarUrl="https://ca.slack-edge.com/TSS5W8YQZ-U015X6QQN0N-b6ea1c7bb618-48"
-                            country="PL"
-                            personName="Michał"
-                            locationText="Warsaw, PL"
-                        />
-                        <LocationAvatar
-                            avatarUrl="https://ca.slack-edge.com/TSS5W8YQZ-U01403VS4MQ-6ae8013dc1bc-72"
-                            country="BR"
-                            personName="Marcus"
-                            locationText="São Paulo, BR"
-                        />
+                        {users.map((user) => {
+                            if (user.location.isHome) {
+                                return null
+                            }
+                            return (
+                                <LocationAvatar
+                                    avatarUrl={user.avatar}
+                                    country={user.location.country_code}
+                                    personName={user.fullName}
+                                    locationText={formatCity(user.location)}
+                                />
+                            )
+                        })}
                     </div>
                 </div>
             </div>
