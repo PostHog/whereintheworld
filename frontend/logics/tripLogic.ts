@@ -3,10 +3,7 @@ import { API } from '../pages/_app'
 import { TripType } from '../types'
 import { tripLogicType } from './tripLogicType'
 
-interface TripPayload {
-    destination: number
-    dates: Date[]
-}
+type TripPayload = Pick<TripType, 'cityId' | 'start' | 'end'>
 
 export const tripLogic = kea<tripLogicType<TripPayload>>({
     actions: {
@@ -23,15 +20,32 @@ export const tripLogic = kea<tripLogicType<TripPayload>>({
             },
         ],
     },
-    loaders: {
+    loaders: ({ values, actions }) => ({
         savedTrip: [
             null as 'new' | 'updated' | null,
             {
                 saveTrip: async (payload: TripPayload): Promise<'new' | 'updated' | null> => {
-                    console.log(payload)
-                    return 'new'
+                    if (values.openTripId === 'new') {
+                        await fetch(`${API}/trips`, {
+                            method: 'POST',
+                            body: JSON.stringify(payload),
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                        })
+                        actions.loadTrips()
+                        return 'new'
+                    }
+                    return null
                 },
                 clearSavedtrip: async () => null,
+                deleteTrip: async () => {
+                    await fetch(`${API}/trips/${values.openTripId}`, {
+                        method: 'DELETE',
+                    })
+                    actions.loadTrips()
+                    return null
+                },
             },
         ],
         trips: [
@@ -43,9 +57,12 @@ export const tripLogic = kea<tripLogicType<TripPayload>>({
                 },
             },
         ],
-    },
+    }),
     listeners: ({ actions }) => ({
         saveTripSuccess: () => {
+            actions.setOpenTripId(null)
+        },
+        deleteTripSuccess: () => {
             actions.setOpenTripId(null)
         },
     }),
