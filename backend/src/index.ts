@@ -66,9 +66,6 @@ app.get('/profile', requiresAuth(), (req, res) => {
 
 app.use(require('body-parser').urlencoded({ extended: true }))
 
-app.get('/login', (req, res) => {
-    res.send("<h2>Where in the world</h2><br/>Please log in <a href='/auth/slack'>here</a>")
-})
 app.get('/trips', async (req, res) => {
     const trips = await prisma.trip.findMany({
         include: { City: true },

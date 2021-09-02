@@ -445,3 +445,25 @@ button {
         border-color: $danger !important;
     }
 }
+
+.whoami {
+    background-color: white;
+    border-radius: $radius_sm;
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 450;
+    padding: $default_spacing * 0.5;
+    display: flex;
+    align-items: center;
+    font-size: 0.85em;
+    @extend .mixin-elevated;
+
+    .avatar {
+        margin-right: $default_spacing;
+        .avatar-img {
+            width: 32px;
+            height: 32px;
+        }
+    }
+}
