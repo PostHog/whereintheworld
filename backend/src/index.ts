@@ -6,6 +6,7 @@ import { loadCities } from './controllers/cities'
 import { bootstrapTeam } from './controllers/teams'
 import { loadUsersFromTSV } from './controllers/users'
 import { isOverlappingTrip, isValidTrip } from './controllers/trips'
+import { createEmitAndSemanticDiagnosticsBuilderProgram } from 'typescript'
 const cors = require('cors')
 const { auth, requiresAuth } = require('express-openid-connect')
 
@@ -195,11 +196,56 @@ app.get('/users', async (req, res) => {
     res.json(users)
 })
 
+app.get('/users/:id', async(req, res) => {
+    const userId = Number(req.params.id)
+    const user = await prisma.user.findUnique({where: {id: userId}, include: {City: true}})
+    res.json(user)
+})
+
 app.post(`/users`, async (req, res) => {
-    const result = await prisma.user.create({
-        data: {
-            ...req.body,
+    const { fullName, email, cityId, avatar, teamId } = req.body
+    const newUser = {
+        fullName: fullName,
+        email: email,
+        avatar: avatar,
+        City: {
+            connect: {
+                id: Number(cityId),
+            },
         },
+        team: {
+            connect: {
+                id: Number(teamId),
+            },
+        },
+    }
+    const result = await prisma.user.create({
+        data: newUser,
+    })
+    res.json(result)
+})
+
+app.put(`/users/:id`, async (req, res) => {
+    const userId = Number(req.params.id) 
+    const { fullName, email, cityId, avatar, teamId } = req.body
+    const newUser = {
+        fullName: fullName,
+        email: email,
+        avatar: avatar,
+        City: {
+            connect: {
+                id: Number(cityId),
+            },
+        },
+        team: {
+            connect: {
+                id: Number(teamId),
+            },
+        },
+    }
+    const result = await prisma.user.update({
+        where: {id: userId},
+        data: newUser,
     })
     res.json(result)
 })
