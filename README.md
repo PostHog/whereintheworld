@@ -18,12 +18,14 @@ cd prisma-examples/typescript/rest-nextjs-express
 The code for the server is located in the [`backend`](./backend) directory. You can start it as follows:
 
 Install PostGIS
+
 ```
 brew install postgis
 psql -d whereintheworld -C 'CREATE EXTENSION postgis;'
 ```
 
 Start the server:
+
 ```
 createdb whereintheworld
 cd backend
@@ -42,7 +44,7 @@ The code for the Next.js app is located in the [`frontend`](./frontend) director
 ```
 cd ../frontend
 yarn install
-yarn dev
+yarn start
 ```
 
 The app is now running, navigate to [`http://localhost:3000/`](http://localhost:3000/) in your browser to explore its UI.

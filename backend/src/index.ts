@@ -43,7 +43,7 @@ app.get('/trips', async (req, res) => {
     res.json(trips)
 })
 
-app.get('/trip/:id', async (req, res) => {
+app.get('/trips/:id', async (req, res) => {
     const { id } = req.params
     const trip = await prisma.trip.findUnique({
         where: {
@@ -53,14 +53,14 @@ app.get('/trip/:id', async (req, res) => {
     res.json(trip)
 })
 
-app.post(`/trip`, async (req, res) => {
-    const { userId, country, state, city, cityID, start, end } = req.body
+app.post(`/trips`, async (req, res) => {
+    const { userId, country, state, city, cityId, start, end } = req.body
     const newTrip = {
         userId: Number(userId),
         country: country,
         state: state,
         city: city,
-        cityId: Number(cityID),
+        cityId: Number(cityId),
         start: new Date(start),
         end: new Date(end),
     }
