@@ -47,7 +47,7 @@ const config = {
     authRequired: false,
     auth0Logout: true,
     secret: process.env.CLIENT_SECRET,
-    baseURL: 'https://whereintheworld.posthog.com',
+    baseURL: process.env.BASE_URL || 'http://localhost:3001',
     clientID: process.env.CLIENT_ID,
     issuerBaseURL: 'https://dev-7z1md7yt.us.auth0.com',
 }
@@ -55,13 +55,13 @@ const config = {
 // auth router attaches /login, /logout, and /callback routes to the baseURL
 app.use(auth(config))
 app.use(require('body-parser').urlencoded({ extended: true }))
-app.use(function(req, res, next) {
-    if (!(req as any).oidc.isAuthenticated()){
-        res.redirect('/login');
-    }   else{
-        next();
-    }
-});
+// app.use(function(req, res, next) {
+//     if (!(req as any).oidc.isAuthenticated()){
+//         res.redirect('/login');
+//     }   else{
+//         next();
+//     }
+// });
 
 app.get('/profile', requiresAuth(), (req, res) => {
     res.send(JSON.stringify((req as any).oidc.user))
