@@ -18,15 +18,24 @@ loadCities()
 bootstrapTeam()
 
 // bootstrap users
-loadUsersFromTSV("user_bootstrap.tsv", 1);
+loadUsersFromTSV('user_bootstrap.tsv', 1)
 
 // Webapp configs beyond here
 
 app.use(express.json())
 
 app.get('/cities', async (req, res) => {
-  const cities = await prisma.city.findMany()
-  res.json(cities)
+    var cityName = req.query.cityName
+    if (cityName) {
+        cityName = String(cityName).toLowerCase()
+        const likeBit = `%${cityName}%`
+        const query = `SELECT * FROM "City" WHERE lower(name) like '${likeBit}';`
+        const cities = await prisma.$queryRaw(query)
+        res.json(cities)
+    } else {
+        const cities = await prisma.city.findMany()
+        res.json(cities)
+    }
 })
 
 app.get('/trips', async (req, res) => {
@@ -54,7 +63,6 @@ app.post(`/trip`, async (req, res) => {
         cityId: Number(cityID),
         start: new Date(start),
         end: new Date(end),
-
     }
     if (!isValidTrip(newTrip)) {
         res.json({ error: 'end must be after start of your trip' })
@@ -146,7 +154,7 @@ app.get('/users/near/:id', async (req, res) => {
 app.get('/users/location/:date', async (req, res) => {
     const { date } = req.params
     const users = await prisma.user.findMany()
-    var locations = [] 
+    var locations = []
     for (let user of users) {
         // find trips that contain the search date
         const trip = await prisma.trip.findFirst({
@@ -161,12 +169,13 @@ app.get('/users/location/:date', async (req, res) => {
             },
         })
         if (trip) {
-          locations[user.id] = {
-            cityId: trip.cityId,
-          }
+            locations[user.id] = {
+                cityId: trip.cityId,
+            }
+        }
+        res.json(locations)
     }
-    res.json(locations) 
-}})
+})
 
 app.use(express.static(path.join(__dirname, '../../frontend/public')))
 
