@@ -38,8 +38,8 @@ app.get('/cities', async (req, res) => {
         const cities = await prisma.$queryRaw(query)
         res.json(cities)
     } else {
-        const cities = await prisma.city.findMany()
-        res.json(cities)
+        // const cities = await prisma.city.findMany()
+        res.json({})
     }
 })
 
@@ -93,7 +93,8 @@ app.get('/trips/:id', async (req, res) => {
             City: true,
         },
     })
-    const nearbyUsers = await findNearbyUsers(trip) 
+    const miles = (1609.34 * 200) 
+    const nearbyUsers = await findNearbyUsers(trip, miles) 
     trip['nearbyUsers'] = nearbyUsers 
     res.json(trip)
 })
