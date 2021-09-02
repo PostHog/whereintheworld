@@ -2,6 +2,7 @@ import React from 'react'
 import GoogleMapReact from 'google-map-react'
 import { MapPin } from '../components/MapPin'
 import { MainOverlay } from '../components/MainOverlay'
+import { TripView } from '../components/TripView'
 
 function Home(): JSX.Element {
     const defaultProps = {
@@ -14,10 +15,13 @@ function Home(): JSX.Element {
     return (
         <div className="map-container">
             <MainOverlay />
+            <TripView />
             <GoogleMapReact
                 bootstrapURLKeys={{ key: '' }}
                 defaultCenter={defaultProps.center}
                 defaultZoom={defaultProps.zoom}
+                fullscreenControl={false}
+                options={{ fullscreenControl: false }}
             >
                 <MapPin
                     lat={51.50460015249271}

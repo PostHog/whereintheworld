@@ -6,3 +6,6 @@ user_bootstrap.tsv
 .vscode
 .next
 frontend/out
+
+# kea
+*Type.ts

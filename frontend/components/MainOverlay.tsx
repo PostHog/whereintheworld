@@ -4,8 +4,11 @@ import { faThumbtack, faPlusCircle } from '@fortawesome/free-solid-svg-icons'
 import { LocationAvatar } from './LocationAvatar'
 import { TripCard } from './TripCard'
 import { Button } from './Button'
+import { useActions } from 'kea'
+import { tripLogic } from '../logics/tripLogic'
 
 export function MainOverlay(): JSX.Element {
+    const { setOpenTripId } = useActions(tripLogic)
     return (
         <div className="main-overlay">
             <div className="header">
@@ -44,7 +47,7 @@ export function MainOverlay(): JSX.Element {
                 <div className="trips">
                     <div className="flex-center">
                         <h2 style={{ flexGrow: 1 }}>My Trips</h2>
-                        <Button>
+                        <Button onClick={() => setOpenTripId('new')}>
                             <FontAwesomeIcon icon={faPlusCircle} /> Add a trip
                         </Button>
                     </div>
