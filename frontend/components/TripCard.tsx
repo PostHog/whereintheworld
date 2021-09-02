@@ -4,6 +4,7 @@ import React from 'react'
 import Flag from 'react-flagkit'
 import { TripMatch } from '../types'
 import clsx from 'clsx'
+import { Button } from './Button'
 
 interface TripCardProps {
     tripMatches?: TripMatch[]
@@ -30,7 +31,10 @@ export function TripCard({ tripMatches }: TripCardProps): JSX.Element {
                         className="avatar-highlight"
                         src="https://ca.slack-edge.com/TSS5W8YQZ-U015X6QQN0N-b6ea1c7bb618-48"
                     />
-                    Michael will be near you!
+                    <div style={{ flexGrow: 1 }}>Michael will be near you!</div>
+                    <Button size="sm" styling="inverse" style={{ marginLeft: 4 }}>
+                        Contact
+                    </Button>
                 </div>
             )}
         </div>

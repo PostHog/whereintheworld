@@ -1,8 +1,9 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faThumbtack } from '@fortawesome/free-solid-svg-icons'
+import { faThumbtack, faPlusCircle } from '@fortawesome/free-solid-svg-icons'
 import { LocationAvatar } from './LocationAvatar'
 import { TripCard } from './TripCard'
+import { Button } from './Button'
 
 export function MainOverlay(): JSX.Element {
     return (
@@ -41,7 +42,13 @@ export function MainOverlay(): JSX.Element {
             </div>
             <div className="content-wrapper">
                 <div className="trips">
-                    <h2>My Trips</h2>
+                    <div className="flex-center">
+                        <h2 style={{ flexGrow: 1 }}>My Trips</h2>
+                        <Button>
+                            <FontAwesomeIcon icon={faPlusCircle} /> Add a trip
+                        </Button>
+                    </div>
+
                     <TripCard
                         tripMatches={[
                             {
