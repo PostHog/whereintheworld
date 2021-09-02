@@ -17,7 +17,7 @@ function Home(): JSX.Element {
             <MainOverlay />
             <TripView />
             <GoogleMapReact
-                bootstrapURLKeys={{ key: '' }}
+                bootstrapURLKeys={{ key: 'AIzaSyDOV1fvZoiOUskMxIYF8sSBNgVhoCNzxsk' }}
                 defaultCenter={defaultProps.center}
                 defaultZoom={defaultProps.zoom}
                 fullscreenControl={false}

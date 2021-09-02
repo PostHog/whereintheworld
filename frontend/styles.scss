@@ -1,12 +1,15 @@
 @use 'sass:math';
 @import '_vars';
 
+// Root styles
 :root {
     --primary: #{$primary};
     --secondary: #{$secondary};
     --orange: #{$orange};
+    --danger: #{$danger};
 }
 
+// Reset styles
 html {
     box-sizing: border-box;
 }
@@ -47,6 +50,7 @@ button {
     cursor: pointer;
 }
 
+// General styles
 .map-container {
     height: 100vh;
     width: 100%;
@@ -57,6 +61,15 @@ button {
     align-items: center;
 }
 
+.mt {
+    margin-top: $default_spacing;
+}
+
+.text-right {
+    text-align: right;
+}
+
+// Button styles
 .btn {
     border-radius: $radius_sm;
     background-color: $primary;
@@ -83,8 +96,33 @@ button {
         }
     }
 
+    &.link {
+        background-color: transparent;
+        color: $primary;
+        border-color: transparent;
+        font-weight: normal;
+        padding-left: 0;
+    }
+
     &.sm {
         padding: 3px 8px;
+    }
+
+    &.lg {
+        padding: 8px 16px;
+        font-size: 0.95em;
+    }
+}
+
+// Form styles
+
+.form-group {
+    margin-bottom: $default_spacing;
+    label {
+        font-size: 0.85em;
+        display: block;
+        font-weight: bold;
+        padding-bottom: math.div($default_spacing, 2);
     }
 }
 
@@ -233,7 +271,25 @@ button {
     }
 }
 
+.trip-view {
+    // Full trip page to add/edit trip
+    background-color: white;
+    @extend .mixin-elevated;
+    position: fixed;
+    border-radius: $radius;
+    width: 320px;
+    height: 85vh;
+    z-index: 380;
+    top: 10vh;
+    left: 320 + $default_spacing * 2 - $default_spacing; // 320px (width of .main-overlay) + margin left of .main-overlay - position adjustment
+    display: flex;
+    flex-direction: column;
+    padding: $default_spacing;
+    padding-left: $default_spacing * 2;
+}
+
 .trip-card {
+    // Trip representation when listing
     &.highlighted {
         border-radius: $radius;
         background-color: $primary;

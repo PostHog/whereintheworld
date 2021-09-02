@@ -3,8 +3,8 @@ import React from 'react'
 
 interface ButtonProps
     extends React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> {
-    size?: 'sm' | 'md'
-    styling?: 'default' | 'inverse'
+    size?: 'sm' | 'md' | 'lg'
+    styling?: 'default' | 'inverse' | 'link'
 }
 
 export function Button({ className, children, size, styling, ...props }: ButtonProps): JSX.Element {
