@@ -2,27 +2,34 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEdit } from '@fortawesome/free-solid-svg-icons'
 import React from 'react'
 import Flag from 'react-flagkit'
-import { TripMatchType } from '../types'
+import { TripType } from '../types'
 import clsx from 'clsx'
 import { Button } from './Button'
+import { formatCity } from '../utils'
+import dayjs from 'dayjs'
+import { useActions } from 'kea'
+import { tripLogic } from '../logics/tripLogic'
 
-interface TripCardProps {
-    tripMatches?: TripMatchType[]
-}
-
-export function TripCard({ tripMatches }: TripCardProps): JSX.Element {
-    const highlightMatches = !!tripMatches?.length
+export function TripCard({ trip }: { trip: TripType }): JSX.Element {
+    const highlightMatches = !!trip.matches?.length
+    const { setOpenTripId } = useActions(tripLogic)
 
     return (
         <div className={clsx('trip-card', { highlighted: highlightMatches })}>
-            <div className="trip-card-inner">
+            <div className="trip-card-inner" onClick={() => setOpenTripId(trip.id)}>
                 <div className="trip-card-header">
-                    <div>Aug 25 - Aug 27</div>
-                    <FontAwesomeIcon icon={faEdit} style={{ cursor: 'pointer', color: '#B3C2F2' }} />
+                    <div>
+                        {dayjs(trip.start).format('MMM DD')} - {dayjs(trip.end).format('MMM DD')}
+                    </div>
+                    <FontAwesomeIcon icon={faEdit} style={{ color: '#B3C2F2' }} />
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', paddingTop: 8 }}>
-                    <Flag country="BE" size={28} style={{ borderRadius: '50%', objectFit: 'cover', marginRight: 8 }} />
-                    <b>Leuven, BE</b>
+                    <Flag
+                        country={trip.City.country_code}
+                        size={28}
+                        style={{ borderRadius: '50%', objectFit: 'cover', marginRight: 8 }}
+                    />
+                    <b>{formatCity(trip.City)}</b>
                 </div>
             </div>
             {highlightMatches && (

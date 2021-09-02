@@ -1,4 +1,6 @@
 import { kea } from 'kea'
+import { API } from '../pages/_app'
+import { TripType } from '../types'
 import { tripLogicType } from './tripLogicType'
 
 interface TripPayload {
@@ -32,10 +34,22 @@ export const tripLogic = kea<tripLogicType<TripPayload>>({
                 clearSavedtrip: async () => null,
             },
         ],
+        trips: [
+            [] as TripType[],
+            {
+                loadTrips: async () => {
+                    const response = await (await fetch(`${API}/trips`)).json()
+                    return response as TripType[]
+                },
+            },
+        ],
     },
     listeners: ({ actions }) => ({
         saveTripSuccess: () => {
             actions.setOpenTripId(null)
         },
+    }),
+    events: ({ actions }) => ({
+        afterMount: [actions.loadTrips],
     }),
 })
