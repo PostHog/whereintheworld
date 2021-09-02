@@ -1,8 +1,4 @@
 import { PrismaClient, Trip } from '@prisma/client'
-import express from 'express'
-import csv from 'csv-parser'
-import fs from 'fs'
-import path from 'path'
 
 const prisma = new PrismaClient()
 

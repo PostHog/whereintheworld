@@ -15,26 +15,28 @@ model Team {
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
-  fullName String
-  email    String  @unique
-  city     String
-  state    String?
-  country  String
-  posts    Post[]
-  avatar   String?
-  team     Team?   @relation(fields: [teamId], references: [id])
-  teamId   Int?
+  id        Int     @id @default(autoincrement())
+  fullName  String
+  email     String  @unique
+  city      String
+  state     String?
+  country   String
+  posts     Post[]
+  avatar    String?
+  team      Team?   @relation(fields: [teamId], references: [id])
+  teamId    Int?
+  cityId    Int
 }
 
 model Trip {
-  id      Int      @id @default(autoincrement())
-  user_id Int
-  country String
-  state   String
-  city    String
-  start   DateTime
-  end     DateTime
+  id        Int      @id @default(autoincrement())
+  userId   Int
+  country   String
+  state     String?
+  city      String
+  cityId   Int
+  start     DateTime
+  end       DateTime
 }
 
 model Post {

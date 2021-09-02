@@ -18,7 +18,7 @@ loadCities()
 bootstrapTeam()
 
 // bootstrap users
-// loadUsersFromTSV("user_bootstrap.tsv", 1);
+loadUsersFromTSV("user_bootstrap.tsv", 1);
 
 // Webapp configs beyond here
 
@@ -40,14 +40,16 @@ app.get('/trip/:id', async (req, res) => {
 })
 
 app.post(`/trip`, async (req, res) => {
-    const { user_id, country, state, city, start, end } = req.body
+    const { user_id, country, state, city, cityID, start, end } = req.body
     const newTrip = {
         user_id: Number(user_id),
         country: country,
         state: state,
         city: city,
+        cityID: Number(cityID),
         start: new Date(start),
         end: new Date(end),
+
     }
     if (!isValidTrip(newTrip)) {
         res.json({ error: 'end must be after start of your trip' })
@@ -76,15 +78,16 @@ app.post(`/trip`, async (req, res) => {
 
 app.put('/trip/:id', async (req, res) => {
     const { id } = req.params
-    const { user_id, country, state, city, start, end } = req.body
+    const { userId, country, state, city, cityId, start, end } = req.body
     const scheduledTrips = await prisma.trip.findMany({
-        where: { user_id: Number(user_id) },
+        where: { user_id: Number(userId) },
     })
     const newTrip = {
-        user_id: Number(user_id),
+        user_id: Number(userId),
         country: country,
         state: state,
         city: city,
+        cityID: Number(cityId),
         start: new Date(start),
         end: new Date(end),
     }
@@ -137,6 +140,26 @@ app.get('/users/near/:id', async (req, res) => {
 
 app.get('/users/location/:date', async (req, res) => {
     const { date } = req.params
+    const users = await prisma.user.findMany()
+    var locations = [] 
+    for (let user of users) {
+        // find trips that contain the search date
+        const trip = await prisma.trip.findFirst({
+            where: {
+                user_id: user.id,
+                start: {
+                    lt: new Date(date),
+                },
+                end: {
+                    gt: new Date(date),
+                },
+            },
+        })
+        if (trip) {
+          locations[user.id] = {
+            cityId: trip.cityId,
+          }
+    }
     return date
 })
 
