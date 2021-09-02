@@ -326,6 +326,7 @@ button {
         border-radius: $radius;
         padding: 8px $default_spacing;
         z-index: 950;
+        cursor: pointer;
 
         .trip-card-header {
             border-bottom: 1px solid $border_default;

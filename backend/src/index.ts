@@ -47,24 +47,37 @@ const config = {
     authRequired: false,
     auth0Logout: true,
     secret: process.env.CLIENT_SECRET,
-    baseURL: 'https://whereintheworld.posthog.com',
+    baseURL: process.env.BASE_URL || 'http://localhost:3001',
     clientID: process.env.CLIENT_ID,
     issuerBaseURL: 'https://dev-7z1md7yt.us.auth0.com',
 }
 
 // auth router attaches /login, /logout, and /callback routes to the baseURL
 app.use(auth(config))
-
-// req.isAuthenticated is provided from the auth router
-app.get('/', (req, res) => {
-    res.send((req as any).oidc.isAuthenticated() ? 'Logged in' : 'Logged out')
-})
-
-app.get('/profile', requiresAuth(), (req, res) => {
-    res.send(JSON.stringify((req as any).oidc.user))
-})
-
 app.use(require('body-parser').urlencoded({ extended: true }))
+// app.use(function(req, res, next) {
+//     if (!(req as any).oidc.isAuthenticated()){
+//         res.redirect('/login');
+//     }   else{
+//         next();
+//     }
+// });
+
+app.get('/profile', requiresAuth(), async (req, res) => {
+    let location = {}
+    try {
+        const user = await prisma.user.findFirst({where: {email: (req as any).oidc.user.email}})
+        location = await userLocationForDay(user.id, new Date())
+    } catch {
+    }
+    res.send(JSON.stringify({
+        location: location,
+        ...(req as any).oidc.user
+    }))
+})
+
+
+
 
 app.get('/trips', async (req, res) => {
     const trips = await prisma.trip.findMany({
@@ -89,8 +102,8 @@ app.get('/trips/:id', async (req, res) => {
 })
 
 app.post(`/trips`, async (req, res) => {
-    const { optionalUserId, cityId, start, end } = req.body
-    var userId = 1
+    const { userId: optionalUserId, cityId, start, end } = req.body
+    let userId = 1
     if (optionalUserId) {
         userId = Number(optionalUserId)
     }
@@ -102,7 +115,7 @@ app.post(`/trips`, async (req, res) => {
                 id: Number(cityId),
             },
         },
-        User: {
+        user: {
             connect: {
                 id: Number(userId),
             },
@@ -195,9 +208,9 @@ app.get('/users', async (req, res) => {
     res.json(users)
 })
 
-app.get('/users/:id', async(req, res) => {
+app.get('/users/:id', async (req, res) => {
     const userId = Number(req.params.id)
-    const user = await prisma.user.findUnique({where: {id: userId}, include: {City: true}})
+    const user = await prisma.user.findUnique({ where: { id: userId }, include: { City: true } })
     res.json(user)
 })
 
@@ -225,7 +238,7 @@ app.post(`/users`, async (req, res) => {
 })
 
 app.put(`/users/:id`, async (req, res) => {
-    const userId = Number(req.params.id) 
+    const userId = Number(req.params.id)
     const { fullName, email, cityId, avatar, teamId } = req.body
     const newUser = {
         fullName: fullName,
@@ -243,7 +256,7 @@ app.put(`/users/:id`, async (req, res) => {
         },
     }
     const result = await prisma.user.update({
-        where: {id: userId},
+        where: { id: userId },
         data: newUser,
     })
     res.json(result)
@@ -256,7 +269,7 @@ app.get('/users/near/:id', async (req, res) => {
 
 app.get('/users/:user/location/:date', async (req, res) => {
     var { date, user } = req.params
-    const dateDate = new Date(date) 
+    const dateDate = new Date(date)
     const locations = await userLocationForDay(Number(user), dateDate)
     res.json(locations)
 })

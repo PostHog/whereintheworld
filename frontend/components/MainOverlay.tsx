@@ -11,7 +11,7 @@ import { useRef } from 'react'
 
 export function MainOverlay(): JSX.Element {
     const { toggleTripView, clearSavedtrip } = useActions(tripLogic)
-    const { savedTrip } = useValues(tripLogic)
+    const { savedTrip, trips } = useValues(tripLogic)
     const tripListRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
@@ -64,17 +64,11 @@ export function MainOverlay(): JSX.Element {
                         </Button>
                     </div>
 
-                    <TripCard
-                        tripMatches={[
-                            {
-                                avatarUrl: 'https://ca.slack-edge.com/TSS5W8YQZ-U015X6QQN0N-b6ea1c7bb618-48',
-                                personName: 'Michael',
-                            },
-                        ]}
-                    />
-                    <TripCard />
-                    <TripCard />
-                    <TripCard />
+                    {trips.map((trip) => (
+                        <React.Fragment key={trip.id}>
+                            <TripCard trip={trip} />
+                        </React.Fragment>
+                    ))}
                 </div>
                 <div className="footer">
                     Home Location
