@@ -67,9 +67,6 @@ app.get('/profile', requiresAuth(), (req, res) => {
     res.send(JSON.stringify((req as any).oidc.user))
 })
 
-
-
-
 app.get('/trips', async (req, res) => {
     const trips = await prisma.trip.findMany({
         include: { City: true },
@@ -177,7 +174,7 @@ app.put('/trip/:id', async (req, res) => {
     res.json(trip)
 })
 
-app.delete(`/trip/:id`, async (req, res) => {
+app.delete(`/trips/:id`, async (req, res) => {
     const { id } = req.params
     try {
         const post = await prisma.trip.delete({
