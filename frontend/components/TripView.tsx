@@ -11,9 +11,11 @@ import { CityType } from '../types'
 import { API } from '../pages/_app'
 import Flag from 'react-flagkit'
 import { formatCity } from '../utils'
+import dayjs from 'dayjs'
 
 export function TripView(): JSX.Element {
-    const { saveTrip } = useActions(tripLogic)
+    const { saveTrip, deleteTrip } = useActions(tripLogic)
+    const { openTripId } = useValues(tripLogic)
     const [destSearch, setDestSearch] = useState('')
     const [formValues, setFormValues] = useState({ dates: [new Date(), new Date()], destination: null })
     const [formState, setFormState] = useState('untouched' as 'untouched' | 'submitted')
@@ -31,7 +33,11 @@ export function TripView(): JSX.Element {
         e.preventDefault()
         setFormState('submitted')
         if (formValues.destination && formValues.dates[0] && formValues.dates[1]) {
-            saveTrip(formValues)
+            saveTrip({
+                cityId: formValues.destination,
+                start: dayjs(formValues.dates[0]).format('YYYY-MM-DD'),
+                end: dayjs(formValues.dates[1]).format('YYYY-MM-DD'),
+            })
         }
     }
 
@@ -47,7 +53,7 @@ export function TripView(): JSX.Element {
 
     return (
         <div className="trip-view">
-            <h2>New Trip</h2>
+            <h2>{openTripId === 'new' ? 'New' : 'Manage'} trip</h2>
 
             <form style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }} onSubmit={handleSubmit}>
                 <div style={{ flexGrow: 1 }}>
@@ -98,9 +104,16 @@ export function TripView(): JSX.Element {
                 </div>
                 <div className="mt flex-center">
                     <div style={{ flexGrow: 1 }}>
-                        <Button styling="link" style={{ color: 'var(--danger)' }}>
-                            <FontAwesomeIcon icon={faTrash} /> Delete trip
-                        </Button>
+                        {openTripId !== 'new' && (
+                            <Button
+                                styling="link"
+                                style={{ color: 'var(--danger)' }}
+                                type="button"
+                                onClick={deleteTrip}
+                            >
+                                <FontAwesomeIcon icon={faTrash} /> Delete trip
+                            </Button>
+                        )}
                     </div>
 
                     <Button type="submit" size="lg">
