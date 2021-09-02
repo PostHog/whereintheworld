@@ -140,15 +140,6 @@ app.get('/users/location/:date', async (req, res) => {
     return date
 })
 
-app.post(`/user`, async (req, res) => {
-    const result = await prisma.user.create({
-        data: {
-            ...req.body,
-        },
-    })
-    res.json(result)
-})
-
 app.use(express.static(path.join(__dirname, '../../frontend/public')))
 
 const server = app.listen(parseInt(process.env.PORT || '3001'), '0.0.0.0', () => {
