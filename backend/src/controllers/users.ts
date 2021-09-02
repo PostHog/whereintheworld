@@ -74,6 +74,7 @@ export async function userLocationForDay(userId: number, date: Date) {
 					City: true
 				}
     })
+		console.log(trip)
 		if (trip) {
 			trip.City['isHome'] = false
     	return trip.City
