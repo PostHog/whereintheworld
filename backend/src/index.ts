@@ -95,10 +95,18 @@ app.post(`/trips`, async (req, res) => {
         userId = Number(optionalUserId)
     }
     const newTrip = {
-        userId: userId,
-        cityId: Number(cityId),
         start: new Date(start),
         end: new Date(end),
+        City: {
+            connect: {
+                id: Number(cityId),
+            },
+        },
+        User: {
+            connect: {
+                id: Number(userId),
+            },
+        },
     }
     if (!isValidTrip(newTrip)) {
         res.json({ error: 'end must be after start of your trip' })
@@ -136,10 +144,18 @@ app.put('/trip/:id', async (req, res) => {
         where: { userId: Number(userId) },
     })
     const newTrip = {
-        userId: userId,
-        cityID: Number(cityId),
         start: new Date(start),
         end: new Date(end),
+        City: {
+            connect: {
+                id: Number(cityId),
+            },
+        },
+        User: {
+            connect: {
+                id: Number(userId),
+            },
+        },
     }
     if (!isValidTrip(newTrip)) {
         res.json({ error: 'end must be after start of your trip' })
@@ -175,7 +191,7 @@ app.delete(`/trip/:id`, async (req, res) => {
 })
 
 app.get('/users', async (req, res) => {
-    const users = await prisma.user.findMany({})
+    const users = await prisma.user.findMany({ include: { City: true, trips: true } })
     res.json(users)
 })
 

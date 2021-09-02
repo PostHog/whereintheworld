@@ -34,7 +34,7 @@ model Trip {
   end    DateTime
   user   User?    @relation(fields: [userId], references: [id])
   userId Int?
-  City   City     @relation(fields: [cityId], references: [id])
+  City   City?     @relation(fields: [cityId], references: [id])
 }
 
 model Post {
