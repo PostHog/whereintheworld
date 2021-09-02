@@ -9,26 +9,7 @@ import DateRangePicker from '@wojtekmaj/react-daterange-picker/dist/entry.nostyl
 import clsx from 'clsx'
 import { CityType } from '../types'
 import { API } from '../pages/_app'
-
-// TODO
-const CITIES = [
-    {
-        name: 'Copenhagen, DK',
-        id: 3939,
-    },
-    {
-        name: 'Hamburg, DE',
-        id: 4343,
-    },
-    {
-        name: 'Frankfurt, DE',
-        id: 1234,
-    },
-    {
-        name: 'Lisbon, PT',
-        id: 4842,
-    },
-]
+import Flag from 'react-flagkit'
 
 export function TripView(): JSX.Element {
     const { saveTrip } = useActions(tripLogic)
@@ -37,7 +18,10 @@ export function TripView(): JSX.Element {
     const [formState, setFormState] = useState('untouched' as 'untouched' | 'submitted')
 
     const handleDestSearch = (newValue: string) => {
-        const inputValue = newValue.replace(/[^a-zA-z 0-9]/g, '')
+        const inputValue = newValue.replace(
+            /[^a-zA-z 0-9àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛãñõÃÑÕäëïöüÿÄËÏÖÜŸçÇßØøÅåÆæœ]/g,
+            ''
+        )
         setDestSearch(inputValue)
         return inputValue
     }
@@ -50,8 +34,9 @@ export function TripView(): JSX.Element {
         }
     }
 
+    // TODO: This should be debounced
     const loadCities = async (searchString, callback) => {
-        const response = await fetch(`${API}/cities?name=${searchString}`)
+        const response = await (await fetch(`${API}/cities?name=${searchString}`)).json()
         callback(response)
     }
 
@@ -69,7 +54,7 @@ export function TripView(): JSX.Element {
                         <label htmlFor="destination">Destination</label>
                         <AsyncSelect
                             name="destination"
-                            cacheOptions
+                            //cacheOptions
                             loadOptions={loadCities}
                             defaultOptions
                             onInputChange={handleDestSearch}
@@ -77,7 +62,14 @@ export function TripView(): JSX.Element {
                             onChange={(newOption: CityType) =>
                                 setFormValues({ ...formValues, destination: newOption?.id || null })
                             }
-                            getOptionLabel={(option: CityType) => option.name}
+                            getOptionLabel={(option: CityType) => (
+                                <>
+                                    <Flag size={12} country={option.country_code} style={{ marginRight: 4 }} />
+                                    {`${option.name}, ${option.country_code === 'US' ? `${option.admin1_code},` : ''} ${
+                                        option.country_code
+                                    }`}
+                                </>
+                            )}
                             getOptionValue={(option: CityType) => option.id}
                             className={clsx({ 'react-select__errored': destErrored })}
                             classNamePrefix="react-select"

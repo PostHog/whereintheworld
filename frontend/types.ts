@@ -13,6 +13,7 @@ export interface CityType {
     name: string
     latitude: number
     longitude: number
+    admin1_code: string // Administrative region 1 code (e.g. State/Province)
     country_code: string
     timezone: string
 }
