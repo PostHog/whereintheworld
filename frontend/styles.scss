@@ -1,6 +1,18 @@
 @use 'sass:math';
 @import '_vars';
+@import 'node_modules/@wojtekmaj/react-daterange-picker/dist/DateRangePicker.css';
+@import 'node_modules/react-calendar/dist/Calendar.css';
 
+// Root styles
+:root {
+    --primary: #{$primary};
+    --secondary: #{$secondary};
+    --orange: #{$orange};
+    --danger: #{$danger};
+    --text-muted: #{$text_muted};
+}
+
+// Reset styles
 html {
     box-sizing: border-box;
 }
@@ -21,6 +33,15 @@ body {
     background: rgba(0, 0, 0, 0.05);
     overflow: hidden;
     height: 100%;
+    color: $text_default;
+}
+
+h1 {
+    font-size: 1.6em;
+}
+
+h2 {
+    font-size: 1.1em;
 }
 
 input,
@@ -32,37 +53,143 @@ button {
     cursor: pointer;
 }
 
+// General styles
 .map-container {
     height: 100vh;
     width: 100%;
 }
 
-.map-pin {
+.flex-center {
+    display: flex;
+    align-items: center;
+}
+
+.mt {
+    margin-top: $default_spacing;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-muted {
+    color: $text_muted;
+}
+
+.text-danger {
+    color: $danger;
+}
+
+// Button styles
+.btn {
+    border-radius: $radius_sm;
+    background-color: $primary;
+    color: white;
+    font-weight: bold;
+    border: 0;
+    padding: 5px 10px;
+    transition: all 0.3s ease-out;
+    border: 2px solid $primary;
+
+    &:hover {
+        background-color: darken($primary, 10%);
+        border-color: darken($primary, 10%);
+    }
+
+    &.inverse {
+        background-color: white;
+        color: $primary;
+
+        &:hover {
+            border-color: white;
+            background-color: $primary;
+            color: white;
+        }
+    }
+
+    &.link {
+        background-color: transparent;
+        color: $primary;
+        border-color: transparent;
+        font-weight: normal;
+        padding-left: 0;
+    }
+
+    &.sm {
+        padding: 3px 8px;
+    }
+
+    &.lg {
+        padding: 8px 16px;
+        font-size: 0.95em;
+    }
+}
+
+// Form styles
+
+.form-group {
+    margin-bottom: $default_spacing;
+    label {
+        font-size: 0.85em;
+        display: block;
+        font-weight: bold;
+        padding-bottom: math.div($default_spacing, 2);
+    }
+    .help-text {
+        padding-top: 4px;
+        font-size: 0.75em;
+    }
+}
+
+.avatar {
     position: relative;
     display: inline-block;
-    transform: translate(-50%, -50%);
-    img {
+
+    .avatar-img {
         width: 48px;
         height: 48px;
         border-radius: $radius_sm;
-        border: 2px solid $secondary;
     }
 
     .icon-wrapper {
-        width: 16px;
-        height: 16px;
+        width: 18px;
+        height: 18px;
         border-radius: math.div($radius_sm, 2);
-        background-color: $secondary;
+        background-color: $bg;
         position: absolute;
         bottom: 0;
         right: -6px;
-        border: 2px solid $secondary;
+        border: 2px solid white;
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
-        font-size: 0.85em;
         padding: 4px;
+    }
+}
+
+.location-avatar {
+    display: inline-block;
+    margin-left: $default_spacing;
+    text-align: center;
+    .location-text {
+        @extend .text-muted;
+        font-weight: bold;
+        font-size: 0.7em;
+    }
+}
+
+.map-pin {
+    transform: translate(-50%, -50%);
+
+    .avatar {
+        .icon-wrapper {
+            width: 14px;
+            height: 14px;
+            font-size: 0.75em;
+            border-color: $secondary;
+            background-color: $secondary;
+        }
     }
 
     &.away {
@@ -71,8 +198,242 @@ button {
             border-color: $orange;
         }
 
-        img {
+        .avatar-img {
             border-color: $orange;
         }
+    }
+
+    .avatar-img {
+        border: 2px solid $secondary;
+    }
+}
+
+.main-overlay {
+    @extend .mixin-elevated;
+    position: fixed;
+    border-radius: $radius;
+    background-color: $bg;
+    width: 320px;
+    height: 85vh;
+    min-height: 500px;
+    z-index: 400;
+    margin-left: $default_spacing * 2;
+    top: 10vh;
+    display: flex;
+    flex-direction: column;
+
+    .header {
+        background-color: $secondary;
+        color: white;
+        position: relative;
+        text-align: center;
+        border-top-left-radius: $radius;
+        border-top-right-radius: $radius;
+        border-bottom-left-radius: 14px;
+        border-bottom-right-radius: 14px;
+        height: 30%;
+        margin-bottom: 10vh;
+
+        h1 {
+            margin-top: 0;
+            padding-top: $default_spacing;
+        }
+    }
+
+    .today {
+        background-color: white;
+        border-radius: $radius;
+        position: absolute;
+        color: $text_default;
+        width: 90%;
+        position: absolute;
+        bottom: 0;
+        transform: translate(-50%, 50%);
+        left: 50%;
+        padding: $default_spacing;
+
+        h2 {
+            margin-top: 0;
+            text-align: left;
+        }
+
+        .away-today {
+            overflow: auto;
+            white-space: nowrap;
+        }
+    }
+
+    .content-wrapper {
+        padding: $default_spacing;
+        flex-grow: 1;
+        max-height: 60%;
+        display: flex;
+        flex-direction: column;
+
+        .trips {
+            flex-grow: 1;
+            overflow-y: auto;
+
+            .trip-card {
+                margin-bottom: $default_spacing;
+            }
+        }
+
+        .footer {
+            padding-top: math.div($default_spacing, 2);
+            text-align: center;
+            font-size: 0.9em;
+        }
+    }
+}
+
+.trip-view {
+    // Full trip page to add/edit trip
+    background-color: white;
+    @extend .mixin-elevated;
+    position: fixed;
+    border-radius: $radius;
+    width: 320px;
+    height: 85vh;
+    z-index: 380;
+    min-height: 500px;
+    top: 10vh;
+    left: 320 + $default_spacing * 2 - $default_spacing; // 320px (width of .main-overlay) + margin left of .main-overlay - position adjustment
+    display: flex;
+    flex-direction: column;
+    padding: $default_spacing;
+    padding-left: $default_spacing * 2;
+}
+
+.trip-card {
+    // Trip representation when listing
+    &.highlighted {
+        border-radius: $radius;
+        background-color: $primary;
+    }
+
+    .trip-card-inner {
+        background-color: white;
+        border-radius: $radius;
+        padding: 8px $default_spacing;
+        z-index: 950;
+
+        .trip-card-header {
+            border-bottom: 1px solid $border_default;
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+            padding-bottom: 8px;
+            font-size: 0.85em;
+
+            div {
+                flex-grow: 1;
+            }
+        }
+    }
+
+    .highlighter {
+        padding: $default_spacing * 0.33 $default_spacing * 0.5;
+        color: white;
+        display: flex;
+        align-items: center;
+        font-size: 0.85em;
+        font-weight: bold;
+        .avatar-highlight {
+            border-radius: $radius_sm;
+            width: 24px;
+            height: 24px;
+            margin-right: math.div($default_spacing, 2);
+        }
+    }
+}
+
+// Date range picker
+.react-daterange-picker {
+    width: 100%;
+    .react-daterange-picker__wrapper {
+        border-radius: $radius_sm;
+        border-color: $border_default;
+        padding: 8px;
+        font-size: 0.85em;
+    }
+    .react-daterange-picker__inputGroup__month {
+        width: 44px;
+    }
+
+    &.errored {
+        .react-daterange-picker__wrapper {
+            border-color: $danger;
+        }
+    }
+}
+
+.react-calendar {
+    @extend .mixin-elevated;
+    margin-top: $default_spacing * 0.5;
+    border-radius: $radius_sm;
+    border-color: $border_default;
+
+    .react-calendar__tile {
+        border-radius: $radius_sm;
+        color: $text_default;
+
+        &.react-calendar__tile--active {
+            border-radius: 0;
+            background-color: $primary;
+            color: white;
+        }
+
+        &.react-calendar__tile--hover {
+            border-radius: 0;
+        }
+
+        &.react-calendar__tile--rangeStart {
+            border-top-left-radius: $radius_sm;
+            border-bottom-left-radius: $radius_sm;
+        }
+
+        &.react-calendar__tile--rangeEnd {
+            border-top-right-radius: $radius_sm;
+            border-bottom-right-radius: $radius_sm;
+        }
+
+        &.react-calendar__month-view__days__day--weekend {
+            color: rgba($text_default, 0.6);
+        }
+
+        &.react-calendar__tile--now {
+            background-color: $bg;
+        }
+    }
+}
+
+// React select
+
+.react-select__control {
+    font-size: 0.85em;
+    border-color: $border_default !important;
+    .react-select__placeholder {
+        color: $text_muted;
+    }
+
+    &.react-select__control--is-focused {
+        border-color: darken($border_default, 20%) !important;
+        box-shadow: none !important;
+    }
+
+    .react-select__clear-indicator {
+        color: $text_muted;
+        cursor: pointer;
+    }
+
+    .react-select__indicator-separator {
+        background-color: $border_default;
+    }
+}
+
+.react-select__errored {
+    .react-select__control {
+        border-color: $danger !important;
     }
 }

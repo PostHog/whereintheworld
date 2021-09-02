@@ -6,3 +6,13 @@ user_bootstrap.tsv
 .vscode
 .next
 frontend/out
+
+# kea
+*Type.ts
+
+# logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

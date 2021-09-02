@@ -2,21 +2,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHome, faPlane } from '@fortawesome/free-solid-svg-icons'
 import React from 'react'
 import clsx from 'clsx'
+import { Avatar } from './Avatar'
 
 interface MapPinProps {
     lat: number
     lng: number
-    imageUrl: string
+    avatarUrl: string
     travelState: 'home' | 'away'
 }
 
-export function MapPin({ imageUrl, travelState }: MapPinProps): JSX.Element {
+export function MapPin({ avatarUrl, travelState }: MapPinProps): JSX.Element {
     return (
         <div className={clsx('map-pin', travelState)}>
-            <img src={imageUrl} />
-            <div className="icon-wrapper">
-                <FontAwesomeIcon icon={travelState === 'home' ? faHome : faPlane} />
-            </div>
+            <Avatar avatarUrl={avatarUrl} icon={<FontAwesomeIcon icon={travelState === 'home' ? faHome : faPlane} />} />
         </div>
     )
 }

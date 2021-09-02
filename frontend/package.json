@@ -1,35 +1,45 @@
 {
-  "name": "whereintheworld",
-  "version": "1.0.0",
-  "description": "",
-  "keywords": [],
-  "license": "MIT",
-  "author": "",
-  "main": "index.js",
-  "scripts": {
-    "dev": "next",
-    "build": "next build",
-    "export": "next export",
-    "start": "next start"
-  },
-  "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^1.2.36",
-    "@fortawesome/free-solid-svg-icons": "^5.15.4",
-    "@fortawesome/react-fontawesome": "^0.1.15",
-    "clsx": "^1.1.1",
-    "google-map-react": "^2.1.10",
-    "next": "11.1.2",
-    "react": "17.0.0",
-    "react-dom": "17.0.0",
-    "react-markdown": "5.0.0",
-    "sass": "^1.38.2",
-
-    "@types/node": "14.17.14",
-    "@types/react": "17.0.19",
-    "prettier": "^2.3.2",
-    "ts-node": "10.2.1",
-    "typescript": "4.4.2"
-  },
-  "devDependencies": {
-  }
+    "name": "whereintheworld",
+    "version": "1.0.0",
+    "description": "",
+    "keywords": [],
+    "license": "MIT",
+    "author": "",
+    "main": "index.js",
+    "scripts": {
+        "dev": "next",
+        "build": "next build",
+        "export": "next export",
+        "start": "concurrently \"yarn start:app\" \"kea-typegen watch\" -n APP,KEA -c blue,green",
+        "start:app": "next"
+    },
+    "dependencies": {
+        "@fortawesome/fontawesome-svg-core": "^1.2.36",
+        "@fortawesome/free-solid-svg-icons": "^5.15.4",
+        "@fortawesome/react-fontawesome": "^0.1.15",
+        "@types/node": "14.17.14",
+        "@types/react": "17.0.19",
+        "@wojtekmaj/react-daterange-picker": "^3.3.0",
+        "clsx": "^1.1.1",
+        "google-map-react": "^2.1.10",
+        "kea": "^2.4.7",
+        "kea-loaders": "^0.4.0",
+        "next": "11.1.2",
+        "prettier": "^2.3.2",
+        "react": "17.0.0",
+        "react-dom": "17.0.0",
+        "react-flagkit": "^2.0.4",
+        "react-markdown": "5.0.0",
+        "react-redux": "^7.2.4",
+        "react-select": "^4.3.1",
+        "redux": "^4.1.1",
+        "reselect": "^4.0.0",
+        "sass": "^1.38.2",
+        "ts-node": "10.2.1",
+        "typescript": "4.4.2"
+    },
+    "devDependencies": {
+        "concurrently": "^6.2.1",
+        "kea-typegen": "^1.1.5"
+    }
 }
