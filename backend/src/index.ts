@@ -25,7 +25,7 @@ loadUsersFromTSV('user_bootstrap.tsv', 1)
 app.use(express.json())
 
 app.get('/cities', async (req, res) => {
-    var cityName = req.query.cityName
+    var cityName = req.query.name
     if (cityName) {
         cityName = String(cityName).toLowerCase()
         const likeBit = `%${cityName}%`
