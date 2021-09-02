@@ -137,20 +137,6 @@ app.delete(`/trip/:id`, async (req, res) => {
     }
 })
 
-app.post(`/user`, async (req, res) => {
-    const result = await prisma.user.create({
-        data: {
-            ...req.body,
-        },
-    })
-    res.json(result)
-})
-
-app.get('/users/near/:id', async (req, res) => {
-    const { id } = req.params
-    return id
-})
-
 app.get('/users/location/:date', async (req, res) => {
     const { date } = req.params
     const users = await prisma.user.findMany()
