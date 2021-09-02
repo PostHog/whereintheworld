@@ -6,6 +6,7 @@ import { TripView } from '../components/TripView'
 import { tripLogic } from '../logics/tripLogic'
 import { useValues } from 'kea'
 import clsx from 'clsx'
+import { WhoAmI } from '../components/WhoAmI'
 
 function Home(): JSX.Element {
     const { openTripId } = useValues(tripLogic)
@@ -18,11 +19,12 @@ function Home(): JSX.Element {
     }
     return (
         <div className="map-container">
+            <WhoAmI />
             <MainOverlay />
             <div className={clsx('trip-view-wrapper', { hidden: !openTripId })}>{openTripId && <TripView />}</div>
 
             <GoogleMapReact
-                bootstrapURLKeys={{ key: 'AIzaSyBD94P3QxagpftpsB-BZ--c4kNIou76PkI' }}
+                bootstrapURLKeys={{ key: '' }}
                 defaultCenter={defaultProps.center}
                 defaultZoom={defaultProps.zoom}
                 fullscreenControl={false}
