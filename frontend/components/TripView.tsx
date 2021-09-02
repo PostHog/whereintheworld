@@ -7,6 +7,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash, faTimes } from '@fortawesome/free-solid-svg-icons'
 import DateRangePicker from '@wojtekmaj/react-daterange-picker/dist/entry.nostyle'
 import clsx from 'clsx'
+import { CityType } from '../types'
+import { API } from '../pages/_app'
 
 // TODO
 const CITIES = [
@@ -28,12 +30,6 @@ const CITIES = [
     },
 ]
 
-const loadOptions = (inputValue, callback) => {
-    setTimeout(() => {
-        callback(CITIES.filter((i) => i.name.toLowerCase().includes(inputValue.toLowerCase())))
-    }, 1000)
-}
-
 export function TripView(): JSX.Element {
     const { saveTrip } = useActions(tripLogic)
     const [destSearch, setDestSearch] = useState('')
@@ -41,7 +37,7 @@ export function TripView(): JSX.Element {
     const [formState, setFormState] = useState('untouched' as 'untouched' | 'submitted')
 
     const handleDestSearch = (newValue: string) => {
-        const inputValue = newValue.replace(/\W/g, '')
+        const inputValue = newValue.replace(/[^a-zA-z 0-9]/g, '')
         setDestSearch(inputValue)
         return inputValue
     }
@@ -52,6 +48,11 @@ export function TripView(): JSX.Element {
         if (formValues.destination && formValues.dates[0] && formValues.dates[1]) {
             saveTrip(formValues)
         }
+    }
+
+    const loadCities = async (searchString, callback) => {
+        const response = await fetch(`${API}/cities?name=${searchString}`)
+        callback(response)
     }
 
     const destErrored = formState === 'submitted' && !formValues.destination
@@ -69,13 +70,15 @@ export function TripView(): JSX.Element {
                         <AsyncSelect
                             name="destination"
                             cacheOptions
-                            loadOptions={loadOptions}
+                            loadOptions={loadCities}
                             defaultOptions
                             onInputChange={handleDestSearch}
                             inputValue={destSearch}
-                            onChange={(newValue) => setFormValues({ ...formValues, destination: newValue?.id || null })}
-                            getOptionLabel={(option) => option.name}
-                            getOptionValue={(option) => option.id}
+                            onChange={(newOption: CityType) =>
+                                setFormValues({ ...formValues, destination: newOption?.id || null })
+                            }
+                            getOptionLabel={(option: CityType) => option.name}
+                            getOptionValue={(option: CityType) => option.id}
                             className={clsx({ 'react-select__errored': destErrored })}
                             classNamePrefix="react-select"
                             escapeClearsValue
