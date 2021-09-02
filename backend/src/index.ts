@@ -255,7 +255,7 @@ app.get('/users/near/:id', async (req, res) => {
 app.get('/users/:user/location/:date', async (req, res) => {
     var { date, user } = req.params
     const dateDate = new Date(date) 
-    const locations = userLocationForDay(Number(user), dateDate)
+    const locations = await userLocationForDay(Number(user), dateDate)
     res.json(locations)
 })
 

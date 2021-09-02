@@ -49,7 +49,7 @@ export async function loadUsersFromTSV(usersTSV = 'user_bootstrap.tsv', team = 1
 }
 
 export async function userLocationForDay(userId: number, date: Date) {
-    const trip = prisma.trip.findFirst({
+    const trip = await prisma.trip.findFirst({
         where: {
             userId: userId,
 
@@ -63,12 +63,13 @@ export async function userLocationForDay(userId: number, date: Date) {
 				include: {
 					City: true
 				}
-    }).City
+    })
 		if (trip) {
-    	return trip
+    	return trip.City
 		}
-		const home = prisma.user.findUnique({
+		const home = await prisma.user.findUnique({
 			where: {id: userId},
 			include: {City: true}
-		}).City
+		})
+		return home.City
 }
