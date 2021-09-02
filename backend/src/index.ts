@@ -24,6 +24,11 @@ loadUsersFromTSV("user_bootstrap.tsv", 1);
 
 app.use(express.json())
 
+app.get('/cities', async (req, res) => {
+  const cities = await prisma.city.findMany()
+  res.json(cities)
+})
+
 app.get('/trips', async (req, res) => {
     const trips = await prisma.trip.findMany()
     res.json(trips)
@@ -40,13 +45,13 @@ app.get('/trip/:id', async (req, res) => {
 })
 
 app.post(`/trip`, async (req, res) => {
-    const { user_id, country, state, city, cityID, start, end } = req.body
+    const { userId, country, state, city, cityID, start, end } = req.body
     const newTrip = {
-        user_id: Number(user_id),
+        userId: Number(userId),
         country: country,
         state: state,
         city: city,
-        cityID: Number(cityID),
+        cityId: Number(cityID),
         start: new Date(start),
         end: new Date(end),
 
@@ -56,7 +61,7 @@ app.post(`/trip`, async (req, res) => {
         return
     }
     const scheduledTrips = await prisma.trip.findMany({
-        where: { user_id: Number(user_id) },
+        where: { userId: Number(userId) },
     })
     for (let scheduledTrip of scheduledTrips) {
         // check if the about to be scheduled trip overlaps with any of the scheduled trips
@@ -80,10 +85,10 @@ app.put('/trip/:id', async (req, res) => {
     const { id } = req.params
     const { userId, country, state, city, cityId, start, end } = req.body
     const scheduledTrips = await prisma.trip.findMany({
-        where: { user_id: Number(userId) },
+        where: { userId: Number(userId) },
     })
     const newTrip = {
-        user_id: Number(userId),
+        userId: Number(userId),
         country: country,
         state: state,
         city: city,
@@ -146,7 +151,7 @@ app.get('/users/location/:date', async (req, res) => {
         // find trips that contain the search date
         const trip = await prisma.trip.findFirst({
             where: {
-                user_id: user.id,
+                userId: user.id,
                 start: {
                     lt: new Date(date),
                 },
@@ -160,8 +165,8 @@ app.get('/users/location/:date', async (req, res) => {
             cityId: trip.cityId,
           }
     }
-    return date
-})
+    res.json(locations) 
+}})
 
 app.use(express.static(path.join(__dirname, '../../frontend/public')))
 

@@ -14,7 +14,7 @@ export async function addUser(user: any, team = 1) {
 					city: user.city,
 					state: user.county,
 					country: user.country,
-					cityId: user.city_id,
+					cityId: parseInt(user.city_id),
 					team: {
 							connect: {
 									id: team,
