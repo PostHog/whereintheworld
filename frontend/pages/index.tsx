@@ -28,7 +28,7 @@ function Home(): JSX.Element {
             <div className={clsx('trip-view-wrapper', { hidden: !openTripId })}>{openTripId && <TripView />}</div>
 
             <GoogleMapReact
-                bootstrapURLKeys={{ key: '' }}
+                bootstrapURLKeys={{ key: typeof window !== 'undefined' && window.location.origin === 'https://whereintheworld.posthog.com' && 'AIzaSyDOV1fvZoiOUskMxIYF8sSBNgVhoCNzxsk' }}
                 defaultCenter={defaultProps.center}
                 defaultZoom={defaultProps.zoom}
                 fullscreenControl={false}
