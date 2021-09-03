@@ -11,7 +11,7 @@ export function WhoAmI(): JSX.Element {
     const [profile, setProfile] = useState(false as any)
     useEffect(() => {
         (async () => {
-        setProfile(await(await fetch(`${API}/profile`)).json())
+        setProfile(await(await fetch(`${API}/profile`, {'credentials': 'include'})).json())
         })()
 
     }, [])

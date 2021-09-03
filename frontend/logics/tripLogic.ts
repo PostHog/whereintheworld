@@ -30,6 +30,7 @@ export const tripLogic = kea<tripLogicType<TripPayload>>({
                         await fetch(`${API}/trips`, {
                             method: 'POST',
                             body: JSON.stringify(payload),
+                            credentials: 'include',
                             headers: {
                                 'Content-Type': 'application/json',
                             },
@@ -44,6 +45,7 @@ export const tripLogic = kea<tripLogicType<TripPayload>>({
                 deleteTrip: async () => {
                     await fetch(`${API}/trips/${values.openTripId}`, {
                         method: 'DELETE',
+                        credentials: 'include'
                     })
                     actions.loadTrips()
                     userLogic.actions.loadUsers()
@@ -55,7 +57,7 @@ export const tripLogic = kea<tripLogicType<TripPayload>>({
             [] as TripType[],
             {
                 loadTrips: async () => {
-                    const response = await (await fetch(`${API}/trips`)).json()
+                    const response = await (await fetch(`${API}/trips`, {'credentials': 'include'})).json()
                     return response as TripType[]
                 },
             },

@@ -3,7 +3,16 @@ import '../styles.scss'
 import { resetContext, Provider } from 'kea'
 import { loadersPlugin } from 'kea-loaders'
 
-export const API = `http://localhost:3001`
+let hostname = ''
+if (typeof window !== 'undefined') {
+    if(window.location.origin.indexOf('localhost') > -1) {
+        hostname = 'http://localhost:3001'
+    } else {
+        hostname = window.location.origin
+    }
+ }
+
+export const API = hostname
 
 resetContext({
     createStore: {

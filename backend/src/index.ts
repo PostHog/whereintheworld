@@ -6,7 +6,6 @@ import { loadCities } from './controllers/cities'
 import { bootstrapTeam } from './controllers/teams'
 import { allLocationsForDay, loadUsersFromTSV, userLocationForDay } from './controllers/users'
 import { findNearbyUsers, isOverlappingTrip, isValidTrip } from './controllers/trips'
-import { createEmitAndSemanticDiagnosticsBuilderProgram } from 'typescript'
 const cors = require('cors')
 const { auth, requiresAuth } = require('express-openid-connect')
 
@@ -51,39 +50,50 @@ const config = {
     clientID: process.env.CLIENT_ID,
     issuerBaseURL: 'https://dev-7z1md7yt.us.auth0.com',
 }
+app.use(cors({credentials: true, origin: process.env.BASE_URL || 'http://localhost:3000'}));
+
 
 // auth router attaches /login, /logout, and /callback routes to the baseURL
 app.use(auth(config))
 app.use(require('body-parser').urlencoded({ extended: true }))
-// app.use(function(req, res, next) {
-//     if (!(req as any).oidc.isAuthenticated()){
-//         res.redirect('/login');
-//     }   else{
-//         next();
-//     }
-// });
+app.use(function(req, res, next) {
+    if (!(req as any).oidc.isAuthenticated()){
+        res.redirect('/login');
+    }   else{
+        next();
+    }
+});
 
-app.get('/profile', async (req, res) => {
-    // let location = {}
-    // try {
-    //     const user = await prisma.user.findFirst({where: {email: (req as any).oidc.user.email}})
-    //     location = await userLocationForDay(user.id, new Date())
-    // } catch {
-    // }
+app.use(async (req, res, next) => {
+    if ((req as any).oidc.isAuthenticated()){
+        const user = await prisma.user.findFirst({where: {email: (req as any).oidc.user.email}});
+        (req as any).user = {...(req as any).oidc.user, ...user}
+    }
+    next()
+})
+
+app.get('/profile', requiresAuth(), async (req, res) => {
+    let location = {}
+    try {
+        location = await userLocationForDay((req as any).user.id, new Date())
+    } catch {
+    }
+
     res.send(JSON.stringify({
-        location: {name: 'London', country_code: 'ENG'},
-        "nickname":"tim","name":"Tim Glaser","picture":"https://avatars.slack-edge.com/2020-02-25/958778681153_88a6594579ca01e8bd4a_1024.jpg","updated_at":"2021-09-02T11:42:20.198Z","email":"tim@posthog.com","sub":"oauth2|slack-oauth-2|TSS5W8YQZ-UT2B67BA4"
+        ...(req as any).user,
+        location
     }))
 })
 
-app.get('/trips', async (req, res) => {
+app.get('/trips', requiresAuth(), async (req, res) => {
     const trips = await prisma.trip.findMany({
+        where: { userId: (req as any).user.id},
         include: { City: true },
     })
     res.json(trips)
 })
 
-app.get('/trips/:id', async (req, res) => {
+app.get('/trips/:id', requiresAuth(), async (req, res) => {
     const { id } = req.params
     const trip = await prisma.trip.findUnique({
         where: {
@@ -99,12 +109,9 @@ app.get('/trips/:id', async (req, res) => {
     res.json(trip)
 })
 
-app.post(`/trips`, async (req, res) => {
-    const { userId: optionalUserId, cityId, start, end } = req.body
-    let userId = 25
-    if (optionalUserId) {
-        userId = Number(optionalUserId)
-    }
+app.post(`/trips`, requiresAuth(), async (req, res) => {
+    const { cityId, start, end } = req.body
+    let userId = (req as any).user.id
     const newTrip = {
         start: new Date(start),
         end: new Date(end),
@@ -144,13 +151,10 @@ app.post(`/trips`, async (req, res) => {
     }
 })
 
-app.put('/trip/:id', async (req, res) => {
+app.put('/trip/:id', requiresAuth(), async (req, res) => {
     const { id } = req.params
-    const { optionalUserId, cityId, start, end } = req.body
-    var userId = 1
-    if (optionalUserId) {
-        userId = Number(optionalUserId)
-    }
+    const { cityId, start, end } = req.body
+    var userId = (req as any).user.id
     const scheduledTrips = await prisma.trip.findMany({
         where: { userId: Number(userId) },
     })

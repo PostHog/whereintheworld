@@ -11,7 +11,9 @@ export const userLogic = kea<userLogicType>({
             {
                 loadUsers: async (date: string = '') => {
                     const parsedDate = dayjs(date || new Date()).format('YYYY-MM-DD')
-                    const response = await (await fetch(`${API}/users/location/${parsedDate}`)).json()
+                    const response = await (await fetch(`${API}/users/location/${parsedDate}`, {
+                        credentials: 'include'
+                    })).json()
                     return response as UserType[]
                 },
             },
