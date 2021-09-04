@@ -22,16 +22,16 @@ const handle = props => {
 
 export function TimeTravel(): JSX.Element {
     const { createSliderWithTooltip } = Slider
-    const { loadUsers } = useActions(userLogic)
+    const { setCurrentDate } = useActions(userLogic)
 
     return (
         <div className="time-travel-wrapper">
             <Slider
                 min={0}
-                max={20}
+                max={180}
                 defaultValue={0}
                 handle={handle} 
-                onChange={(value) => loadUsers(dayjs().add(value, 'days'))}/>
+                onChange={(value) => setCurrentDate(dayjs().add(value, 'days'))}/>
         </div>
     )
 }

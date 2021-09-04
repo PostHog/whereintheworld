@@ -7,6 +7,17 @@ import { userLogicType } from './userLogicType'
 let cache = {}
 
 export const userLogic = kea<userLogicType>({
+    actions: {
+        setCurrentDate: (date: Date) => ({date})
+    },
+    reducers: {
+        currentDate: [
+            new Date(),
+            {
+                setCurrentDate: (_, {date}) => date
+            }
+        ]
+    },
     loaders: {
         users: [
             [] as UserType[],
@@ -25,6 +36,11 @@ export const userLogic = kea<userLogicType>({
             },
         ],
     },
+    listeners: ({actions}) => ({
+        setCurrentDate: ({date}) => {
+            actions.loadUsers(date)
+        }
+    }),
     events: ({ actions }) => ({
         afterMount: [actions.loadUsers],
     }),

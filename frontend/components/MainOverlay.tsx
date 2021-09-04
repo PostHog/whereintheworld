@@ -10,12 +10,13 @@ import { useEffect } from 'react'
 import { useRef } from 'react'
 import { userLogic } from '../logics/userLogic'
 import { formatCity } from '../utils'
+import dayjs from 'dayjs'
 
 export function MainOverlay(): JSX.Element {
     const { toggleTripView, clearSavedtrip } = useActions(tripLogic)
     const { savedTrip, trips } = useValues(tripLogic)
     const tripListRef = useRef<HTMLDivElement>(null)
-    const { users } = useValues(userLogic)
+    const { users, currentDate } = useValues(userLogic)
 
     useEffect(() => {
         if (savedTrip) {
@@ -29,7 +30,7 @@ export function MainOverlay(): JSX.Element {
             <div className="header">
                 <h1>Where in the world</h1>
                 <div className="today">
-                    <h2>Today</h2>
+                    <h2>{dayjs(currentDate).isSame(dayjs()) ? 'Today' : dayjs(currentDate).format('YYYY-MM-DD')}</h2>
                     <div className="away-today">
                         {users.map((user) => {
                             if (user.location.isHome) {

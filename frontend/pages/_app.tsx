@@ -3,7 +3,7 @@ import '../styles.scss'
 import { resetContext, Provider } from 'kea'
 import { loadersPlugin } from 'kea-loaders'
 
-let hostname = ''
+let hostname = 'http://localhost:3001'
 if (typeof window !== 'undefined') {
     if(window.location.origin.indexOf('localhost') > -1) {
         hostname = 'http://localhost:3001'

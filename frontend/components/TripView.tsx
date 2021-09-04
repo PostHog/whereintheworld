@@ -43,7 +43,7 @@ export function TripView(): JSX.Element {
 
     // TODO: This should be debounced
     const loadCities = async (searchString, callback) => {
-        const response = await (await fetch(`${API}/cities?name=${searchString}`)).json()
+        const response = await (await fetch(`${API}/cities?name=${searchString}`, {'credentials': 'include'})).json()
         callback(response)
     }
 
