@@ -10,7 +10,7 @@ export const tripLogic = kea<tripLogicType<TripPayload>>({
     actions: {
         setOpenTripId: (tripId: number | null | 'new') => ({ tripId }),
         toggleTripView: true,
-        clearSavedtrip: true,
+        clearSavedtrip: true
     },
     reducers: {
         openTripId: [

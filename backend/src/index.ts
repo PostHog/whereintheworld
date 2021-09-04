@@ -25,22 +25,7 @@ async function bootstrap() {
 
 app.use(express.json())
 
-app.use(cors())
 
-app.get('/cities', async (req, res) => {
-    var cityName = req.query.name
-    if (cityName) {
-        cityName = String(cityName).toLowerCase()
-        const likeBit = `${cityName}%`
-        const query = `SELECT * FROM "City" WHERE lower(name) like '${likeBit}';`
-        console.log(query)
-        const cities = await prisma.$queryRaw(query)
-        res.json(cities)
-    } else {
-        // const cities = await prisma.city.findMany()
-        res.json({})
-    }
-})
 
 const config = {
     authRequired: false,
@@ -50,7 +35,8 @@ const config = {
     clientID: process.env.CLIENT_ID,
     issuerBaseURL: 'https://dev-7z1md7yt.us.auth0.com',
 }
-app.use(cors({credentials: true, origin: process.env.BASE_URL || 'http://localhost:3000'}));
+
+app.use(cors({credentials: true, origin: true}));
 
 
 // auth router attaches /login, /logout, and /callback routes to the baseURL
@@ -85,10 +71,26 @@ app.get('/profile', requiresAuth(), async (req, res) => {
     }))
 })
 
+app.get('/cities', requiresAuth(), async (req, res) => {
+    var cityName = req.query.name
+    if (cityName) {
+        cityName = String(cityName).toLowerCase()
+        const likeBit = `${cityName}%`
+        const query = `SELECT * FROM "City" WHERE lower(name) like '${likeBit}';`
+        console.log(query)
+        const cities = await prisma.$queryRaw(query)
+        res.json(cities)
+    } else {
+        // const cities = await prisma.city.findMany()
+        res.json({})
+    }
+})
+
 app.get('/trips', requiresAuth(), async (req, res) => {
     const trips = await prisma.trip.findMany({
-        where: { userId: (req as any).user.id},
+        where: { userId: (req as any).user.id, end: {gte: new Date(new Date().toISOString().split('T')[0]),}},
         include: { City: true },
+        orderBy: {start: 'asc'}
     })
     res.json(trips)
 })
@@ -131,7 +133,7 @@ app.post(`/trips`, requiresAuth(), async (req, res) => {
         return
     }
     const scheduledTrips = await prisma.trip.findMany({
-        where: { userId: Number(userId) },
+        where: { userId: Number(userId)},
     })
     for (let scheduledTrip of scheduledTrips) {
         // check if the about to be scheduled trip overlaps with any of the scheduled trips

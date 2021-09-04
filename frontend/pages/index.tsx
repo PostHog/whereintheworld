@@ -38,7 +38,7 @@ function Home(): JSX.Element {
                     <MapPin
                         lat={user.location.latitude}
                         lng={user.location.longitude}
-                        avatarUrl={user.avatar}
+                        avatarUrl={(user.avatar || '').replace('_1024.', '_72.')} // try loading a smaller image if from slack
                         travelState={user.location.isHome ? 'home' : 'away'}
                         key={user.id}
                     />

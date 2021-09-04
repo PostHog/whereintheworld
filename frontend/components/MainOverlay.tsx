@@ -30,8 +30,9 @@ export function MainOverlay(): JSX.Element {
             <div className="header">
                 <h1>Where in the world</h1>
                 <div className="today">
-                    <h2>{dayjs(currentDate).isSame(dayjs()) ? 'Today' : dayjs(currentDate).format('YYYY-MM-DD')}</h2>
+                    <h2>{dayjs(currentDate).isSame(dayjs(), 'day') ? 'Today' : dayjs(currentDate).format('YYYY-MM-DD')}</h2>
                     <div className="away-today">
+                        {users.length === 0 && 'No one is on a trip.'}
                         {users.map((user) => {
                             if (user.location.isHome) {
                                 return null
@@ -56,7 +57,7 @@ export function MainOverlay(): JSX.Element {
                             <FontAwesomeIcon icon={faPlusCircle} /> Add a trip
                         </Button>
                     </div>
-
+                    {trips.length === 0 && "You don't have any upcoming trips."}
                     {trips.map((trip) => (
                         <React.Fragment key={trip.id}>
                             <TripCard trip={trip} />
