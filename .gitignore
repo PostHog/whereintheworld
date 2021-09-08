@@ -3,9 +3,11 @@ dist/
 *.env*
 *.db
 user_bootstrap.tsv
-.vscode
 .next
 frontend/out
+
+# ide
+.vscode
 
 # kea
 *Type.ts
@@ -16,3 +18,49 @@ logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+
+# byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# mypy
+.mypy_cache/
+
+# osX
+*.DS_Store
+
+# distribution / packaging
+.Python
+build/
+dist/
+sdist/
+*.egg-info
+
+# installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+pip-wheel-metadata
+
+# unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+coverage.xml
+.pytest_cache/
+
+# translations
+*.mo
+*.pot
+
+# django
+*.log
+
+# virtual environment stuff
+env/
+venv/
+.python-version
+
