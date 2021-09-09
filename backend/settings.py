@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 from typing import List
 
@@ -38,7 +39,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "api",
+    "django.contrib.gis",
+    "cities",
+    "backend.apps.WhereInTheWorldConfig",
 ]
 
 MIDDLEWARE = [
@@ -51,7 +54,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "whereintheworld.urls"
+ROOT_URLCONF = "backend.urls"
 
 TEMPLATES = [
     {
@@ -69,16 +72,21 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "whereintheworld.wsgi.application"
+WSGI_APPLICATION = "backend.wsgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.contrib.gis.db.backends.postgis",
+        "NAME": "whereintheworld",
+        "USER": os.getenv("POSTHOG_DB_USER", "postgres"),
+        "PASSWORD": os.getenv("POSTHOG_DB_PASSWORD", ""),
+        "HOST": os.getenv("POSTHOG_POSTGRES_HOST", "localhost"),
+        "PORT": "5432",
     }
 }
 
@@ -122,3 +130,15 @@ STATIC_URL = "/static/"
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+# Django Cities
+# https://github.com/coderholic/django-cities
+CITIES_LOCALES = []
+CITIES_POSTAL_CODES = []
+CITIES_FILES = {
+    "city": {
+        "filename": "cities15000.zip",
+        "urls": ["http://download.geonames.org/export/dump/" + "{filename}"],
+    },
+}

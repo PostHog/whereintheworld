@@ -10,7 +10,7 @@ PYTEST_ARGS = {
     "default": [],
 }
 
-PROJECT = ["whereintheworld", "api"]
+PROJECT = ["backend"]
 
 FLAKE8_ARGS = PROJECT
 

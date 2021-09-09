@@ -4,3 +4,4 @@ isort
 mypy
 pytest
 pytest-django
+Faker
