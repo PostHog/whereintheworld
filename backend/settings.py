@@ -91,6 +91,12 @@ DATABASES = {
 }
 
 
+# Authentication
+# https://docs.djangoproject.com/en/3.2/topics/auth/customizing/
+
+AUTH_USER_MODEL = "backend.User"
+
+
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
@@ -134,8 +140,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Django Cities
 # https://github.com/coderholic/django-cities
-CITIES_LOCALES = []
-CITIES_POSTAL_CODES = []
+
+CITIES_LOCALES: List[str] = []
+CITIES_POSTAL_CODES: List[str] = []
 CITIES_FILES = {
     "city": {
         "filename": "cities15000.zip",

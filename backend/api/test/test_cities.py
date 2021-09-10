@@ -1,4 +1,4 @@
-from backend.api.tests.base import APIBaseTest
+from backend.test.base import APIBaseTest
 
 
 class TestCities(APIBaseTest):

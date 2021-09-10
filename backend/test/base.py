@@ -1,11 +1,27 @@
 from typing import Dict, Optional
 
 from cities.models import City, Country
+from django.contrib.gis.geos import Point
 from django.test import TestCase
 from faker import Faker
 from rest_framework.test import APITestCase as DRFTestCase
 
 from backend.models import Team, User
+
+
+def helper_create_city(country, **kwargs) -> City:
+    fake = Faker()
+    return City.objects.create(
+        **{
+            "country": country,
+            "name_std": fake.city(),
+            "location": Point(float(fake.latitude()), float(fake.longitude())),
+            "population": 3,
+            "kind": "PPL",
+            "timezone": fake.timezone(),
+            **kwargs,
+        }
+    )
 
 
 class ErrorResponsesMixin:
@@ -84,10 +100,14 @@ class TestMixin:
 
     @classmethod
     def setUpTestData(cls):
-        fake = Faker()
         cls.team = Team.objects.create(name=cls.CONFIG_TEAM_NAME)
         cls.user = User.objects.create(
             team=cls.team, email=cls.CONFIG_EMAIL, password=cls.CONFIG_PASSWORD
+        )
+
+        cls.team2 = Team.objects.create(name="Team 2")
+        cls.team2_user = User.objects.create(
+            team=cls.team2, email="u@team2.posthog.com", password=cls.CONFIG_PASSWORD
         )
 
         cls.country = Country.objects.create(
@@ -102,14 +122,34 @@ class TestMixin:
         )
 
         for _ in range(0, 5):
-            City.objects.create(
-                country=cls.country,
-                name_std=fake.city(),
-                location=fake.latlng(),
-                population=3,
-                kind="PPL",
-                timezone=fake.timezone(),
-            )
+            helper_create_city(cls.country)
+
+        cls.london = helper_create_city(
+            country=cls.country,
+            name_std="London",
+            location=Point(51.509865, -0.118092),
+        )
+
+        cls.cambridge = helper_create_city(
+            country=cls.country,
+            name_std="Cambridge",
+            location=Point(52.205276, 0.119167),
+        )
+
+        cls.edinburgh = helper_create_city(
+            country=cls.country,
+            name_std="Edinburgh",
+            location=Point(55.953251, -3.188267),
+        )
+
+        cls.paris = helper_create_city(
+            country=cls.country,
+            name_std="Paris",
+            location=Point(48.864716, 2.349014),
+        )
+
+    def create_city(self, **kwargs):
+        return helper_create_city(country=self.country, **kwargs)
 
 
 class BaseTest(TestMixin, ErrorResponsesMixin, TestCase):

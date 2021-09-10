@@ -101,15 +101,15 @@ if __name__ == "__main__":
 
         if first_arg.startswith("-"):
             # `runtests.py [flags]`
-            pytest_args = ["tests"] + pytest_args
+            pytest_args = ["backend/test"] + pytest_args
         elif is_class(first_arg) and is_function(first_arg):
             # `runtests.py TestCase.test_function [flags]`
             expression = split_class_and_function(first_arg)
-            pytest_args = ["tests", "-k", expression] + pytest_args[1:]
+            pytest_args = ["backend/test", "-k", expression] + pytest_args[1:]
         elif is_class(first_arg) or is_function(first_arg):
             # `runtests.py TestCase [flags]`
             # `runtests.py test_function [flags]`
-            pytest_args = ["tests", "-k", pytest_args[0]] + pytest_args[1:]
+            pytest_args = ["backend/test", "-k", pytest_args[0]] + pytest_args[1:]
     else:
         pytest_args = [""]
 
