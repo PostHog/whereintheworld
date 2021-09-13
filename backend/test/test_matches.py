@@ -79,6 +79,8 @@ class TestMatches(BaseTest):
         )  # First trip is always the source_match
         self.assertEqual(match.destination_match, loc2)
         self.assertEqual(match.distance, 81702)
+        self.assertEqual(match.overlap_start, dt.date(2021, 9, 3))
+        self.assertEqual(match.overlap_end, dt.date(2021, 9, 5))
 
     def test_single_day_trip_matches(self):
         loc1 = UserLocation.objects.create(
@@ -102,6 +104,8 @@ class TestMatches(BaseTest):
         self.assertEqual(match.source_match, loc1)
         self.assertEqual(match.destination_match, loc2)
         self.assertEqual(match.distance, 0)
+        self.assertEqual(match.overlap_start, dt.date(2021, 9, 1))
+        self.assertEqual(match.overlap_end, dt.date(2021, 9, 1))
 
     def test_dont_match_other_teams(self):
         UserLocation.objects.create(
@@ -122,6 +126,52 @@ class TestMatches(BaseTest):
         loc.calculate_matches()
         self.assertEqual(Match.objects.count(), matches_count)
 
-    def test_match_with_inception_and_no_end_date(self):
-        # TODO
-        pass
+    def test_match_with_inception_location_and_no_end_date(self):
+        loc1 = UserLocation.objects.create(
+            city=self.london,
+            user=self.user,
+            start=dt.date(1970, 1, 1),
+            end=None,
+        )
+
+        loc2 = UserLocation.objects.create(
+            city=self.london,
+            user=self.user3,
+            start=dt.date(2021, 9, 3),
+            end=dt.date(2021, 9, 8),
+        )
+
+        matches_count = Match.objects.count()
+        loc1.calculate_matches()
+        self.assertEqual(Match.objects.count(), matches_count + 1)
+        match = Match.objects.last()
+        self.assertEqual(match.source_match, loc1)
+        self.assertEqual(match.destination_match, loc2)
+        self.assertEqual(match.distance, 0)
+        self.assertEqual(match.overlap_start, dt.date(2021, 9, 3))
+        self.assertEqual(match.overlap_end, dt.date(2021, 9, 8))
+
+    def test_match_with_only_no_end_dates(self):
+        loc1 = UserLocation.objects.create(
+            city=self.london,
+            user=self.user,
+            start=dt.date(1970, 1, 1),
+            end=None,
+        )
+
+        loc2 = UserLocation.objects.create(
+            city=self.london,
+            user=self.user3,
+            start=dt.date(1975, 12, 12),
+            end=None,
+        )
+
+        matches_count = Match.objects.count()
+        loc1.calculate_matches()
+        self.assertEqual(Match.objects.count(), matches_count + 1)
+        match = Match.objects.last()
+        self.assertEqual(match.source_match, loc1)
+        self.assertEqual(match.destination_match, loc2)
+        self.assertEqual(match.distance, 0)
+        self.assertEqual(match.overlap_start, dt.date(1975, 12, 12))
+        self.assertEqual(match.overlap_end, None)

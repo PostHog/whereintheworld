@@ -1,15 +1,17 @@
 import datetime as dt
+from typing import Optional
 
 from cities.models import City
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.gis.db.models.functions import Distance
-from django.contrib.gis.measure import D
 from django.db import models
 from django.db.models import Q
 from django_extensions.db.models import TimeStampedModel
 
 from .utils import generate_id
+
+LARGE_DATE = dt.date(2500, 1, 1)
 
 
 class CoreModel(TimeStampedModel):
@@ -81,7 +83,7 @@ class UserLocation(CoreModel):
 
     PREFIXER = "loc"
     start = models.DateField()
-    end = models.DateField(null=True)
+    end = models.DateField(null=True, blank=True)
     trip = models.OneToOneField(
         Trip,
         on_delete=models.deletion.CASCADE,
@@ -107,9 +109,8 @@ class UserLocation(CoreModel):
                     self.city.location,
                     1.8,
                 ),  # 1.8 degrees is approximately 200km
-                start__lte=self.end,
-                end__gte=self.start,
             )
+            .filter(Q(end__gte=self.start) | Q(end__isnull=True))
             .exclude(pk=self.pk)
             .exclude(
                 Q(source_matches__in=Match.objects.filter(source_match=self))
@@ -122,6 +123,10 @@ class UserLocation(CoreModel):
             .order_by("pk")
         )
 
+        # If location has no end time, we can match to any point in the future
+        if self.end:
+            matching_locations.filter(start__lte=self.end)
+
         insert_statements = []
 
         for match in matching_locations:
@@ -130,11 +135,21 @@ class UserLocation(CoreModel):
             )  # Ensures deterministic position in either source or destination so unique constraint works
             destination_match = match if match.pk > self.pk else self
 
+            overlap_end: Optional[dt.date] = None
+
+            if source_match.end or destination_match.end:
+                overlap_end = min(
+                    source_match.end or LARGE_DATE,
+                    destination_match.end or LARGE_DATE,
+                )
+
             insert_statements.append(
                 Match(
                     source_match=source_match,
                     destination_match=destination_match,
                     distance=int(match.distance.m),
+                    overlap_start=max(source_match.start, destination_match.start),
+                    overlap_end=overlap_end,
                 )
             )
 
@@ -157,6 +172,8 @@ class Match(CoreModel):
         related_name="destination_matches",
     )
     distance = models.IntegerField(blank=True, null=True, default=None)
+    overlap_start = models.DateField()
+    overlap_end = models.DateField(null=True, blank=True)
 
     class Meta:
         unique_together = (

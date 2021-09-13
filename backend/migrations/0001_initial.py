@@ -253,7 +253,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 ("start", models.DateField()),
-                ("end", models.DateField(null=True)),
+                ("end", models.DateField(null=True, blank=True)),
                 (
                     "city",
                     models.ForeignKey(
@@ -343,6 +343,14 @@ class Migration(migrations.Migration):
                         related_name="source_matches",
                         to="backend.userlocation",
                     ),
+                ),
+                (
+                    "overlap_end",
+                    models.DateField(null=True, blank=True),
+                ),
+                (
+                    "overlap_start",
+                    models.DateField(),
                 ),
             ],
             options={
