@@ -1,5 +1,5 @@
 import datetime as dt
-from typing import Optional
+from typing import List, Optional
 
 from cities.models import City
 from django.conf import settings
@@ -44,7 +44,7 @@ class Team(CoreModel):
 class User(CoreModel, AbstractUser):
     PREFIXER = "user"
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS: List[str] = []
 
     team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name="users")
     avatar_url = models.CharField(max_length=512, blank=True)

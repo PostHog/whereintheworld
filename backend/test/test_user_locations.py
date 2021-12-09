@@ -2,7 +2,6 @@ from backend.test.base import BaseTest
 
 
 class TestUserLocations(BaseTest):
-    
     def test_inception_location_is_created_when_setting_home_location(self):
         pass
 
