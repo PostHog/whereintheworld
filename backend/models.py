@@ -5,7 +5,7 @@ from cities.models import City
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.gis.db.models.functions import Distance
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Q
 from django_extensions.db.models import TimeStampedModel
 
@@ -188,21 +188,28 @@ def calculate_locations_for_user(user: User) -> None:
     """
     trips = Trip.objects.filter(user=user).order_by("start")
 
-    # # Inception location
-    # inception, created = UserLocation.objects.get_or_create(
-    #     user=user,
-    #     start=dt.date(1970, 1, 1),
-    #     city=user.home_city,
-    #     end=(None if len(trips) == 0 else trips.first().start),
-    # )
+    with transaction.atomic():
 
-    # if created:
-    #     # Only one inception per user
-    #     UserLocation.objects.filter(user=user, start=dt.datetime(1970, 1, 1)).exclude(
-    #         pk=inception.pk
-    #     ).delete()
-
-    for trip in trips:
-        UserLocation.objects.get_or_create(
-            start=trip.start, end=trip.end, trip=trip, city=trip.city, user=user
+        # Inception location
+        inception, created = UserLocation.objects.get_or_create(
+            user=user,
+            start=dt.date(1970, 1, 1),
+            city=user.home_city,
+            end=(None if len(trips) == 0 else trips.first().start),
         )
+
+        if created:
+            # Only one inception per user
+            UserLocation.objects.filter(
+                user=user, start=dt.datetime(1970, 1, 1)
+            ).exclude(pk=inception.pk).delete()
+
+        for trip in trips:
+            if trip.location:
+                UserLocation.objects.filter(trip=trip.pk).update(
+                    start=trip.start, end=trip.end, city=trip.city, user=user
+                )
+
+            UserLocation.objects.get_or_create(
+                start=trip.start, end=trip.end, trip=trip, city=trip.city, user=user
+            )
