@@ -18,9 +18,7 @@ class CoreModel(TimeStampedModel):
 
     PREFIXER = ""
 
-    transactional_id = models.CharField(
-        db_index=True, unique=True, editable=False, max_length=30, default=generate_id
-    )
+    transactional_id = models.CharField(db_index=True, unique=True, editable=False, max_length=30, default=generate_id)
 
     class Meta:
         abstract = True
@@ -48,9 +46,7 @@ class User(CoreModel, AbstractUser):
 
     team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name="users")
     avatar_url = models.CharField(max_length=512, blank=True)
-    home_city = models.ForeignKey(
-        City, on_delete=models.deletion.CASCADE, null=True, blank=True
-    )
+    home_city = models.ForeignKey(City, on_delete=models.deletion.CASCADE, null=True, blank=True)
 
     # AbstractUser overrides
     username = None  # type: ignore
@@ -98,6 +94,9 @@ class UserLocation(CoreModel):
         related_name="locations",
     )
 
+    def __str__(self):
+        return f"UL @ {self.city.name_std}, {self.start} - {self.end}"
+
     def calculate_matches(self):
         """
         Computes any potential matches with other users at the specified location.
@@ -114,9 +113,7 @@ class UserLocation(CoreModel):
             .exclude(pk=self.pk)
             .exclude(
                 Q(source_matches__in=Match.objects.filter(source_match=self))
-                | Q(
-                    destination_matches__in=Match.objects.filter(destination_match=self)
-                )
+                | Q(destination_matches__in=Match.objects.filter(destination_match=self))
             )
             .exclude(user=self.user)  # don't match against yourself
             .annotate(distance=Distance("city__location", self.city.location))
@@ -153,9 +150,7 @@ class UserLocation(CoreModel):
                 )
             )
 
-        Match.objects.bulk_create(
-            insert_statements, ignore_conflicts=True
-        )  # If match already exists, ignore
+        Match.objects.bulk_create(insert_statements, ignore_conflicts=True)  # If match already exists, ignore
 
 
 class Match(CoreModel):
@@ -163,9 +158,7 @@ class Match(CoreModel):
     Records matches between users being close to each other at a given time.
     """
 
-    source_match = models.ForeignKey(
-        UserLocation, on_delete=models.deletion.CASCADE, related_name="source_matches"
-    )
+    source_match = models.ForeignKey(UserLocation, on_delete=models.deletion.CASCADE, related_name="source_matches")
     destination_match = models.ForeignKey(
         UserLocation,
         on_delete=models.deletion.CASCADE,
@@ -189,7 +182,6 @@ def calculate_locations_for_user(user: User) -> None:
     trips = Trip.objects.filter(user=user).order_by("start")
 
     with transaction.atomic():
-
         # Inception location
         inception, created = UserLocation.objects.get_or_create(
             user=user,
@@ -199,17 +191,25 @@ def calculate_locations_for_user(user: User) -> None:
         )
 
         if created:
-            # Only one inception per user
-            UserLocation.objects.filter(
-                user=user, start=dt.datetime(1970, 1, 1)
-            ).exclude(pk=inception.pk).delete()
+            # Inception location changed, recompute all user locations
+            UserLocation.objects.filter(user=user).exclude(pk=inception.pk).delete()
 
-        for trip in trips:
-            if trip.location:
-                UserLocation.objects.filter(trip=trip.pk).update(
-                    start=trip.start, end=trip.end, city=trip.city, user=user
-                )
-
-            UserLocation.objects.get_or_create(
+        for i, trip in enumerate(trips, 1):
+            if not UserLocation.objects.filter(
                 start=trip.start, end=trip.end, trip=trip, city=trip.city, user=user
+            ).exists():
+                UserLocation.objects.filter(user=user, start__gte=trip.start).delete()
+                UserLocation.objects.create(start=trip.start, end=trip.end, trip=trip, city=trip.city, user=user)
+
+            print(f"Created trip {i} for: {trip.city.name_std} from {trip.start} to {trip.end}")
+
+            # in between trips you are in your home town
+            loc_end = None if len(trips) == i else trips[i].start
+
+            UserLocation.objects.create(
+                user=user,
+                start=trip.end,
+                city=user.home_city,
+                end=loc_end,
             )
+            print(f'Created home loc {i} from {trip.end} to {loc_end or "null"}')
