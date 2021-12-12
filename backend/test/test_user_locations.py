@@ -65,6 +65,7 @@ class TestUserLocations(BaseTest):
         print("----------> BEGIN ------>")
         calculate_locations_for_user(self.user)
         print(UserLocation.objects.order_by("start"))
+        print(UserLocation.objects.count())
         # calculate_locations_for_user runs automatically
         self.helper_validate_locations_for_user(
             self.user,
@@ -76,7 +77,7 @@ class TestUserLocations(BaseTest):
                 {"city": self.paris, "start": dt.date(2021, 4, 7), "end": dt.date(2021, 4, 10)},
                 {"city": self.london, "start": dt.date(2021, 4, 10), "end": dt.date(2021, 4, 21), "trip": trip5},
                 {"city": self.paris, "start": dt.date(2021, 4, 21), "end": dt.date(2021, 5, 8)},
-                {"city": self.edinburgh, "start": dt.date(2021, 5, 8), "end": dt.date(2021, 5, 10), "trip": trip3},
+                {"city": self.cambridge, "start": dt.date(2021, 5, 8), "end": dt.date(2021, 5, 10), "trip": trip3},
                 {"city": self.paris, "start": dt.date(2021, 5, 10), "end": dt.date(2021, 6, 17)},
                 {"city": self.edinburgh, "start": dt.date(2021, 6, 17), "end": dt.date(2021, 6, 28), "trip": trip4},
                 {"city": self.london, "start": dt.date(2021, 6, 28), "end": None},

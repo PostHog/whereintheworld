@@ -194,22 +194,37 @@ def calculate_locations_for_user(user: User) -> None:
             # Inception location changed, recompute all user locations
             UserLocation.objects.filter(user=user).exclude(pk=inception.pk).delete()
 
-        for i, trip in enumerate(trips, 1):
-            if not UserLocation.objects.filter(
-                start=trip.start, end=trip.end, trip=trip, city=trip.city, user=user
-            ).exists():
-                UserLocation.objects.filter(user=user, start__gte=trip.start).delete()
+        # delete all information after first unprocessed trip
+        first_unprocessed_trip = trips.filter(location=None).first()
+        if first_unprocessed_trip:
+            UserLocation.objects.filter(user=user).filter(
+                Q(start__gte=first_unprocessed_trip.start) | Q(end=None)
+            ).delete()
+
+            trips_to_reprocess = trips.filter(start__gte=first_unprocessed_trip.start)
+
+            last_trip: Optional[Trip] = None
+            for i, trip in enumerate(trips_to_reprocess, 1):
+                last_trip = trip
+                # in between trips you are in your home town
+                last_location = UserLocation.objects.filter(user=user).order_by("-end").first()
+                if last_location.trip:
+                    temp = UserLocation.objects.create(
+                        user=user,
+                        start=last_location.end,
+                        city=user.home_city,
+                        end=trip.start,
+                    )
+                    print(f"Created home loc {i} from {trip.end} to {temp.end}")
+
                 UserLocation.objects.create(start=trip.start, end=trip.end, trip=trip, city=trip.city, user=user)
 
-            print(f"Created trip {i} for: {trip.city.name_std} from {trip.start} to {trip.end}")
+                print(f"Created trip {i} for: {trip.city.name_std} from {trip.start} to {trip.end}")
 
-            # in between trips you are in your home town
-            loc_end = None if len(trips) == i else trips[i].start
-
+            # omega location
             UserLocation.objects.create(
                 user=user,
-                start=trip.end,
+                start=last_trip.end,
                 city=user.home_city,
-                end=loc_end,
+                end=None,
             )
-            print(f'Created home loc {i} from {trip.end} to {loc_end or "null"}')
