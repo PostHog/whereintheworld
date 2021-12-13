@@ -34,9 +34,7 @@ class Migration(migrations.Migration):
                 ("password", models.CharField(max_length=128, verbose_name="password")),
                 (
                     "last_login",
-                    models.DateTimeField(
-                        blank=True, null=True, verbose_name="last login"
-                    ),
+                    models.DateTimeField(blank=True, null=True, verbose_name="last login"),
                 ),
                 (
                     "is_superuser",
@@ -48,15 +46,11 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "first_name",
-                    models.CharField(
-                        blank=True, max_length=150, verbose_name="first name"
-                    ),
+                    models.CharField(blank=True, max_length=150, verbose_name="first name"),
                 ),
                 (
                     "last_name",
-                    models.CharField(
-                        blank=True, max_length=150, verbose_name="last name"
-                    ),
+                    models.CharField(blank=True, max_length=150, verbose_name="last name"),
                 ),
                 (
                     "is_staff",
@@ -77,21 +71,15 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "date_joined",
-                    models.DateTimeField(
-                        default=django.utils.timezone.now, verbose_name="date joined"
-                    ),
+                    models.DateTimeField(default=django.utils.timezone.now, verbose_name="date joined"),
                 ),
                 (
                     "created",
-                    django_extensions.db.fields.CreationDateTimeField(
-                        auto_now_add=True, verbose_name="created"
-                    ),
+                    django_extensions.db.fields.CreationDateTimeField(auto_now_add=True, verbose_name="created"),
                 ),
                 (
                     "modified",
-                    django_extensions.db.fields.ModificationDateTimeField(
-                        auto_now=True, verbose_name="modified"
-                    ),
+                    django_extensions.db.fields.ModificationDateTimeField(auto_now=True, verbose_name="modified"),
                 ),
                 (
                     "transactional_id",
@@ -136,15 +124,11 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "created",
-                    django_extensions.db.fields.CreationDateTimeField(
-                        auto_now_add=True, verbose_name="created"
-                    ),
+                    django_extensions.db.fields.CreationDateTimeField(auto_now_add=True, verbose_name="created"),
                 ),
                 (
                     "modified",
-                    django_extensions.db.fields.ModificationDateTimeField(
-                        auto_now=True, verbose_name="modified"
-                    ),
+                    django_extensions.db.fields.ModificationDateTimeField(auto_now=True, verbose_name="modified"),
                 ),
                 (
                     "transactional_id",
@@ -162,129 +146,6 @@ class Migration(migrations.Migration):
                 "abstract": False,
             },
         ),
-        migrations.CreateModel(
-            name="Trip",
-            fields=[
-                (
-                    "id",
-                    models.BigAutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                (
-                    "created",
-                    django_extensions.db.fields.CreationDateTimeField(
-                        auto_now_add=True, verbose_name="created"
-                    ),
-                ),
-                (
-                    "modified",
-                    django_extensions.db.fields.ModificationDateTimeField(
-                        auto_now=True, verbose_name="modified"
-                    ),
-                ),
-                (
-                    "transactional_id",
-                    models.CharField(
-                        db_index=True,
-                        default=backend.utils.generate_id,
-                        editable=False,
-                        max_length=30,
-                        unique=True,
-                    ),
-                ),
-                ("start", models.DateField()),
-                ("end", models.DateField()),
-                ("notes", models.TextField(blank=True)),
-                (
-                    "city",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        to=settings.CITIES_CITY_MODEL,
-                    ),
-                ),
-                (
-                    "user",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="trips",
-                        to=settings.AUTH_USER_MODEL,
-                    ),
-                ),
-            ],
-            options={
-                "abstract": False,
-            },
-        ),
-        migrations.CreateModel(
-            name="UserLocation",
-            fields=[
-                (
-                    "id",
-                    models.BigAutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                (
-                    "created",
-                    django_extensions.db.fields.CreationDateTimeField(
-                        auto_now_add=True, verbose_name="created"
-                    ),
-                ),
-                (
-                    "modified",
-                    django_extensions.db.fields.ModificationDateTimeField(
-                        auto_now=True, verbose_name="modified"
-                    ),
-                ),
-                (
-                    "transactional_id",
-                    models.CharField(
-                        db_index=True,
-                        default=backend.utils.generate_id,
-                        editable=False,
-                        max_length=30,
-                        unique=True,
-                    ),
-                ),
-                ("start", models.DateField()),
-                ("end", models.DateField(null=True, blank=True)),
-                (
-                    "city",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        to=settings.CITIES_CITY_MODEL,
-                    ),
-                ),
-                (
-                    "trip",
-                    models.OneToOneField(
-                        blank=True,
-                        null=True,
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="location",
-                        to="backend.trip",
-                    ),
-                ),
-                (
-                    "user",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="locations",
-                        to=settings.AUTH_USER_MODEL,
-                    ),
-                ),
-            ],
-            options={
-                "abstract": False,
-            },
-        ),
         migrations.AddField(
             model_name="user",
             name="team",
@@ -293,69 +154,5 @@ class Migration(migrations.Migration):
                 related_name="users",
                 to="backend.team",
             ),
-        ),
-        migrations.CreateModel(
-            name="Match",
-            fields=[
-                (
-                    "id",
-                    models.BigAutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                (
-                    "created",
-                    django_extensions.db.fields.CreationDateTimeField(
-                        auto_now_add=True, verbose_name="created"
-                    ),
-                ),
-                (
-                    "modified",
-                    django_extensions.db.fields.ModificationDateTimeField(
-                        auto_now=True, verbose_name="modified"
-                    ),
-                ),
-                (
-                    "transactional_id",
-                    models.CharField(
-                        db_index=True,
-                        default=backend.utils.generate_id,
-                        editable=False,
-                        max_length=30,
-                        unique=True,
-                    ),
-                ),
-                ("distance", models.IntegerField(blank=True, default=None, null=True)),
-                (
-                    "destination_match",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="destination_matches",
-                        to="backend.userlocation",
-                    ),
-                ),
-                (
-                    "source_match",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="source_matches",
-                        to="backend.userlocation",
-                    ),
-                ),
-                (
-                    "overlap_end",
-                    models.DateField(null=True, blank=True),
-                ),
-                (
-                    "overlap_start",
-                    models.DateField(),
-                ),
-            ],
-            options={
-                "unique_together": {("source_match", "destination_match")},
-            },
         ),
     ]

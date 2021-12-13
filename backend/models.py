@@ -1,12 +1,11 @@
 import datetime as dt
-from typing import List, Optional
+from typing import List
 
 from cities.models import City
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.gis.db.models.functions import Distance
-from django.db import models, transaction
-from django.db.models import Q
+from django.db import models
 from django_extensions.db.models import TimeStampedModel
 
 from .utils import generate_id
@@ -71,82 +70,71 @@ class Trip(CoreModel):
     )
     notes = models.TextField(blank=True)
 
+    def compute_matches_for_trip(self):
 
-class UserLocation(CoreModel):
-    """
-    Abstraction to represent where a user will be at a given time. Enables faster lookups at runtime.
-    """
+        insert_statements = []
 
-    PREFIXER = "loc"
-    start = models.DateField()
-    end = models.DateField(null=True, blank=True)
-    trip = models.OneToOneField(
-        Trip,
-        on_delete=models.deletion.CASCADE,
-        null=True,
-        blank=True,
-        related_name="location",
-    )
-    city = models.ForeignKey(City, on_delete=models.deletion.CASCADE)
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="locations",
-    )
-
-    def __str__(self):
-        return f"UL @ {self.city.name_std}, {self.start} - {self.end}"
-
-    def calculate_matches(self):
-        """
-        Computes any potential matches with other users at the specified location.
-        """
-        matching_locations = (
-            UserLocation.objects.filter(
+        # Match trips with other users
+        trip_matches = (
+            Trip.objects.filter(
                 user__team=self.user.team,
                 city__location__dwithin=(
                     self.city.location,
-                    1.8,
-                ),  # 1.8 degrees is approximately 200km
-            )
-            .filter(Q(end__gte=self.start) | Q(end__isnull=True))
-            .exclude(pk=self.pk)
-            .exclude(
-                Q(source_matches__in=Match.objects.filter(source_match=self))
-                | Q(destination_matches__in=Match.objects.filter(destination_match=self))
+                    1.8,  # 1.8 degrees is approximately 200km
+                ),
+                end__gte=self.start,
+                start__lte=self.end,
             )
             .exclude(user=self.user)  # don't match against yourself
             .annotate(distance=Distance("city__location", self.city.location))
             .order_by("pk")
         )
 
-        # If location has no end time, we can match to any point in the future
-        if self.end:
-            matching_locations.filter(start__lte=self.end)
-
-        insert_statements = []
-
-        for match in matching_locations:
-            source_match = (
-                match if match.pk < self.pk else self
-            )  # Ensures deterministic position in either source or destination so unique constraint works
-            destination_match = match if match.pk > self.pk else self
-
-            overlap_end: Optional[dt.date] = None
-
-            if source_match.end or destination_match.end:
-                overlap_end = min(
-                    source_match.end or LARGE_DATE,
-                    destination_match.end or LARGE_DATE,
-                )
+        for match in trip_matches:
+            source_trip = (
+                match if match.user.pk < self.user.pk else self
+            )  # Ensures deterministic position in either source or target so unique constraint works
+            target_trip = match if match.user.pk > self.user.pk else self
 
             insert_statements.append(
                 Match(
-                    source_match=source_match,
-                    destination_match=destination_match,
+                    source_user=source_trip.user,
+                    target_user=target_trip.user,
+                    source_trip=source_trip,
+                    target_trip=target_trip,
                     distance=int(match.distance.m),
-                    overlap_start=max(source_match.start, destination_match.start),
-                    overlap_end=overlap_end,
+                    overlap_start=max(source_trip.start, target_trip.start),
+                    overlap_end=min(source_trip.end, target_trip.end),
+                )
+            )
+
+        # Match home location with other users
+        home_city_matches = (
+            User.objects.filter(
+                team=self.user.team,
+                home_city__location__dwithin=(
+                    self.city.location,
+                    1.8,  # 1.8 degrees is approximately 200km
+                ),
+            )
+            .exclude(pk__in=Trip.objects.filter(start__lte=self.start, end__gte=self.end))
+            .exclude(pk=self.user.pk)  # don't match against yourself
+            .annotate(distance=Distance("home_city__location", self.city.location))
+            .order_by("pk")
+        )
+
+        for user in home_city_matches:
+            source_user = user if user.pk < self.user.pk else self.user
+            target_user = user if user.pk > self.user.pk else self.user
+            trip_qs = {"source_trip": self} if source_user == self.user else {"target_trip": self}
+            insert_statements.append(
+                Match(
+                    source_user=source_user,
+                    target_user=target_user,
+                    distance=int(user.distance.m),
+                    overlap_start=self.start,  # TODO: if you have a trip midway
+                    overlap_end=self.end,
+                    **trip_qs,
                 )
             )
 
@@ -158,73 +146,36 @@ class Match(CoreModel):
     Records matches between users being close to each other at a given time.
     """
 
-    source_match = models.ForeignKey(UserLocation, on_delete=models.deletion.CASCADE, related_name="source_matches")
-    destination_match = models.ForeignKey(
-        UserLocation,
-        on_delete=models.deletion.CASCADE,
-        related_name="destination_matches",
+    source_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="source_matches",
+    )  # user 1 for this match; source_user is always the user with lower `pk`
+    target_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="target_matches",
     )
     distance = models.IntegerField(blank=True, null=True, default=None)
     overlap_start = models.DateField()
     overlap_end = models.DateField(null=True, blank=True)
+    source_trip = models.ForeignKey(
+        Trip,
+        on_delete=models.deletion.CASCADE,
+        null=True,
+        blank=True,
+        related_name="source_matches",
+    )  # trip for the source_user that makes up this match (if `None`, `source_user` is at home location)
+    target_trip = models.ForeignKey(
+        Trip,
+        on_delete=models.deletion.CASCADE,
+        null=True,
+        blank=True,
+        related_name="target_matches",
+    )  # trip for the target_user that makes up this match (if `None`, `target_user` is at home location)
 
     class Meta:
         unique_together = (
-            "source_match",
-            "destination_match",
+            "source_trip",
+            "target_trip",
         )
-
-
-def calculate_locations_for_user(user: User) -> None:
-    """
-    Computes the location of where a user will be based on their trips.
-    """
-    trips = Trip.objects.filter(user=user).order_by("start")
-
-    with transaction.atomic():
-        # Inception location
-        inception, created = UserLocation.objects.get_or_create(
-            user=user,
-            start=dt.date(1970, 1, 1),
-            city=user.home_city,
-            end=(None if len(trips) == 0 else trips.first().start),
-        )
-
-        if created:
-            # Inception location changed, recompute all user locations
-            UserLocation.objects.filter(user=user).exclude(pk=inception.pk).delete()
-
-        # delete all information after first unprocessed trip
-        first_unprocessed_trip = trips.filter(location=None).first()
-        if first_unprocessed_trip:
-            UserLocation.objects.filter(user=user).filter(
-                Q(start__gte=first_unprocessed_trip.start) | Q(end=None)
-            ).delete()
-
-            trips_to_reprocess = trips.filter(start__gte=first_unprocessed_trip.start)
-
-            last_trip: Optional[Trip] = None
-            for i, trip in enumerate(trips_to_reprocess, 1):
-                last_trip = trip
-                # in between trips you are in your home town
-                last_location = UserLocation.objects.filter(user=user).order_by("-end").first()
-                if last_location.trip:
-                    temp = UserLocation.objects.create(
-                        user=user,
-                        start=last_location.end,
-                        city=user.home_city,
-                        end=trip.start,
-                    )
-                    print(f"Created home loc {i} from {trip.end} to {temp.end}")
-
-                UserLocation.objects.create(start=trip.start, end=trip.end, trip=trip, city=trip.city, user=user)
-
-                print(f"Created trip {i} for: {trip.city.name_std} from {trip.start} to {trip.end}")
-
-            # omega location
-            UserLocation.objects.create(
-                user=user,
-                start=last_trip.end,
-                city=user.home_city,
-                end=None,
-            )
