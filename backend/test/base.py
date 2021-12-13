@@ -33,9 +33,7 @@ class ErrorResponsesMixin:
         "attr": None,
     }
 
-    def not_found_response(
-        self, message: str = "Not found."
-    ) -> Dict[str, Optional[str]]:
+    def not_found_response(self, message: str = "Not found.") -> Dict[str, Optional[str]]:
         return {
             "type": "invalid_request",
             "code": "not_found",
@@ -101,14 +99,10 @@ class TestMixin:
     @classmethod
     def setUpTestData(cls):
         cls.team = Team.objects.create(name=cls.CONFIG_TEAM_NAME)
-        cls.user = User.objects.create(
-            team=cls.team, email=cls.CONFIG_EMAIL, password=cls.CONFIG_PASSWORD
-        )
+        cls.user = User.objects.create(team=cls.team, email=cls.CONFIG_EMAIL, password=cls.CONFIG_PASSWORD)
 
         cls.team2 = Team.objects.create(name="Team 2")
-        cls.team2_user = User.objects.create(
-            team=cls.team2, email="u@team2.posthog.com", password=cls.CONFIG_PASSWORD
-        )
+        cls.team2_user = User.objects.create(team=cls.team2, email="u@team2.posthog.com", password=cls.CONFIG_PASSWORD)
 
         cls.country = Country.objects.create(
             code="US",
@@ -146,6 +140,12 @@ class TestMixin:
             country=cls.country,
             name_std="Paris",
             location=Point(48.864716, 2.349014),
+        )
+
+        cls.frankfurt = helper_create_city(
+            country=cls.country,
+            name_std="Frankfurt",
+            location=Point(50.5069755, 6.3286251),
         )
 
     def create_city(self, **kwargs):

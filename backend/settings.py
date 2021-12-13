@@ -143,7 +143,7 @@ STATIC_URL = "/static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-# Django Cities
+# Django cities
 # https://github.com/coderholic/django-cities
 
 CITIES_LOCALES: List[str] = []
@@ -154,3 +154,8 @@ CITIES_FILES = {
         "urls": ["http://download.geonames.org/export/dump/" + "{filename}"],
     },
 }
+
+# Business rules
+# https://github.com/PostHog/whereintheworld
+
+DISTANCE_THRESHOLD = 1.8  # 1.8 degrees is approximately 200km

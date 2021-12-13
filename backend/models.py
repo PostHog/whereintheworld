@@ -42,6 +42,7 @@ class User(CoreModel, AbstractUser):
     PREFIXER = "user"
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS: List[str] = []
+    _home_city_changed = False
 
     team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name="users")
     avatar_url = models.CharField(max_length=512, blank=True)
@@ -55,6 +56,25 @@ class User(CoreModel, AbstractUser):
 
     class Meta:
         swappable = "AUTH_USER_MODEL"
+
+    def handle_home_city_change(self):
+
+        # First remove previous matches to your home city.
+        Match.objects.filter(
+            models.Q(source_user=self, source_trip=None) | models.Q(target_user=self, target_trip=None)
+        ).delete()
+
+        # Check for trip matches in new location
+        # TODO: This could be optimized so we don't check every potential trip match
+        potential_trip_matches = Trip.objects.filter(
+            city__location__dwithin=(
+                self.home_city.location,
+                settings.DISTANCE_THRESHOLD,
+            )
+        )
+
+        for trip in potential_trip_matches:
+            trip.compute_matches()
 
 
 class Trip(CoreModel):
@@ -70,7 +90,7 @@ class Trip(CoreModel):
     )
     notes = models.TextField(blank=True)
 
-    def compute_matches_for_trip(self):
+    def compute_matches(self):
 
         insert_statements = []
 
@@ -80,7 +100,7 @@ class Trip(CoreModel):
                 user__team=self.user.team,
                 city__location__dwithin=(
                     self.city.location,
-                    1.8,  # 1.8 degrees is approximately 200km
+                    settings.DISTANCE_THRESHOLD,
                 ),
                 end__gte=self.start,
                 start__lte=self.end,
@@ -114,10 +134,12 @@ class Trip(CoreModel):
                 team=self.user.team,
                 home_city__location__dwithin=(
                     self.city.location,
-                    1.8,  # 1.8 degrees is approximately 200km
+                    settings.DISTANCE_THRESHOLD,
                 ),
             )
-            .exclude(pk__in=Trip.objects.filter(start__lte=self.start, end__gte=self.end))
+            .exclude(
+                pk__in=Trip.objects.filter(start__lte=self.start, end__gte=self.end).values_list("user_id", flat=True)
+            )  # exclude if user will be away from home location for the entirety of the trip time
             .exclude(pk=self.user.pk)  # don't match against yourself
             .annotate(distance=Distance("home_city__location", self.city.location))
             .order_by("pk")
@@ -127,16 +149,18 @@ class Trip(CoreModel):
             source_user = user if user.pk < self.user.pk else self.user
             target_user = user if user.pk > self.user.pk else self.user
             trip_qs = {"source_trip": self} if source_user == self.user else {"target_trip": self}
-            insert_statements.append(
-                Match(
-                    source_user=source_user,
-                    target_user=target_user,
-                    distance=int(user.distance.m),
-                    overlap_start=self.start,  # TODO: if you have a trip midway
-                    overlap_end=self.end,
-                    **trip_qs,
+
+            if not Match.objects.filter(source_user=source_user, target_user=target_user, **trip_qs).exists():
+                insert_statements.append(
+                    Match(
+                        source_user=source_user,
+                        target_user=target_user,
+                        distance=int(user.distance.m),
+                        overlap_start=self.start,  # TODO: if you have a trip midway
+                        overlap_end=self.end,
+                        **trip_qs,
+                    )
                 )
-            )
 
         Match.objects.bulk_create(insert_statements, ignore_conflicts=True)  # If match already exists, ignore
 

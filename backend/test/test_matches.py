@@ -163,3 +163,71 @@ class TestMatches(BaseTest):
             ).exists()
         )
 
+    def test_changing_home_city_removes_matches_and_checks_for_new_matches(self):
+        self.user3.home_city = self.london
+        self.user3.save()
+        Trip.objects.create(
+            city=self.london,
+            user=self.user,
+            start=dt.date(2021, 8, 1),
+            end=dt.date(2021, 8, 5),
+        )
+        Trip.objects.create(
+            city=self.cambridge,
+            user=self.user4,
+            start=dt.date(2021, 11, 3),
+            end=dt.date(2021, 11, 4),
+        )
+        de_trip = Trip.objects.create(
+            city=self.frankfurt,
+            user=self.user2,
+            start=dt.date(2021, 4, 3),
+            end=dt.date(2021, 4, 5),
+        )
+        self.assertEqual(Match.objects.count(), 2)  # user 3 & user; user 4 & user
+        self.assertTrue(Match.objects.filter(source_user=self.user3).exists())
+        self.assertTrue(Match.objects.filter(target_user=self.user3).exists())
+
+        self.user3.home_city = self.frankfurt
+        self.user3.save()
+
+        # Match now in Frankfurt
+        self.assertEqual(Match.objects.count(), 1)
+        self.assertTrue(
+            Match.objects.filter(
+                source_user=self.user2,
+                target_user=self.user3,
+                source_trip=de_trip,
+                target_trip=None,
+                overlap_start=dt.date(2021, 4, 3),
+                overlap_end=dt.date(2021, 4, 5),
+                distance=0,
+            ).exists()
+        )
+
+    def test_compute_matches_for_trip_is_atomic(self):
+        # i.e. no repeated matches are created
+        trip = Trip.objects.create(
+            city=self.paris,
+            user=self.user,
+            start=dt.date(2021, 9, 1),
+            end=dt.date(2021, 9, 5),
+        )
+        trip2 = Trip.objects.create(
+            city=self.paris,
+            user=self.user4,
+            start=dt.date(2021, 8, 28),
+            end=dt.date(2021, 9, 1),
+        )
+
+        trip.compute_matches()
+        trip.compute_matches()
+        trip2.compute_matches()
+
+        self.assertEqual(Match.objects.count(), 5)
+        self.assertTrue(Match.objects.filter(source_user=self.user, target_user=self.user2).exists())
+        self.assertTrue(Match.objects.filter(source_user=self.user, target_user=self.user3).exists())
+        self.assertTrue(Match.objects.filter(source_user=self.user, target_user=self.user4).exists())
+        self.assertTrue(Match.objects.filter(source_user=self.user2, target_user=self.user4).exists())
+        self.assertTrue(Match.objects.filter(source_user=self.user3, target_user=self.user4).exists())
+
