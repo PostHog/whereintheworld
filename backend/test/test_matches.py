@@ -178,7 +178,7 @@ class TestMatches(BaseTest):
             start=dt.date(2021, 11, 3),
             end=dt.date(2021, 11, 4),
         )
-        de_trip = Trip.objects.create(
+        FRA_trip = Trip.objects.create(
             city=self.frankfurt,
             user=self.user2,
             start=dt.date(2021, 4, 3),
@@ -197,7 +197,7 @@ class TestMatches(BaseTest):
             Match.objects.filter(
                 source_user=self.user2,
                 target_user=self.user3,
-                source_trip=de_trip,
+                source_trip=FRA_trip,
                 target_trip=None,
                 overlap_start=dt.date(2021, 4, 3),
                 overlap_end=dt.date(2021, 4, 5),
@@ -231,3 +231,95 @@ class TestMatches(BaseTest):
         self.assertTrue(Match.objects.filter(source_user=self.user2, target_user=self.user4).exists())
         self.assertTrue(Match.objects.filter(source_user=self.user3, target_user=self.user4).exists())
 
+    def test_edge_case_match_with_home_city_is_removed_if_trip_is_added(self):
+        trip1 = Trip.objects.create(
+            city=self.paris,
+            user=self.user,
+            start=dt.date(2021, 10, 16),
+            end=dt.date(2021, 10, 25),
+        )
+        self.assertTrue(
+            Match.objects.filter(
+                source_user=self.user,
+                target_user=self.user2,
+                source_trip=trip1,
+                target_trip=None,
+                overlap_start=dt.date(2021, 10, 16),
+                overlap_end=dt.date(2021, 10, 25),
+                distance=0,
+            ).exists()
+        )
+
+        # User2 is actually going on the date range
+        Trip.objects.create(
+            city=self.london,
+            user=self.user2,
+            start=dt.date(2021, 10, 15),
+            end=dt.date(2021, 10, 26),
+        )
+        self.assertFalse(
+            Match.objects.filter(
+                source_user=self.user,
+                target_user=self.user2,
+            ).exists()
+        )
+
+    def test_edge_case_changing_home_city_with_existing_trips(self):
+        self.user3.home_city = self.london
+        self.user3.save()
+        EDI_trip = Trip.objects.create(
+            city=self.edinburgh,
+            user=self.user3,
+            start=dt.date(2021, 10, 8),
+            end=dt.date(2021, 10, 10),
+        )
+        Trip.objects.create(
+            city=self.london,
+            user=self.user,
+            start=dt.date(2021, 8, 1),
+            end=dt.date(2021, 8, 5),
+        )
+        Trip.objects.create(
+            city=self.cambridge,
+            user=self.user4,
+            start=dt.date(2021, 11, 3),
+            end=dt.date(2021, 11, 4),
+        )
+        FRA_trip = Trip.objects.create(
+            city=self.frankfurt,
+            user=self.user2,
+            start=dt.date(2021, 4, 3),
+            end=dt.date(2021, 4, 5),
+        )
+        self.assertEqual(Match.objects.count(), 3)  # user 3 & user; user 4 & user; user 4 & user 3 (EDI)
+
+        self.user3.home_city = self.frankfurt
+        self.user3.save()
+
+        # Match now in Frankfurt (home city for User3)
+        self.assertEqual(Match.objects.count(), 2)
+        self.assertTrue(
+            Match.objects.filter(
+                source_user=self.user2,
+                target_user=self.user3,
+                source_trip=FRA_trip,
+                target_trip=None,
+                overlap_start=dt.date(2021, 4, 3),
+                overlap_end=dt.date(2021, 4, 5),
+                distance=0,
+            ).exists()
+        )
+
+        # Match in Edinburgh (from a scheduled trip) is kept
+        self.assertEqual(Match.objects.count(), 2)
+        self.assertTrue(
+            Match.objects.filter(
+                source_user=self.user3,
+                target_user=self.user4,
+                source_trip=EDI_trip,
+                target_trip=None,
+                overlap_start=dt.date(2021, 10, 8),
+                overlap_end=dt.date(2021, 10, 10),
+                distance=0,
+            ).exists()
+        )

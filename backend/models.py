@@ -94,6 +94,12 @@ class Trip(CoreModel):
 
         insert_statements = []
 
+        # Delete previous matches to your home city in the range of this trip (as you're no longer in your home city)
+        Match.objects.filter(
+            models.Q(source_user=self.user, source_trip=None) | models.Q(target_user=self.user, target_trip=None)
+        ).filter(overlap_start__gt=self.start, overlap_end__lt=self.end).delete()
+        # TODO: Partial matches
+
         # Match trips with other users
         trip_matches = (
             Trip.objects.filter(
