@@ -5,6 +5,7 @@ from cities.models import City
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.gis.db.models.functions import Distance
+from django.core.exceptions import ValidationError
 from django.db import models
 from django_extensions.db.models import TimeStampedModel
 
@@ -90,7 +91,11 @@ class Trip(CoreModel):
     )
     notes = models.TextField(blank=True)
 
-    # TODO: Validate start <= end always
+    def clean(self) -> None:
+        super().clean()
+
+        if self.start > self.end:
+            raise ValidationError({"end": "Must be before start."})
 
     def compute_matches(self):
 
@@ -255,4 +260,8 @@ class Match(CoreModel):
     def __str__(self):
         return f"Match for: {self.source_user} and {self.target_user} from {self.overlap_start} to {self.overlap_end}"
 
-    # TODO: Validate overlap_start <= overlap_end always
+    def clean(self) -> None:
+        super().clean()
+
+        if self.overlap_end and self.overlap_start > self.overlap_end:
+            raise ValidationError({"overlap_end": "Must be before overlap_start."})
