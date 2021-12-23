@@ -107,12 +107,25 @@ class TestMixin:
         cls.country = Country.objects.create(
             code="US",
             code3="USA",
+            name="United States of America",
             population=1,
             tld="us",
             phone="1",
             postal_code_format="00000",
             postal_code_regex="[0-9]{5}",
             capital="Washington D.C.",
+        )
+
+        cls.france = Country.objects.create(
+            code="FR",
+            code3="FRA",
+            name="France",
+            population=2,
+            tld="fr",
+            phone="33",
+            postal_code_format="00000",
+            postal_code_regex="[0-9]{5}",
+            capital="Paris",
         )
 
         for _ in range(0, 5):
@@ -137,9 +150,10 @@ class TestMixin:
         )
 
         cls.paris = helper_create_city(
-            country=cls.country,
+            country=cls.france,
             name_std="Paris",
             location=Point(48.864716, 2.349014),
+            timezone="Europe/Paris",
         )
 
         cls.frankfurt = helper_create_city(
