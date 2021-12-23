@@ -231,6 +231,106 @@ class TestMatches(BaseTest):
         self.assertTrue(Match.objects.filter(source_user=self.user2, target_user=self.user4).exists())
         self.assertTrue(Match.objects.filter(source_user=self.user3, target_user=self.user4).exists())
 
+    def test_edge_case_match_against_home_city_with_partial_trip_between(self):
+        """
+        U1 travels to Paris on 16th.
+        U2 leaves Paris on 17th.
+        U2 returns to Paris on 18th.
+        U1 leaves Paris on the 25th.
+        """
+        Trip.objects.create(
+            city=self.london,
+            user=self.user2,
+            start=dt.date(2021, 10, 17),
+            end=dt.date(2021, 10, 18),
+        )
+
+        trip1 = Trip.objects.create(
+            city=self.paris,
+            user=self.user,
+            start=dt.date(2021, 10, 16),
+            end=dt.date(2021, 10, 25),
+        )
+
+        self.assertEqual(Match.objects.count(), 3)
+
+        self.assertTrue(
+            Match.objects.filter(
+                source_user=self.user,
+                target_user=self.user2,
+                overlap_start=dt.date(2021, 10, 16),
+                overlap_end=dt.date(2021, 10, 17),
+                source_trip=trip1,
+                target_trip=None,
+            ).exists()
+        )
+        self.assertTrue(
+            Match.objects.filter(
+                source_user=self.user,
+                target_user=self.user2,
+                overlap_start=dt.date(2021, 10, 18),
+                overlap_end=dt.date(2021, 10, 25),
+                source_trip=trip1,
+                target_trip=None,
+            ).exists()
+        )
+
+        self.assertTrue(
+            Match.objects.filter(
+                source_user=self.user,
+                target_user=self.user3,
+                overlap_start=dt.date(2021, 10, 16),
+                overlap_end=dt.date(2021, 10, 25),
+                source_trip=trip1,
+                target_trip=None,
+            ).exists()
+        )
+
+    def test_edge_case_match_against_home_city_with_partial_trip_previously_started(self):
+        """
+        U2 leaves Paris on 14th.
+        U1 travels to Paris on 16th.
+        U2 returns to Paris on 19th.
+        U1 leaves Paris on the 25th.
+        """
+        Trip.objects.create(
+            city=self.london,
+            user=self.user2,
+            start=dt.date(2021, 10, 14),
+            end=dt.date(2021, 10, 19),
+        )
+
+        trip1 = Trip.objects.create(
+            city=self.paris,
+            user=self.user,
+            start=dt.date(2021, 10, 16),
+            end=dt.date(2021, 10, 25),
+        )
+
+        self.assertEqual(Match.objects.count(), 2)
+
+        self.assertTrue(
+            Match.objects.filter(
+                source_user=self.user,
+                target_user=self.user2,
+                overlap_start=dt.date(2021, 10, 19),
+                overlap_end=dt.date(2021, 10, 25),
+                source_trip=trip1,
+                target_trip=None,
+            ).exists()
+        )
+
+        self.assertTrue(
+            Match.objects.filter(
+                source_user=self.user,
+                target_user=self.user3,
+                overlap_start=dt.date(2021, 10, 16),
+                overlap_end=dt.date(2021, 10, 25),
+                source_trip=trip1,
+                target_trip=None,
+            ).exists()
+        )
+
     def test_edge_case_match_with_home_city_is_removed_if_trip_is_added(self):
         trip1 = Trip.objects.create(
             city=self.paris,
@@ -250,17 +350,64 @@ class TestMatches(BaseTest):
             ).exists()
         )
 
-        # User2 is actually going on the date range
+        # User2 is actually going on a trip on the date range (therefore there's no longer a match)
         Trip.objects.create(
             city=self.london,
             user=self.user2,
             start=dt.date(2021, 10, 15),
             end=dt.date(2021, 10, 26),
         )
+
         self.assertFalse(
             Match.objects.filter(
                 source_user=self.user,
                 target_user=self.user2,
+            ).exists()
+        )
+
+    def test_edge_case_match_with_home_city_is_updated_if_partially_overlapping_trip_is_added(self):
+        trip1 = Trip.objects.create(
+            city=self.paris,
+            user=self.user,
+            start=dt.date(2021, 10, 16),
+            end=dt.date(2021, 10, 25),
+        )
+        self.assertTrue(
+            Match.objects.filter(
+                source_user=self.user,
+                target_user=self.user2,
+                source_trip=trip1,
+                target_trip=None,
+                overlap_start=dt.date(2021, 10, 16),
+                overlap_end=dt.date(2021, 10, 25),
+                distance=0,
+            ).exists()
+        )
+
+        # User2 goes on a trip in the middle of the previous match
+        Trip.objects.create(
+            city=self.london,
+            user=self.user2,
+            start=dt.date(2021, 10, 18),
+            end=dt.date(2021, 10, 20),
+        )
+
+        self.assertEqual(Match.objects.count(), 3)  # cases below & U3/U1 @ CDG
+
+        self.assertTrue(
+            Match.objects.filter(
+                source_user=self.user,
+                target_user=self.user2,
+                overlap_start=dt.date(2021, 10, 16),
+                overlap_end=dt.date(2021, 10, 18),
+            ).exists()
+        )
+        self.assertTrue(
+            Match.objects.filter(
+                source_user=self.user,
+                target_user=self.user2,
+                overlap_start=dt.date(2021, 10, 20),
+                overlap_end=dt.date(2021, 10, 25),
             ).exists()
         )
 
@@ -279,7 +426,8 @@ class TestMatches(BaseTest):
             start=dt.date(2021, 8, 1),
             end=dt.date(2021, 8, 5),
         )
-        Trip.objects.create(
+
+        U4_STN_trip = Trip.objects.create(
             city=self.cambridge,
             user=self.user4,
             start=dt.date(2021, 11, 3),
@@ -291,7 +439,30 @@ class TestMatches(BaseTest):
             start=dt.date(2021, 4, 3),
             end=dt.date(2021, 4, 5),
         )
-        self.assertEqual(Match.objects.count(), 3)  # user 3 & user; user 4 & user; user 4 & user 3 (EDI)
+
+        self.assertEqual(Match.objects.count(), 3)  # user 3 & user (LHR); plus cases below
+
+        self.assertTrue(
+            Match.objects.filter(
+                source_user=self.user3,  # Home base -> LHR
+                target_user=self.user4,
+                source_trip=None,
+                target_trip=U4_STN_trip,
+                overlap_start=dt.date(2021, 11, 3),
+                overlap_end=dt.date(2021, 11, 4),
+            ).exists()
+        )
+
+        self.assertTrue(
+            Match.objects.filter(
+                source_user=self.user3,
+                target_user=self.user4,  # Home base -> STN
+                source_trip=EDI_trip,
+                target_trip=None,
+                overlap_start=dt.date(2021, 10, 8),
+                overlap_end=dt.date(2021, 10, 10),
+            ).exists()
+        )
 
         self.user3.home_city = self.frankfurt
         self.user3.save()
@@ -321,5 +492,14 @@ class TestMatches(BaseTest):
                 overlap_start=dt.date(2021, 10, 8),
                 overlap_end=dt.date(2021, 10, 10),
                 distance=0,
+            ).exists()
+        )
+
+        # STN trip that previously matched on User's 3 home base @ LHR no longer exists
+        self.assertFalse(
+            Match.objects.filter(
+                source_user=self.user3,  # Home base -> LHR
+                target_user=self.user4,
+                target_trip=U4_STN_trip,
             ).exists()
         )

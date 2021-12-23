@@ -90,15 +90,18 @@ class Trip(CoreModel):
     )
     notes = models.TextField(blank=True)
 
+    # TODO: Validate start <= end always
+
     def compute_matches(self):
 
         insert_statements = []
 
-        # Delete previous matches to your home city in the range of this trip (as you're no longer in your home city)
-        Match.objects.filter(
+        # Delete previous matches to your home city in the range of this trip (given you're no longer in your home city)
+        stale_matches = Match.objects.filter(
             models.Q(source_user=self.user, source_trip=None) | models.Q(target_user=self.user, target_trip=None)
-        ).filter(overlap_start__gt=self.start, overlap_end__lt=self.end).delete()
-        # TODO: Partial matches
+        ).exclude(models.Q(overlap_end__lte=self.start) | models.Q(overlap_start__gte=self.end))
+        trips_to_reprocess = [(match.source_trip, match.target_trip) for match in stale_matches]
+        stale_matches.delete()
 
         # Match trips with other users
         trip_matches = (
@@ -155,20 +158,59 @@ class Trip(CoreModel):
             source_user = user if user.pk < self.user.pk else self.user
             target_user = user if user.pk > self.user.pk else self.user
             trip_qs = {"source_trip": self} if source_user == self.user else {"target_trip": self}
+            match_atts = {
+                "source_user": source_user,
+                "target_user": target_user,
+                "distance": int(user.distance.m),
+                **trip_qs,
+            }
 
             if not Match.objects.filter(source_user=source_user, target_user=target_user, **trip_qs).exists():
-                insert_statements.append(
-                    Match(
-                        source_user=source_user,
-                        target_user=target_user,
-                        distance=int(user.distance.m),
-                        overlap_start=self.start,  # TODO: if you have a trip midway
-                        overlap_end=self.end,
-                        **trip_qs,
-                    )
+                overlap_start = self.start
+                overlap_end = self.end
+
+                # User has an overlapping trip in the middle of this match
+                overlapping_trips = (
+                    Trip.objects.filter(user=user).filter(start__lte=self.end, end__gte=self.start).order_by("start")
                 )
+                if overlapping_trips.exists():
+                    # TODO: Extra extra edge case, you could have multiple overlapping trips
+                    overlapping_trip = overlapping_trips.first()
+
+                    if overlapping_trip.start < self.start:
+                        overlap_start = overlapping_trip.end
+
+                    overlap_end = min(self.end, overlapping_trip.start)
+
+                if overlap_end >= overlap_start:
+                    insert_statements.append(
+                        Match(
+                            **match_atts,
+                            overlap_start=overlap_start,
+                            overlap_end=overlap_end,
+                        )
+                    )
+
+                if overlap_end < self.end:
+                    # If trip still continues but the previous overlap doesn't cover the entire gap, there's still
+                    # another date match
+                    insert_statements.append(
+                        Match(
+                            **match_atts,
+                            overlap_start=overlapping_trip.end,
+                            overlap_end=self.end,
+                        )
+                    )
 
         Match.objects.bulk_create(insert_statements, ignore_conflicts=True)  # If match already exists, ignore
+
+        # Recompute trip matches for stale matches that were deleted
+        for trip1, trip2 in trips_to_reprocess:
+            if trip1:
+                trip1.compute_matches()
+
+            if trip2:
+                trip2.compute_matches()
 
 
 class Match(CoreModel):
@@ -209,3 +251,8 @@ class Match(CoreModel):
             "source_trip",
             "target_trip",
         )
+
+    def __str__(self):
+        return f"Match for: {self.source_user} and {self.target_user} from {self.overlap_start} to {self.overlap_end}"
+
+    # TODO: Validate overlap_start <= overlap_end always
