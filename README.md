@@ -24,6 +24,14 @@ export GDAL_LIBRARY_PATH=/opt/homebrew/lib/libgdal.dylib
 export GEOS_LIBRARY_PATH=/opt/homebrew/lib/libgeos_c.dylib
 ```
 
+**Create database & Role**
+```
+psql
+CREATE DATABASE whereintheworld;
+CREATE USER whereintheworld WITH PASSWORD 'whereintheworld';
+GRANT ALL PRIVILEGES ON DATABASE whereintheworld TO whereintheworld;
+```
+
 **Migrate the database and start the server**
 
 ```

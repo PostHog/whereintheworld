@@ -84,8 +84,8 @@ DATABASES = {
     "default": {
         "ENGINE": "django.contrib.gis.db.backends.postgis",
         "NAME": "whereintheworld",
-        "USER": os.getenv("POSTHOG_DB_USER", "postgres"),
-        "PASSWORD": os.getenv("POSTHOG_DB_PASSWORD", ""),
+        "USER": os.getenv("POSTHOG_DB_USER", "whereintheworld"),
+        "PASSWORD": os.getenv("POSTHOG_DB_PASSWORD", "whereintheworld"),
         "HOST": os.getenv("POSTHOG_POSTGRES_HOST", "localhost"),
         "PORT": "5432",
     }
@@ -154,9 +154,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 100,
     "EXCEPTION_HANDLER": "exceptions_hog.exception_handler",
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication"
-    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": ["rest_framework.authentication.SessionAuthentication"],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
