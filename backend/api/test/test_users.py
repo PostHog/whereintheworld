@@ -63,7 +63,9 @@ class TestUsers(APIBaseTest):
         json_response = response.json()
         self.assertEqual(len(json_response.keys()), len(self.SERIALIZER_ATTRIBUTES))
         self.assertEqual(json_response["home_city"]["name"], "Frankfurt")
-        self.assertEqual(json_response["home_city"]["location"], [50.5069755, 6.3286251])
+        self.assertEqual(
+            json_response["home_city"]["location"], [50.5069755, 6.3286251]
+        )
 
         self.user.refresh_from_db()
         self.assertEqual(self.user.home_city, self.frankfurt)

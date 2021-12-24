@@ -93,7 +93,9 @@ class UserSerializer(BaseSerializer):
 
 
 class UserUpdateSerializer(BaseSerializer):
-    home_city = serializers.SlugRelatedField(slug_field="id", queryset=City.objects.all())
+    home_city = serializers.SlugRelatedField(
+        slug_field="id", queryset=City.objects.all()
+    )
 
     class Meta:
         model = User

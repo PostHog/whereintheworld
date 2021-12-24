@@ -33,7 +33,9 @@ class ErrorResponsesMixin:
         "attr": None,
     }
 
-    def not_found_response(self, message: str = "Not found.") -> Dict[str, Optional[str]]:
+    def not_found_response(
+        self, message: str = "Not found."
+    ) -> Dict[str, Optional[str]]:
         return {
             "type": "invalid_request",
             "code": "not_found",
@@ -100,11 +102,16 @@ class TestMixin:
     def setUpTestData(cls):
         cls.team = Team.objects.create(name=cls.CONFIG_TEAM_NAME)
         cls.user = User.objects.create(
-            team=cls.team, email=cls.CONFIG_EMAIL, password=cls.CONFIG_PASSWORD, first_name="Alice"
+            team=cls.team,
+            email=cls.CONFIG_EMAIL,
+            password=cls.CONFIG_PASSWORD,
+            first_name="Alice",
         )
 
         cls.team2 = Team.objects.create(name="Team 2")
-        cls.team2_user = User.objects.create(team=cls.team2, email="u@team2.posthog.com", password=cls.CONFIG_PASSWORD)
+        cls.team2_user = User.objects.create(
+            team=cls.team2, email="u@team2.posthog.com", password=cls.CONFIG_PASSWORD
+        )
 
         cls.country = Country.objects.create(
             code="US",
@@ -156,7 +163,9 @@ class TestMixin:
             name_std="Paris",
             location=Point(48.864716, 2.349014),
             timezone="Europe/Paris",
-            region=Region.objects.create(name_std="Île-de-France", code="11", country=cls.france),
+            region=Region.objects.create(
+                name_std="Île-de-France", code="11", country=cls.france
+            ),
         )
 
         cls.frankfurt = helper_create_city(

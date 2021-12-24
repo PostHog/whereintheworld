@@ -32,8 +32,12 @@ class BaseModelViewSet(ModelViewSet):
         headers = self.get_success_headers(serializer.data)
 
         # Objects are now returned with the list serializer (to return the full object)
-        serializer = self.serializer_class(serializer.instance, context={"request": request})
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        serializer = self.serializer_class(
+            serializer.instance, context={"request": request}
+        )
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
 
     def update(self, request, *args, **kwargs):
         super().update(request, *args, **kwargs)

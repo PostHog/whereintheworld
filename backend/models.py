@@ -18,7 +18,9 @@ class CoreModel(TimeStampedModel):
 
     PREFIXER = ""
 
-    transactional_id = models.CharField(db_index=True, unique=True, editable=False, max_length=30, default=generate_id)
+    transactional_id = models.CharField(
+        db_index=True, unique=True, editable=False, max_length=30, default=generate_id
+    )
 
     class Meta:
         abstract = True
@@ -47,7 +49,9 @@ class User(CoreModel, AbstractUser):
 
     team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name="users")
     avatar_url = models.CharField(max_length=512, blank=True)
-    home_city = models.ForeignKey(City, on_delete=models.deletion.CASCADE, null=True, blank=True)
+    home_city = models.ForeignKey(
+        City, on_delete=models.deletion.CASCADE, null=True, blank=True
+    )
 
     # AbstractUser overrides
     username = None  # type: ignore
@@ -62,7 +66,8 @@ class User(CoreModel, AbstractUser):
 
         # First remove previous matches to your home city.
         Match.objects.filter(
-            models.Q(source_user=self, source_trip=None) | models.Q(target_user=self, target_trip=None)
+            models.Q(source_user=self, source_trip=None)
+            | models.Q(target_user=self, target_trip=None)
         ).delete()
 
         # Check for trip matches in new location
@@ -103,9 +108,15 @@ class Trip(CoreModel):
 
         # Delete previous matches to your home city in the range of this trip (given you're no longer in your home city)
         stale_matches = Match.objects.filter(
-            models.Q(source_user=self.user, source_trip=None) | models.Q(target_user=self.user, target_trip=None)
-        ).exclude(models.Q(overlap_end__lte=self.start) | models.Q(overlap_start__gte=self.end))
-        trips_to_reprocess = [(match.source_trip, match.target_trip) for match in stale_matches]
+            models.Q(source_user=self.user, source_trip=None)
+            | models.Q(target_user=self.user, target_trip=None)
+        ).exclude(
+            models.Q(overlap_end__lte=self.start)
+            | models.Q(overlap_start__gte=self.end)
+        )
+        trips_to_reprocess = [
+            (match.source_trip, match.target_trip) for match in stale_matches
+        ]
         stale_matches.delete()
 
         # Match trips with other users
@@ -152,7 +163,9 @@ class Trip(CoreModel):
                 ),
             )
             .exclude(
-                pk__in=Trip.objects.filter(start__lte=self.start, end__gte=self.end).values_list("user_id", flat=True)
+                pk__in=Trip.objects.filter(
+                    start__lte=self.start, end__gte=self.end
+                ).values_list("user_id", flat=True)
             )  # exclude if user will be away from home location for the entirety of the trip time
             .exclude(pk=self.user.pk)  # don't match against yourself
             .annotate(distance=Distance("home_city__location", self.city.location))
@@ -162,7 +175,11 @@ class Trip(CoreModel):
         for user in home_city_matches:
             source_user = user if user.pk < self.user.pk else self.user
             target_user = user if user.pk > self.user.pk else self.user
-            trip_qs = {"source_trip": self} if source_user == self.user else {"target_trip": self}
+            trip_qs = (
+                {"source_trip": self}
+                if source_user == self.user
+                else {"target_trip": self}
+            )
             match_atts = {
                 "source_user": source_user,
                 "target_user": target_user,
@@ -170,13 +187,17 @@ class Trip(CoreModel):
                 **trip_qs,
             }
 
-            if not Match.objects.filter(source_user=source_user, target_user=target_user, **trip_qs).exists():
+            if not Match.objects.filter(
+                source_user=source_user, target_user=target_user, **trip_qs
+            ).exists():
                 overlap_start = self.start
                 overlap_end = self.end
 
                 # User has an overlapping trip in the middle of this match
                 overlapping_trips = (
-                    Trip.objects.filter(user=user).filter(start__lte=self.end, end__gte=self.start).order_by("start")
+                    Trip.objects.filter(user=user)
+                    .filter(start__lte=self.end, end__gte=self.start)
+                    .order_by("start")
                 )
                 if overlapping_trips.exists():
                     # TODO: Extra extra edge case, you could have multiple overlapping trips
@@ -207,7 +228,9 @@ class Trip(CoreModel):
                         )
                     )
 
-        Match.objects.bulk_create(insert_statements, ignore_conflicts=True)  # If match already exists, ignore
+        Match.objects.bulk_create(
+            insert_statements, ignore_conflicts=True
+        )  # If match already exists, ignore
 
         # Recompute trip matches for stale matches that were deleted
         for trip1, trip2 in trips_to_reprocess:

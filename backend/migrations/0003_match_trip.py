@@ -19,29 +19,53 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Trip",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 (
                     "created",
-                    django_extensions.db.fields.CreationDateTimeField(auto_now_add=True, verbose_name="created"),
+                    django_extensions.db.fields.CreationDateTimeField(
+                        auto_now_add=True, verbose_name="created"
+                    ),
                 ),
                 (
                     "modified",
-                    django_extensions.db.fields.ModificationDateTimeField(auto_now=True, verbose_name="modified"),
+                    django_extensions.db.fields.ModificationDateTimeField(
+                        auto_now=True, verbose_name="modified"
+                    ),
                 ),
                 (
                     "transactional_id",
                     models.CharField(
-                        db_index=True, default=backend.utils.generate_id, editable=False, max_length=30, unique=True
+                        db_index=True,
+                        default=backend.utils.generate_id,
+                        editable=False,
+                        max_length=30,
+                        unique=True,
                     ),
                 ),
                 ("start", models.DateField()),
                 ("end", models.DateField()),
                 ("notes", models.TextField(blank=True)),
-                ("city", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.CITIES_CITY_MODEL)),
+                (
+                    "city",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.CITIES_CITY_MODEL,
+                    ),
+                ),
                 (
                     "user",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, related_name="trips", to=settings.AUTH_USER_MODEL
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="trips",
+                        to=settings.AUTH_USER_MODEL,
                     ),
                 ),
             ],
@@ -52,19 +76,35 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Match",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 (
                     "created",
-                    django_extensions.db.fields.CreationDateTimeField(auto_now_add=True, verbose_name="created"),
+                    django_extensions.db.fields.CreationDateTimeField(
+                        auto_now_add=True, verbose_name="created"
+                    ),
                 ),
                 (
                     "modified",
-                    django_extensions.db.fields.ModificationDateTimeField(auto_now=True, verbose_name="modified"),
+                    django_extensions.db.fields.ModificationDateTimeField(
+                        auto_now=True, verbose_name="modified"
+                    ),
                 ),
                 (
                     "transactional_id",
                     models.CharField(
-                        db_index=True, default=backend.utils.generate_id, editable=False, max_length=30, unique=True
+                        db_index=True,
+                        default=backend.utils.generate_id,
+                        editable=False,
+                        max_length=30,
+                        unique=True,
                     ),
                 ),
                 ("distance", models.IntegerField(blank=True, default=None, null=True)),
