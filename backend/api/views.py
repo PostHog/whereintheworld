@@ -1,17 +1,18 @@
+from typing import ClassVar, Optional
+
 from cities.models import City
-from rest_framework import filters, status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import filters, serializers, status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from backend.api.serializers import CitySerializer
+from backend.api.serializers import CitySerializer, UserSerializer, UserUpdateSerializer
+from backend.models import User
 
 
 class BaseModelViewSet(ModelViewSet):
 
-    permission_classes = (IsAuthenticated,)
     lookup_field = "transactional_id"
-    write_serializer = None
+    write_serializer: ClassVar[Optional[serializers.Serializer]] = None
 
     def get_serializer_class(self):
         """
@@ -43,7 +44,7 @@ class BaseModelViewSet(ModelViewSet):
         return Response(serializer.data)
 
 
-class CityViewSet(ModelViewSet):
+class CityViewSet(BaseModelViewSet):
     """
     List and retrieve and delete cities.
     """
@@ -54,3 +55,20 @@ class CityViewSet(ModelViewSet):
 
     def get_queryset(self):
         return City.objects.order_by("population", "name_std")
+
+
+class UserViewSet(BaseModelViewSet):
+    """
+    List and update current user.
+    """
+
+    serializer_class = UserSerializer
+    write_serializer = UserUpdateSerializer
+
+    def get_queryset(self):
+        return User.objects.none()
+
+    def get_object(self):
+        if self.kwargs.get("me"):
+            return self.request.user
+        return super().get_object()

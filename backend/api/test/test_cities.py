@@ -1,4 +1,4 @@
-from rest_framework import filters, status
+from rest_framework import status
 
 from backend.test.base import APIBaseTest
 
@@ -21,6 +21,8 @@ class TestCities(APIBaseTest):
                 self.assertEqual(item["country"]["code3"], "FRA")
                 self.assertEqual(item["country"]["name"], "France")
                 self.assertEqual(item["country"]["tld"], "fr")
+                self.assertEqual(item["region"]["name"], "Île-de-France")
+                self.assertEqual(item["region"]["code"], "11")
                 self.assertEqual(item["location"], [48.864716, 2.349014])
                 self.assertEqual(item["kind"], "PPL")
 

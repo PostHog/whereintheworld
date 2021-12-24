@@ -1,6 +1,6 @@
 from typing import Dict, Optional
 
-from cities.models import City, Country
+from cities.models import City, Country, Region
 from django.contrib.gis.geos import Point
 from django.test import TestCase
 from faker import Faker
@@ -99,7 +99,9 @@ class TestMixin:
     @classmethod
     def setUpTestData(cls):
         cls.team = Team.objects.create(name=cls.CONFIG_TEAM_NAME)
-        cls.user = User.objects.create(team=cls.team, email=cls.CONFIG_EMAIL, password=cls.CONFIG_PASSWORD)
+        cls.user = User.objects.create(
+            team=cls.team, email=cls.CONFIG_EMAIL, password=cls.CONFIG_PASSWORD, first_name="Alice"
+        )
 
         cls.team2 = Team.objects.create(name="Team 2")
         cls.team2_user = User.objects.create(team=cls.team2, email="u@team2.posthog.com", password=cls.CONFIG_PASSWORD)
@@ -154,6 +156,7 @@ class TestMixin:
             name_std="Paris",
             location=Point(48.864716, 2.349014),
             timezone="Europe/Paris",
+            region=Region.objects.create(name_std="Île-de-France", code="11", country=cls.france),
         )
 
         cls.frankfurt = helper_create_city(
