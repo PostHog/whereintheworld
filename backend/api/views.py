@@ -5,8 +5,15 @@ from rest_framework import filters, serializers, status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from backend.api.serializers import CitySerializer, UserSerializer, UserUpdateSerializer
-from backend.models import User
+from backend.api.permissions import YourTripsOnlyPermission
+from backend.api.serializers import (
+    CitySerializer,
+    TripCreateSerializer,
+    TripSerializer,
+    UserSerializer,
+    UserUpdateSerializer,
+)
+from backend.models import Trip, User
 
 
 class BaseModelViewSet(ModelViewSet):
@@ -63,7 +70,7 @@ class CityViewSet(BaseModelViewSet):
 
 class UserViewSet(BaseModelViewSet):
     """
-    List and update current user.
+    Retrieve and update current user.
     """
 
     serializer_class = UserSerializer
@@ -76,3 +83,28 @@ class UserViewSet(BaseModelViewSet):
         if self.kwargs.get("me"):
             return self.request.user
         return super().get_object()
+
+
+class TripViewSet(BaseModelViewSet):
+    """
+    List, retrieve, create and delete trips.
+    """
+
+    serializer_class = TripSerializer
+    write_serializer = TripCreateSerializer
+
+    def get_queryset(self):
+        me = self.request.query_params.get("me")
+        queryset = Trip.objects.filter(user__team=self.request.user.team).order_by(
+            "start"
+        )
+
+        if me:
+            queryset = queryset.filter(user=self.request.user)
+
+        return queryset
+
+    def get_permissions(self):
+        if self.request.method == "DELETE":
+            return [*super().get_permissions(), YourTripsOnlyPermission()]
+        return super().get_permissions()

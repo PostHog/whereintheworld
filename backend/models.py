@@ -58,6 +58,7 @@ class User(CoreModel, AbstractUser):
     groups = None  # type: ignore
     user_permissions = None  # type: ignore
     email = models.EmailField(unique=True)
+    password = models.CharField("password", max_length=128, blank=True)
 
     class Meta:
         swappable = "AUTH_USER_MODEL"

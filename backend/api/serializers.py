@@ -3,7 +3,7 @@ from typing import Tuple
 from cities.models import City, Country, Region
 from rest_framework import serializers
 
-from backend.models import User
+from backend.models import Trip, User
 
 
 class BaseSerializer(serializers.ModelSerializer):
@@ -78,8 +78,8 @@ class CitySerializer(ReadOnlySerializer):
         return instance.location.coords
 
 
-class UserSerializer(BaseSerializer):
-    home_city = CitySerializer(many=False)
+class UserSerializer(ReadOnlySerializer):
+    home_city = CitySerializer(many=False, read_only=True)
 
     class Meta:
         model = User
@@ -104,3 +104,44 @@ class UserUpdateSerializer(BaseSerializer):
             "avatar_url",
             "home_city",
         )
+
+
+class TripSerializer(ReadOnlySerializer):
+    city = CitySerializer(many=False, read_only=True)
+    user = UserSerializer(many=False, read_only=True)
+
+    class Meta:
+        model = Trip
+        fields = (
+            "id",
+            "city",
+            "start",
+            "end",
+            "user",
+            "notes",  # TODO: only available for your trips
+        )
+
+
+class TripCreateSerializer(BaseSerializer):
+    city = serializers.SlugRelatedField(slug_field="id", queryset=City.objects.all())
+
+    class Meta:
+        model = Trip
+        fields = (
+            "city",
+            "start",
+            "end",
+            "notes",
+        )
+
+    def validate(self, attrs):
+        if attrs["start"] > attrs["end"]:
+            raise serializers.ValidationError(
+                {"end": "Must be before start."}, code="invalid_date_range"
+            )
+        return attrs
+
+    def create(self, validated_data):
+        assert "request" in self.context, "`request` must be passed in context"
+        validated_data["user"] = self.context["request"].user
+        return super().create(validated_data)
