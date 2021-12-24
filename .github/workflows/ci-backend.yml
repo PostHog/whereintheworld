@@ -36,8 +36,9 @@ jobs:
                   python-version: 3.9
             - name: Install OS dependencies
               run: |
+                  sudo add-apt-repository -y ppa:ubuntugis/ppa
                   sudo apt-get update
-                  sudo apt-get install python-gdal
+                  sudo apt-get install gdal-bin python3-gdal
             - name: Install Python dependencies
               run: pip install -r requirements-test.txt && pip install -r requirements.txt
             - name: Tests
