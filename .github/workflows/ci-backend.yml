@@ -1,31 +1,40 @@
 name: CI
 
 on:
-  - pull_request
+    - pull_request
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
-      - name: Install dependencies
-        run: pip install -r requirements-test.txt && pip install -r requirements.txt
-      - name: Lint
-        run: python runtests.py --lint-only
+    lint:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - name: Set up Python 3.9
+              uses: actions/setup-python@v2
+              with:
+                  python-version: 3.9
+            - name: Install dependencies
+              run: pip install -r requirements-test.txt && pip install -r requirements.txt
+            - name: Lint
+              run: python runtests.py --lint-only
 
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
-      - name: Install dependencies
-        run: pip install -r requirements-test.txt && pip install -r requirements.txt
-      - name: Tests
-        run: python runtests.py --no-lint
+    test:
+        runs-on: ubuntu-latest
+        services:
+            postgres:
+                image: postgis/postgis:14-master
+                env:
+                    POSTGRES_USER: postgres
+                    POSTGRES_PASSWORD:
+                    POSTGRES_DB: whereintheworld
+                ports: ['5432:5432']
+                options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+        steps:
+            - uses: actions/checkout@v2
+            - name: Set up Python 3.9
+              uses: actions/setup-python@v2
+              with:
+                  python-version: 3.9
+            - name: Install dependencies
+              run: pip install -r requirements-test.txt && pip install -r requirements.txt
+            - name: Tests
+              run: python runtests.py --no-lint
