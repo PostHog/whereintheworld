@@ -178,8 +178,10 @@ CITIES_FILES = {
 # Social Django
 # https://python-social-auth.readthedocs.io/en/latest/configuration/django.html
 SOCIAL_AUTH_JSONFIELD_ENABLED = True
+SOCIAL_AUTH_USER_MODEL = "backend.User"
 SOCIAL_AUTH_STRATEGY = "social_django.strategy.DjangoStrategy"
 SOCIAL_AUTH_STORAGE = "social_django.models.DjangoStorage"
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = "/api/users/me"
 SOCIAL_AUTH_PIPELINE = (
     "social_core.pipeline.social_auth.social_details",
     "social_core.pipeline.social_auth.social_uid",

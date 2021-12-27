@@ -1,4 +1,4 @@
-from typing import ClassVar, Optional
+from typing import Any, ClassVar, Dict, Optional
 
 from cities.models import City
 from django.db import models
@@ -88,10 +88,9 @@ class UserViewSet(BaseModelViewSet):
 
 
 @partial
-def social_create_user(strategy: DjangoStrategy, details, backend, request, user=None, *args, **kwargs):
-    import ipdb
-
-    ipdb.set_trace()
+def social_create_user(
+    strategy: DjangoStrategy, details, backend, request, user=None, *args, **kwargs
+) -> Dict[str, Any]:
     if user:
         return {"is_new": False}
 
@@ -120,7 +119,10 @@ def social_create_user(strategy: DjangoStrategy, details, backend, request, user
 
     # TODO: whereintheworld is intended for internal use only just yet, multitenancy NOT YET supported
     # team must be assigned based on email's TLD.
-    user = User.objects.create(email=email, first_name=name, team=Team.objects.first(), avatar_url=avatar_url)
+    return {
+        "is_new": True,
+        "user": User.objects.create(email=email, first_name=name, team=Team.objects.first(), avatar_url=avatar_url),
+    }
 
 
 class TripViewSet(BaseModelViewSet):
