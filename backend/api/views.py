@@ -172,7 +172,7 @@ class MatchViewSet(BaseModelViewSet):
         return Match.objects.filter(source_user__team=self.request.user.team).order_by("overlap_start")
 
 
-class JWTGenerateView(GenericAPIView):
+class JWTIssueView(GenericAPIView):
     def get(self, request, *args, **kwargs):
         """
         Issues a new JWT based on an existing session (i.e. mainly after social auth)

@@ -36,8 +36,7 @@ class TestUsers(APIBaseTest):
     def test_cant_see_users_if_unauthenticated(self):
         self.client.logout()
         response = self.client.get("/api/users/me")
-        # TODO: Will be fixed when using real auth (401)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(response.json(), self.unauthenticated_response())
 
     def test_can_update_home_location(self):

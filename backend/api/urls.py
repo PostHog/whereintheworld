@@ -7,7 +7,7 @@ from rest_framework_jwt.views import obtain_jwt_token, verify_jwt_token
 
 from backend.api import converters
 
-from .views import CityViewSet, JWTGenerateView, MatchViewSet, TripViewSet, UserViewSet
+from .views import CityViewSet, JWTIssueView, MatchViewSet, TripViewSet, UserViewSet
 
 register_converter(converters.TransactionalIDConverter, "id")
 
@@ -40,7 +40,7 @@ urlpatterns: List[Any] = [
         name="match",
     ),
     # JWT routes
-    path("api/jwt/issue", JWTGenerateView.as_view(), name="jwt_generate"),
+    path("api/jwt/issue", JWTIssueView.as_view(), name="jwt_generate"),
     url(r"^api/jwt$", obtain_jwt_token, name="auth_login"),
     url(r"^api/jwt/verify$", verify_jwt_token, name="auth_verify"),
     path(
