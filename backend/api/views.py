@@ -4,8 +4,11 @@ from cities.models import City
 from django.db import models
 from django.utils import timezone
 from rest_framework import filters, permissions, serializers, status
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from social_core.pipeline.partial import partial
+from social_django.strategy import DjangoStrategy
 
 from backend.api.permissions import YourMatchesOnlyPermission, YourTripsOnlyPermission
 from backend.api.serializers import (
@@ -16,7 +19,7 @@ from backend.api.serializers import (
     UserSerializer,
     UserUpdateSerializer,
 )
-from backend.models import Match, Trip, User
+from backend.models import Match, Team, Trip, User
 
 
 class BaseModelViewSet(ModelViewSet):
@@ -82,6 +85,42 @@ class UserViewSet(BaseModelViewSet):
         if self.kwargs.get("me"):
             return self.request.user
         return super().get_object()
+
+
+@partial
+def social_create_user(strategy: DjangoStrategy, details, backend, request, user=None, *args, **kwargs):
+    import ipdb
+
+    ipdb.set_trace()
+    if user:
+        return {"is_new": False}
+
+    email = details["email"][0] if isinstance(details["email"], (list, tuple)) else details["email"]
+    name = (
+        details["fullname"]
+        or f"{details['first_name'] or ''} {details['last_name'] or ''}".strip()
+        or details["username"]
+    )
+    avatar_url = ""
+
+    try:
+        # TODO: Copy avatar & save locally to avoid extra request
+        avatar_url = kwargs["response"]["picture"]
+    except KeyError:
+        pass
+
+    strategy.session_set("user_name", name)
+    strategy.session_set("backend", backend.name)
+
+    if not email or not name:
+        missing_attr = "email" if not email else "name"
+        raise ValidationError(
+            {missing_attr: "This field is required and was not provided by the IdP."}, code="required"
+        )
+
+    # TODO: whereintheworld is intended for internal use only just yet, multitenancy NOT YET supported
+    # team must be assigned based on email's TLD.
+    user = User.objects.create(email=email, first_name=name, team=Team.objects.first(), avatar_url=avatar_url)
 
 
 class TripViewSet(BaseModelViewSet):

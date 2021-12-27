@@ -3,8 +3,9 @@
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.2/topics/http/urls/
 """
+
 from django.contrib import admin
-from django.urls import path, re_path
+from django.urls import include, path, re_path
 from rest_framework import decorators, exceptions
 
 from .api.urls import urlpatterns as api_url_patterns
@@ -20,5 +21,6 @@ def api_not_found(request):
 urlpatterns = [
     path("admin/", admin.site.urls),
     *api_url_patterns,
+    path("", include("social_django.urls", namespace="social")),
     re_path(r"^api.+", api_not_found),
 ]
