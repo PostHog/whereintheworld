@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import datetime as dt
 import os
 from pathlib import Path
 from typing import List
@@ -44,12 +45,14 @@ INSTALLED_APPS = [
     "rest_framework",
     "cities",
     "social_django",
+    "rest_framework_jwt.blacklist",
     "backend.apps.WhereInTheWorldConfig",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -156,10 +159,24 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 100,
     "EXCEPTION_HANDLER": "exceptions_hog.exception_handler",
-    "DEFAULT_AUTHENTICATION_CLASSES": ["rest_framework.authentication.SessionAuthentication"],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_jwt.authentication.JSONWebTokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
+}
+
+# JWT Authentication
+# https://styria-digital.github.io/django-rest-framework-jwt/#additional-settings
+
+JWT_AUTH = {
+    "JWT_ALLOW_REFRESH": False,
+    "JWT_DELETE_STALE_BLACKLISTED_TOKENS": True,
+    "JWT_EXPIRATION_DELTA": dt.timedelta(days=60),
+    "JWT_PAYLOAD_HANDLER": "backend.api.handlers.jwt_payload_handler",
+    "JWT_PAYLOAD_GET_USERNAME_HANDLER": "backend.api.handlers.jwt_get_username_from_payload_handler",
 }
 
 

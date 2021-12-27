@@ -1,6 +1,7 @@
 from typing import Dict, Optional
 
 from cities.models import City, Country, Region
+from django.contrib.auth import get_user_model
 from django.contrib.gis.geos import Point
 from django.test import TestCase
 from faker import Faker
@@ -102,9 +103,10 @@ class TestMixin:
         cls.user = User.objects.create(
             team=cls.team,
             email=cls.CONFIG_EMAIL,
-            password=cls.CONFIG_PASSWORD,
             first_name="Alice",
         )
+        cls.user.set_password(cls.CONFIG_PASSWORD)
+        cls.user.save()
 
         cls.team2 = Team.objects.create(name="Team 2")
         cls.team2_user = User.objects.create(team=cls.team2, email="u@team2.posthog.com", password=cls.CONFIG_PASSWORD)
@@ -170,6 +172,23 @@ class TestMixin:
 
     def create_city(self, **kwargs):
         return helper_create_city(country=self.country, **kwargs)
+
+    def validate_close_date(self, date1, date2, tolerance=1.5):
+        """
+        Returns a :bool of whether two dates are close to each other,
+        up to the tolerance (in seconds)
+        """
+        if abs((date2 - date1).total_seconds()) < tolerance:
+            return True
+        return False
+
+    def auth(self, login, password=CONFIG_PASSWORD):
+
+        email = login.email if isinstance(login, get_user_model()) else login
+
+        response = self.client.post("/api/jwt", {"email": email, "password": password})
+
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + response.data["token"])
 
 
 class BaseTest(TestMixin, ErrorResponsesMixin, TestCase):
