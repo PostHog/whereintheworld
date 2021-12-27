@@ -191,9 +191,15 @@ class TestSocialAuthentication(APIBaseTest):
         url += f"?code=2&state={response.client.session['google-oauth2_state']}"
         mock_request.return_value.json.return_value = MOCK_SOCIAL_RESPONSE
 
-        with self.settings(SOCIAL_AUTH_GOOGLE_OAUTH2_KEY="google.key", SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET="secret"):
-            response = self.client.get(url, follow=True)
+        response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, status.HTTP_200_OK)  # because follow=True
+
+        # Test the newly issued token
+        self.assertEqual(response.request["PATH_INFO"], "/")
+        token = response.request["QUERY_STRING"][4:]
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + token)
+        response = self.client.get("/api/users/me")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         # TODO: Pass & check JWT
 
         self.assertEqual(User.objects.count(), count + 1)

@@ -1,5 +1,10 @@
 import secrets
 import string
+from typing import Dict
+
+from django.http.request import HttpRequest
+from django.http.response import HttpResponse
+from django.template.loader import get_template
 
 
 def random_secret(length=10, chars=string.ascii_uppercase + string.ascii_lowercase + string.digits):
@@ -21,3 +26,12 @@ def generate_id(prefixer="???", length=24):
     assert 2 <= len(prefixer) <= 5, "prefixer must be between 3 and 5 characters"
 
     return f"{prefixer}_{random_secret(length)}"
+
+
+def render_template(template_name: str, request: HttpRequest, context: Dict = {}) -> HttpResponse:
+    """
+    Sets any backend context and renders frontend.
+    """
+    template = get_template(template_name)
+    html = template.render(context, request=request)
+    return HttpResponse(html)
