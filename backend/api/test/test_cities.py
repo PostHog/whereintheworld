@@ -33,7 +33,5 @@ class TestCities(APIBaseTest):
         json_response = response.json()
         self.assertEqual(json_response["count"], 1)
         self.assertEqual(json_response["results"][0]["name"], "London")
-        self.assertEqual(
-            json_response["results"][0]["location"], [51.509865, -0.118092]
-        )
+        self.assertEqual(json_response["results"][0]["location"], [51.509865, -0.118092])
         self.assertEqual(json_response["results"][0]["country"]["code"], "US")

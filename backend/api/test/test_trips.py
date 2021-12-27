@@ -57,9 +57,8 @@ class TestTrips(APIBaseTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         json_response = response.json()
         self.assertEqual(json_response["count"], 3)
-        self.assertEqual(
-            len(json_response["results"][0].keys()), len(self.SERIALIZER_ATTRIBUTES)
-        )
+        self.assertEqual(len(json_response["results"][0].keys()), len(self.SERIALIZER_ATTRIBUTES))
+        self.assertRegexpMatches(json_response["results"][0]["id"], r"^trip_[A-Za-z0-9]{24}$")
         self.assertEqual(json_response["results"][0]["user"]["first_name"], "Alice")
         self.assertEqual(json_response["results"][0]["city"]["name"], "Paris")
         self.assertEqual(json_response["results"][0]["start"], "2021-09-01")
@@ -71,9 +70,7 @@ class TestTrips(APIBaseTest):
         json_response = response.json()
 
         self.assertEqual(json_response["count"], 1)
-        self.assertEqual(
-            len(json_response["results"][0].keys()), len(self.SERIALIZER_ATTRIBUTES)
-        )
+        self.assertEqual(len(json_response["results"][0].keys()), len(self.SERIALIZER_ATTRIBUTES))
         self.assertEqual(json_response["results"][0]["user"]["first_name"], "Alice")
 
     def test_can_retrieve_trip(self):
@@ -179,9 +176,7 @@ class TestTrips(APIBaseTest):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(
             response.json(),
-            self.permission_denied_response(
-                "You cannot modify or delete someone else's trip."
-            ),
+            self.permission_denied_response("You cannot modify or delete someone else's trip."),
         )
         self.trip2.refresh_from_db()
 

@@ -4,7 +4,7 @@ from django.urls import path, register_converter
 
 from backend.api import converters
 
-from .views import CityViewSet, TripViewSet, UserViewSet
+from .views import CityViewSet, MatchViewSet, TripViewSet, UserViewSet
 
 register_converter(converters.TransactionalIDConverter, "id")
 
@@ -25,5 +25,15 @@ urlpatterns: List[Any] = [
         "api/trips/<id:transactional_id>",
         TripViewSet.as_view({"get": "retrieve", "delete": "destroy"}),
         name="trip",
+    ),
+    path(
+        "api/matches",
+        MatchViewSet.as_view({"get": "list"}),
+        name="matches",
+    ),
+    path(
+        "api/matches/<id:transactional_id>",
+        MatchViewSet.as_view({"get": "retrieve"}),
+        name="match",
     ),
 ]

@@ -1,19 +1,22 @@
 from typing import ClassVar, Optional
 
 from cities.models import City
-from rest_framework import filters, serializers, status
+from django.db import models
+from django.utils import timezone
+from rest_framework import filters, permissions, serializers, status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from backend.api.permissions import YourTripsOnlyPermission
+from backend.api.permissions import YourMatchesOnlyPermission, YourTripsOnlyPermission
 from backend.api.serializers import (
     CitySerializer,
+    MatchSerializer,
     TripCreateSerializer,
     TripSerializer,
     UserSerializer,
     UserUpdateSerializer,
 )
-from backend.models import Trip, User
+from backend.models import Match, Trip, User
 
 
 class BaseModelViewSet(ModelViewSet):
@@ -39,12 +42,8 @@ class BaseModelViewSet(ModelViewSet):
         headers = self.get_success_headers(serializer.data)
 
         # Objects are now returned with the list serializer (to return the full object)
-        serializer = self.serializer_class(
-            serializer.instance, context={"request": request}
-        )
-        return Response(
-            serializer.data, status=status.HTTP_201_CREATED, headers=headers
-        )
+        serializer = self.serializer_class(serializer.instance, context={"request": request})
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def update(self, request, *args, **kwargs):
         super().update(request, *args, **kwargs)
@@ -95,9 +94,7 @@ class TripViewSet(BaseModelViewSet):
 
     def get_queryset(self):
         me = self.request.query_params.get("me")
-        queryset = Trip.objects.filter(user__team=self.request.user.team).order_by(
-            "start"
-        )
+        queryset = Trip.objects.filter(user__team=self.request.user.team).order_by("start")
 
         if me:
             queryset = queryset.filter(user=self.request.user)
@@ -108,3 +105,24 @@ class TripViewSet(BaseModelViewSet):
         if self.request.method == "DELETE":
             return [*super().get_permissions(), YourTripsOnlyPermission()]
         return super().get_permissions()
+
+
+class MatchViewSet(BaseModelViewSet):
+    """
+    List and retrieve matches.
+    """
+
+    serializer_class = MatchSerializer
+    permission_classes = [permissions.IsAuthenticated, YourMatchesOnlyPermission]
+
+    def get_queryset(self):
+        if self.action == "list":
+            return (
+                Match.objects.filter(models.Q(source_user=self.request.user) | models.Q(target_user=self.request.user))
+                .filter(overlap_end__gte=timezone.now())
+                .order_by("overlap_start")
+            )
+
+        # When retrieving we can fetch all matches for the user's team so a proper 403
+        # response is returned if applicable
+        return Match.objects.filter(source_user__team=self.request.user.team).order_by("overlap_start")

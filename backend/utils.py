@@ -2,9 +2,7 @@ import secrets
 import string
 
 
-def random_secret(
-    length=10, chars=string.ascii_uppercase + string.ascii_lowercase + string.digits
-):
+def random_secret(length=10, chars=string.ascii_uppercase + string.ascii_lowercase + string.digits):
     return "".join(secrets.choice(chars) for _ in range(length))
 
 

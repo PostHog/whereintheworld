@@ -41,9 +41,7 @@ class TestMatches(BaseTest):
             target_user = self.user2 if i == 0 else self.user3
             self.assertEqual(match.source_user, self.user)
             self.assertEqual(match.target_user, target_user)
-            self.assertEqual(
-                match.source_trip, trip
-            )  # Trip for first user is always the source_match
+            self.assertEqual(match.source_trip, trip)  # Trip for first user is always the source_match
             self.assertEqual(match.target_trip, None)
             self.assertEqual(match.overlap_start, dt.date(2021, 9, 1))
             self.assertEqual(match.overlap_end, dt.date(2021, 9, 5))
@@ -120,9 +118,7 @@ class TestMatches(BaseTest):
         for match in Match.objects.all():
             self.assertEqual(match.source_user, self.user)
             self.assertIn(match.target_user, [self.user2, self.user3])
-            self.assertEqual(
-                match.source_trip, trip
-            )  # Trip for first user is always the source_match
+            self.assertEqual(match.source_trip, trip)  # Trip for first user is always the source_match
             self.assertEqual(match.target_trip, None)
             self.assertEqual(match.overlap_start, dt.date(2021, 9, 1))
             self.assertEqual(match.overlap_end, dt.date(2021, 9, 1))
@@ -235,25 +231,11 @@ class TestMatches(BaseTest):
         trip2.compute_matches()
 
         self.assertEqual(Match.objects.count(), 5)
-        self.assertTrue(
-            Match.objects.filter(source_user=self.user, target_user=self.user2).exists()
-        )
-        self.assertTrue(
-            Match.objects.filter(source_user=self.user, target_user=self.user3).exists()
-        )
-        self.assertTrue(
-            Match.objects.filter(source_user=self.user, target_user=self.user4).exists()
-        )
-        self.assertTrue(
-            Match.objects.filter(
-                source_user=self.user2, target_user=self.user4
-            ).exists()
-        )
-        self.assertTrue(
-            Match.objects.filter(
-                source_user=self.user3, target_user=self.user4
-            ).exists()
-        )
+        self.assertTrue(Match.objects.filter(source_user=self.user, target_user=self.user2).exists())
+        self.assertTrue(Match.objects.filter(source_user=self.user, target_user=self.user3).exists())
+        self.assertTrue(Match.objects.filter(source_user=self.user, target_user=self.user4).exists())
+        self.assertTrue(Match.objects.filter(source_user=self.user2, target_user=self.user4).exists())
+        self.assertTrue(Match.objects.filter(source_user=self.user3, target_user=self.user4).exists())
 
     def test_edge_case_match_against_home_city_with_partial_trip_between(self):
         """
@@ -468,9 +450,7 @@ class TestMatches(BaseTest):
             end=dt.date(2021, 4, 5),
         )
 
-        self.assertEqual(
-            Match.objects.count(), 3
-        )  # user 3 & user (LHR); plus cases below
+        self.assertEqual(Match.objects.count(), 3)  # user 3 & user (LHR); plus cases below
 
         self.assertTrue(
             Match.objects.filter(
