@@ -1,0 +1,9 @@
+black==21.12b0
+Faker
+flake8
+isort
+ipdb
+mypy
+pytest
+pytest-django
+types-pytz==2021.3.3
