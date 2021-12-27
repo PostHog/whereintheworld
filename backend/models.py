@@ -168,7 +168,6 @@ class Trip(CoreModel):
                 "source_user": source_user,
                 "target_user": target_user,
                 "distance": int(user.distance.m),
-                "transactional_id": generate_id(Match.PREFIXER),
                 **trip_qs,
             }
 
@@ -195,6 +194,7 @@ class Trip(CoreModel):
                             **match_atts,
                             overlap_start=overlap_start,
                             overlap_end=overlap_end,
+                            transactional_id=generate_id(Match.PREFIXER),
                         )
                     )
 
@@ -206,6 +206,7 @@ class Trip(CoreModel):
                             **match_atts,
                             overlap_start=overlapping_trip.end,
                             overlap_end=self.end,
+                            transactional_id=generate_id(Match.PREFIXER),
                         )
                     )
 

@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.gis",
     "django_extensions",
     "rest_framework",
+    "corsheaders",
     "cities",
     "social_django",
     "rest_framework_jwt.blacklist",
@@ -186,6 +187,12 @@ REST_FRAMEWORK = {
     ],
 }
 
+# CORS
+# https://github.com/adamchainz/django-cors-headers
+
+CORS_ALLOW_ALL_ORIGINS = True  # TODO: Allow granular CORS controls
+
+
 # JWT Authentication
 # https://styria-digital.github.io/django-rest-framework-jwt/#additional-settings
 
@@ -212,6 +219,7 @@ CITIES_FILES = {
 
 # Social Django
 # https://python-social-auth.readthedocs.io/en/latest/configuration/django.html
+
 SOCIAL_AUTH_JSONFIELD_ENABLED = True
 SOCIAL_AUTH_USER_MODEL = "backend.User"
 SOCIAL_AUTH_STRATEGY = "social_django.strategy.DjangoStrategy"
