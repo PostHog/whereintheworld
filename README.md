@@ -41,15 +41,14 @@ python manage.py cities --import=all
 python manage.py runserver
 ```
 
-The server is now running at [`http://localhost:3001/`](http://localhost:3001/).
+The server is now running at [`http://localhost:8000/`](http://localhost:8000/).
 
 ### 3. Start the frontend
 
-The code for the Next.js app is located in the [`frontend`](./frontend) directory. Once you launched the server, you can start it as follows:
+The code for the frontend is located in the [`src`](./src) directory. Once you launched the server, you can start it as follows:
 
 ```
-cd ../frontend
-yarn install
+yarn
 yarn start
 ```
 
