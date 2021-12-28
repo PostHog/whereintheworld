@@ -1,12 +1,72 @@
 {
-  "name": "whereintheworld",
-  "version": "1.0.0",
-  "main": "index.js",
-  "repository": "git@github.com:PostHog/whereintheworld.git",
-  "author": "Tim Glaser <tim@glsr.nl>",
-  "license": "MIT",
-  "scripts": {
-      "heroku-prebuild": "cd frontend && npm install && npm run build && npm run export && mv out public && cd ../backend && npm install"
-  }
-
+    "name": "whereintheworld",
+    "version": "0.0.0",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/posthog/whereintheworld.git"
+    },
+    "private": true,
+    "dependencies": {
+        "@fortawesome/fontawesome-svg-core": "^1.2.36",
+        "@fortawesome/free-solid-svg-icons": "^5.15.4",
+        "@fortawesome/react-fontawesome": "^0.1.15",
+        "@testing-library/jest-dom": "^5.14.1",
+        "@testing-library/react": "^12.0.0",
+        "@testing-library/user-event": "^13.2.1",
+        "@types/google-map-react": "^2.1.3",
+        "@types/jest": "^27.0.1",
+        "@types/node": "^16.7.13",
+        "@types/react": "^17.0.20",
+        "@types/react-dom": "^17.0.9",
+        "@wojtekmaj/react-daterange-picker": "^3.3.0",
+        "clsx": "^1.1.1",
+        "concurrently": "^6.2.1",
+        "dayjs": "^1.10.6",
+        "google-map-react": "^2.1.10",
+        "kea": "^2.4.7",
+        "kea-loaders": "^0.4.0",
+        "kea-typegen": "^1.1.5",
+        "next": "11.1.2",
+        "prettier": "^2.3.2",
+        "rc-slider": "^9.7.2",
+        "react": "^17.0.2",
+        "react-dom": "^17.0.2",
+        "react-flagkit": "^2.0.4",
+        "react-markdown": "5.0.0",
+        "react-redux": "^7.2.4",
+        "react-scripts": "5.0.0",
+        "react-select": "^4.3.1",
+        "redux": "^4.1.1",
+        "reselect": "^4.0.0",
+        "sass": "^1.45.1",
+        "ts-node": "10.2.1",
+        "typescript": "^4.4.2",
+        "web-vitals": "^2.1.0"
+    },
+    "scripts": {
+        "start": "concurrently \"yarn start:app\" \"kea-typegen watch\" -n APP,KEA -c blue,green",
+        "start:app": "react-scripts start",
+        "build": "react-scripts build",
+        "test": "react-scripts test",
+        "eject": "react-scripts eject",
+        "typegen:write": "kea-typegen write"
+    },
+    "eslintConfig": {
+        "extends": [
+            "react-app",
+            "react-app/jest"
+        ]
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    }
 }
