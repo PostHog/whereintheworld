@@ -1,0 +1,6 @@
+{
+    "tsConfigPath": "./tsconfig.json",
+    "rootPath": "./src",
+    "typesPath": "./src",
+    "writePaths": true
+}
