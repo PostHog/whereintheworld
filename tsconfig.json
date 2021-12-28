@@ -4,6 +4,7 @@
         "paths": {
             "lib/*": ["./lib/*"],
             "scenes/*": ["./scenes/*"],
+            "logics/*": ["./logics/*"],
             "~/*": ["./*"],
             "public/*": ["./public/*"]
         },

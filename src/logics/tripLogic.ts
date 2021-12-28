@@ -1,5 +1,5 @@
 import { kea } from 'kea'
-import { API } from '../pages/_app'
+import { API } from 'const'
 import { TripType } from '../types'
 import { tripLogicType } from './tripLogicType'
 import { userLogic } from './userLogic'
@@ -10,7 +10,7 @@ export const tripLogic = kea<tripLogicType<TripPayload>>({
     actions: {
         setOpenTripId: (tripId: number | null | 'new') => ({ tripId }),
         toggleTripView: true,
-        clearSavedtrip: true
+        clearSavedtrip: true,
     },
     reducers: {
         openTripId: [
@@ -45,7 +45,7 @@ export const tripLogic = kea<tripLogicType<TripPayload>>({
                 deleteTrip: async () => {
                     await fetch(`${API}/trips/${values.openTripId}`, {
                         method: 'DELETE',
-                        credentials: 'include'
+                        credentials: 'include',
                     })
                     actions.loadTrips()
                     userLogic.actions.loadUsers()
@@ -57,7 +57,7 @@ export const tripLogic = kea<tripLogicType<TripPayload>>({
             [] as TripType[],
             {
                 loadTrips: async () => {
-                    const response = await (await fetch(`${API}/trips`, {'credentials': 'include'})).json()
+                    const response = await (await fetch(`${API}/trips`, { credentials: 'include' })).json()
                     return response as TripType[]
                 },
             },

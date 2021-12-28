@@ -1,23 +1,28 @@
 import React, { useState } from 'react'
 import { useActions, useValues } from 'kea'
-import { tripLogic } from '../logics/tripLogic'
+import { tripLogic } from 'logics/tripLogic'
 import { Button } from './Button'
+// @ts-ignore
 import AsyncSelect from 'react-select/async'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash, faTimes } from '@fortawesome/free-solid-svg-icons'
+// @ts-ignore
 import DateRangePicker from '@wojtekmaj/react-daterange-picker/dist/entry.nostyle'
 import clsx from 'clsx'
-import { CityType } from '../types'
-import { API } from '../pages/_app'
+import { CityType } from 'types'
 import Flag from 'react-flagkit'
-import { formatCity } from '../utils'
+import { formatCity } from 'utils'
 import dayjs from 'dayjs'
+import { API } from 'const'
 
 export function TripView(): JSX.Element {
     const { saveTrip, deleteTrip } = useActions(tripLogic)
     const { openTripId } = useValues(tripLogic)
     const [destSearch, setDestSearch] = useState('')
-    const [formValues, setFormValues] = useState({ dates: [new Date(), new Date()], destination: null })
+    const [formValues, setFormValues] = useState({
+        dates: [new Date(), new Date()],
+        destination: null as null | number,
+    })
     const [formState, setFormState] = useState('untouched' as 'untouched' | 'submitted')
 
     const handleDestSearch = (newValue: string) => {
@@ -42,8 +47,9 @@ export function TripView(): JSX.Element {
     }
 
     // TODO: This should be debounced
-    const loadCities = async (searchString, callback) => {
-        const response = await (await fetch(`${API}/cities?name=${searchString}`, {'credentials': 'include'})).json()
+    // TODO: Type properly
+    const loadCities = async (searchString: string, callback: (response: any) => void) => {
+        const response = await (await fetch(`${API}/cities?name=${searchString}`, { credentials: 'include' })).json()
         callback(response)
     }
 
@@ -91,7 +97,7 @@ export function TripView(): JSX.Element {
                             disableCalendar={false}
                             value={formValues.dates}
                             clearIcon={<FontAwesomeIcon icon={faTimes} className="text-muted" />}
-                            onChange={(newValue) => setFormValues({ ...formValues, dates: newValue })}
+                            onChange={(newValue: Date[]) => setFormValues({ ...formValues, dates: newValue })}
                             rangeDivider="&nbsp;to&nbsp;"
                             format="d MMM y"
                             yearPlaceholder="YY"

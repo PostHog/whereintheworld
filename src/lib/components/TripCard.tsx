@@ -2,13 +2,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEdit } from '@fortawesome/free-solid-svg-icons'
 import React from 'react'
 import Flag from 'react-flagkit'
-import { TripType } from '../types'
+import { TripType } from 'types'
 import clsx from 'clsx'
 import { Button } from './Button'
-import { formatCity } from '../utils'
+import { formatCity } from 'utils'
 import dayjs from 'dayjs'
 import { useActions } from 'kea'
-import { tripLogic } from '../logics/tripLogic'
+import { tripLogic } from 'logics/tripLogic'
 
 export function TripCard({ trip }: { trip: TripType }): JSX.Element {
     const highlightMatches = !!trip.matches?.length

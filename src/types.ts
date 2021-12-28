@@ -32,7 +32,7 @@ export interface UserType {
     id: number
     fullName: string
     email: string
-    avatar: string | null
+    avatar: string
     cityId: number
     location: LocationType
 }

@@ -5,11 +5,11 @@ import { LocationAvatar } from './LocationAvatar'
 import { TripCard } from './TripCard'
 import { Button } from './Button'
 import { useActions, useValues } from 'kea'
-import { tripLogic } from '../logics/tripLogic'
+import { tripLogic } from 'logics/tripLogic'
 import { useEffect } from 'react'
 import { useRef } from 'react'
-import { userLogic } from '../logics/userLogic'
-import { formatCity } from '../utils'
+import { userLogic } from 'logics/userLogic'
+import { formatCity } from 'utils'
 import dayjs from 'dayjs'
 
 export function MainOverlay(): JSX.Element {
@@ -30,7 +30,9 @@ export function MainOverlay(): JSX.Element {
             <div className="header">
                 <h1>Where in the world</h1>
                 <div className="today">
-                    <h2>{dayjs(currentDate).isSame(dayjs(), 'day') ? 'Today' : dayjs(currentDate).format('YYYY-MM-DD')}</h2>
+                    <h2>
+                        {dayjs(currentDate).isSame(dayjs(), 'day') ? 'Today' : dayjs(currentDate).format('YYYY-MM-DD')}
+                    </h2>
                     <div className="away-today">
                         {users.length === 0 && 'No one is on a trip.'}
                         {users.map((user) => {

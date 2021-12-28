@@ -4,17 +4,7 @@ import 'styles.scss'
 import reportWebVitals from './reportWebVitals'
 import { resetContext, Provider } from 'kea'
 import { loadersPlugin } from 'kea-loaders'
-
-let hostname = 'http://localhost:8000'
-if (typeof window !== 'undefined') {
-    if (window.location.origin.indexOf('localhost') > -1) {
-        hostname = 'http://localhost:8000'
-    } else {
-        hostname = window.location.origin
-    }
-}
-
-export const API = hostname
+import { Home } from 'scenes/Home'
 
 resetContext({
     createStore: {
@@ -25,7 +15,9 @@ resetContext({
 
 ReactDOM.render(
     <React.StrictMode>
-        <Provider>Hello there!</Provider>
+        <Provider>
+            <Home />
+        </Provider>
     </React.StrictMode>,
     document.getElementById('root')
 )
