@@ -4,7 +4,7 @@
 
 The code for the server is located in the [`backend`](./backend) directory.
 
-**Install dependencies**
+### 1. Install dependencies**
 
 1. Install [Postgres.app](https://postgresapp.com/) and follow the [instructions](https://postgresapp.com/documentation/install.html) to add it to your path.
 
@@ -24,7 +24,8 @@ export GDAL_LIBRARY_PATH=/opt/homebrew/lib/libgdal.dylib
 export GEOS_LIBRARY_PATH=/opt/homebrew/lib/libgeos_c.dylib
 ```
 
-**Create database & Role**
+### 2. Create database and start backend
+
 ```
 psql
 CREATE DATABASE whereintheworld;
@@ -42,7 +43,7 @@ python manage.py runserver
 
 The server is now running at [`http://localhost:3001/`](http://localhost:3001/).
 
-### 3. Start the app (frontend)
+### 3. Start the frontend
 
 The code for the Next.js app is located in the [`frontend`](./frontend) directory. Once you launched the server, you can start it as follows:
 
