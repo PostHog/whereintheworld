@@ -1,10 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import 'styles.scss'
 import reportWebVitals from './reportWebVitals'
 import { resetContext, Provider } from 'kea'
 import { loadersPlugin } from 'kea-loaders'
-import { Home } from 'scenes/Home'
+import { App } from './App'
 
 resetContext({
     createStore: {
@@ -16,7 +15,7 @@ resetContext({
 ReactDOM.render(
     <React.StrictMode>
         <Provider>
-            <Home />
+            <App />
         </Provider>
     </React.StrictMode>,
     document.getElementById('root')

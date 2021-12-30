@@ -1,4 +1,9 @@
-// TODO
+export interface PaginatedResponse<T> {
+    results: T[]
+    next?: string
+    previous?: string
+}
+
 export interface TripType {
     id: number
     cityId: number
