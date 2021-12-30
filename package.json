@@ -45,9 +45,9 @@
     },
     "scripts": {
         "start": "concurrently \"yarn start:app\" \"kea-typegen watch\" -n APP,KEA -c blue,green",
-        "start:app": "react-scripts start",
-        "build": "react-scripts build",
-        "test": "react-scripts test",
+        "start:app": "react-app-rewired start",
+        "build": "react-app-rewired build",
+        "test": "react-app-rewired test",
         "eject": "react-scripts eject",
         "typegen:write": "kea-typegen write"
     },
@@ -68,5 +68,9 @@
             "last 1 firefox version",
             "last 1 safari version"
         ]
+    },
+    "devDependencies": {
+        "install": "^0.13.0",
+        "react-app-rewired": "^2.1.10"
     }
 }
