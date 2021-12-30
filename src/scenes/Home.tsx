@@ -15,7 +15,7 @@ import { userLogic } from 'logics/userLogic'
 }
 
 export function Home(): JSX.Element {
-    const { openTripId } = useValues(tripLogic)
+    const { openTrip } = useValues(tripLogic)
     const { users } = useValues(userLogic)
     const defaultProps = {
         center: {
@@ -29,7 +29,7 @@ export function Home(): JSX.Element {
             <WhoAmI />
             <MainOverlay />
             <TimeTravel />
-            <div className={clsx('trip-view-wrapper', { hidden: !openTripId })}>{openTripId && <TripView />}</div>
+            <div className={clsx('trip-view-wrapper', { hidden: !openTrip })}>{openTrip && <TripView />}</div>
 
             <GoogleMapReact
                 bootstrapURLKeys={{

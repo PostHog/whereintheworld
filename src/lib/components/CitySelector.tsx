@@ -7,8 +7,14 @@ import AsyncSelect from 'react-select/async'
 import { CityType, PaginatedResponse } from '~/types'
 import { formatCity } from 'utils'
 
-export function CitySelector(): JSX.Element {
+interface CitySelectorProps {
+    onValueSelect: (city: CityType | null) => void
+    errored?: boolean
+}
+
+export function CitySelector({ onValueSelect, errored }: CitySelectorProps): JSX.Element {
     // TODO: Can we do this seamlessly with Kea?
+    // TODO: Debounce
     const loadCities = async (searchQuery: string, callback: (response: CityType[]) => void) => {
         const response = (await api.get(
             `/cities${searchQuery ? `?search=${encodeURIComponent(searchQuery)}` : ''}`
@@ -22,9 +28,7 @@ export function CitySelector(): JSX.Element {
             cacheOptions
             loadOptions={loadCities}
             defaultOptions
-            // onInputChange={handleDestSearch}
-            // inputValue={destSearch}
-            //onChange={(newOption: CityType) => setFormValues({ ...formValues, destination: newOption?.id || null })}
+            onChange={onValueSelect}
             getOptionLabel={(option: CityType) => {
                 const cityName = formatCity(option)
                 return (
@@ -35,7 +39,7 @@ export function CitySelector(): JSX.Element {
                 )
             }}
             getOptionValue={(option: CityType) => option.id}
-            className={clsx({ 'react-select__errored': false })}
+            className={clsx({ 'react-select__errored': errored })}
             classNamePrefix="react-select"
             escapeClearsValue
             isClearable

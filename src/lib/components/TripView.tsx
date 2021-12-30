@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import { useActions, useValues } from 'kea'
+import { useActions } from 'kea'
 import { tripLogic } from 'logics/tripLogic'
 import { Button } from './Button'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrash, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
 // @ts-ignore
 import DateRangePicker from '@wojtekmaj/react-daterange-picker/dist/entry.nostyle'
 import clsx from 'clsx'
@@ -11,11 +11,10 @@ import dayjs from 'dayjs'
 import { CitySelector } from './CitySelector'
 
 export function TripView(): JSX.Element {
-    const { saveTrip, deleteTrip } = useActions(tripLogic)
-    const { openTripId } = useValues(tripLogic)
+    const { createTrip } = useActions(tripLogic)
     const [formValues, setFormValues] = useState({
         dates: [new Date(), new Date()],
-        destination: null as null | number,
+        city: null as null | number,
     })
 
     const [formState, setFormState] = useState('untouched' as 'untouched' | 'submitted')
@@ -23,28 +22,31 @@ export function TripView(): JSX.Element {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         setFormState('submitted')
-        if (formValues.destination && formValues.dates[0] && formValues.dates[1]) {
-            saveTrip({
-                city: formValues.destination,
+        if (formValues.city && formValues.dates[0] && formValues.dates[1]) {
+            createTrip({
+                city: formValues.city,
                 start: dayjs(formValues.dates[0]).format('YYYY-MM-DD'),
                 end: dayjs(formValues.dates[1]).format('YYYY-MM-DD'),
             })
         }
     }
 
-    const destErrored = formState === 'submitted' && !formValues.destination
+    const destErrored = formState === 'submitted' && !formValues.city
     const datesErrored =
         formState === 'submitted' && (!formValues.dates?.length || !formValues.dates[0] || !formValues.dates[1])
 
     return (
         <div className="trip-view">
-            <h2>{openTripId === 'new' ? 'New' : 'Manage'} trip</h2>
+            <h2>New trip</h2>
 
             <form style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }} onSubmit={handleSubmit}>
                 <div style={{ flexGrow: 1 }}>
                     <div className="form-group">
                         <label htmlFor="destination">Destination</label>
-                        <CitySelector />
+                        <CitySelector
+                            onValueSelect={(city) => setFormValues({ ...formValues, city: city?.id ?? null })}
+                            errored={destErrored}
+                        />
                         {destErrored && <div className="help-text text-danger">This field is required.</div>}
                     </div>
                     <div className="form-group">
@@ -67,19 +69,6 @@ export function TripView(): JSX.Element {
                     </div>
                 </div>
                 <div className="mt flex-center">
-                    <div style={{ flexGrow: 1 }}>
-                        {openTripId !== 'new' && (
-                            <Button
-                                styling="link"
-                                style={{ color: 'var(--danger)' }}
-                                type="button"
-                                onClick={deleteTrip}
-                            >
-                                <FontAwesomeIcon icon={faTrash} /> Delete trip
-                            </Button>
-                        )}
-                    </div>
-
                     <Button type="submit" size="lg">
                         Save
                     </Button>

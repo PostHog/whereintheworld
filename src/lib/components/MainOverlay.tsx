@@ -6,7 +6,6 @@ import { TripCard } from './TripCard'
 import { Button } from './Button'
 import { useActions, useValues } from 'kea'
 import { tripLogic } from 'logics/tripLogic'
-import { useEffect } from 'react'
 import { useRef } from 'react'
 import { userLogic } from 'logics/userLogic'
 import dayjs from 'dayjs'
@@ -14,18 +13,11 @@ import { authLogic } from 'logics/authLogic'
 import { formatCity } from 'utils'
 
 export function MainOverlay(): JSX.Element {
-    const { toggleTripView, clearSavedtrip } = useActions(tripLogic)
-    const { savedTrip, trips } = useValues(tripLogic)
+    const { toggleOpenTrip } = useActions(tripLogic)
+    const { trips } = useValues(tripLogic)
     const tripListRef = useRef<HTMLDivElement>(null)
     const { users, currentDate } = useValues(userLogic)
     const { user } = useValues(authLogic)
-
-    useEffect(() => {
-        if (savedTrip) {
-            tripListRef.current?.scrollTo({ behavior: 'smooth', top: tripListRef.current.scrollHeight })
-            clearSavedtrip()
-        }
-    }, [savedTrip])
 
     return (
         <div className="main-overlay">
@@ -57,7 +49,7 @@ export function MainOverlay(): JSX.Element {
                 <div className="trips" ref={tripListRef}>
                     <div className="flex-center">
                         <h2 style={{ flexGrow: 1 }}>My Trips</h2>
-                        <Button onClick={toggleTripView}>
+                        <Button onClick={toggleOpenTrip}>
                             <FontAwesomeIcon icon={faPlusCircle} /> Add a trip
                         </Button>
                     </div>

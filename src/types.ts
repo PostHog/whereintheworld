@@ -5,7 +5,7 @@ export interface PaginatedResponse<T> {
 }
 
 export interface TripType {
-    id: number
+    id: string
     start: string
     end: string
     city: CityType

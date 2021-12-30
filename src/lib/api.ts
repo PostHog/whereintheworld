@@ -19,6 +19,21 @@ const normalize_url = (url: string): string => {
     return url
 }
 
+export function getCookie(name: string): string | null {
+    let cookieValue: string | null = null
+    if (document.cookie && document.cookie !== '') {
+        for (let cookie of document.cookie.split(';')) {
+            cookie = cookie.trim()
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === name + '=') {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
+                break
+            }
+        }
+    }
+    return cookieValue
+}
+
 const api = {
     async get(url: string, signal?: AbortSignal): Promise<any> {
         url = normalize_url(url)
@@ -45,7 +60,9 @@ const api = {
         const response = await fetch(url, {
             method: 'PATCH',
             headers: {
-                ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+                ...(isFormData
+                    ? {}
+                    : { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') || '' }),
             },
             body: isFormData ? data : JSON.stringify(data),
         })
@@ -68,7 +85,9 @@ const api = {
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+                ...(isFormData
+                    ? {}
+                    : { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') || '' }),
             },
             body: data ? (isFormData ? data : JSON.stringify(data)) : undefined,
         })
@@ -91,6 +110,7 @@ const api = {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken') || '',
             },
         })
 

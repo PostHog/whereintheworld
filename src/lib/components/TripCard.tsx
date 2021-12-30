@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEdit } from '@fortawesome/free-solid-svg-icons'
+import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import React from 'react'
 import Flag from 'react-flagkit'
 import { TripType } from 'types'
@@ -12,16 +12,20 @@ import { tripLogic } from 'logics/tripLogic'
 
 export function TripCard({ trip }: { trip: TripType }): JSX.Element {
     const highlightMatches = false
-    const { setOpenTripId } = useActions(tripLogic)
+    const { deleteTrip } = useActions(tripLogic)
 
     return (
         <div className={clsx('trip-card', { highlighted: highlightMatches })}>
-            <div className="trip-card-inner" onClick={() => setOpenTripId(trip.id)}>
+            <div className="trip-card-inner">
                 <div className="trip-card-header">
                     <div>
                         {dayjs(trip.start).format('MMM DD')} - {dayjs(trip.end).format('MMM DD')}
                     </div>
-                    <FontAwesomeIcon icon={faEdit} style={{ color: '#B3C2F2' }} />
+                    <FontAwesomeIcon
+                        icon={faTrash}
+                        style={{ color: 'var(--danger)', cursor: 'pointer' }}
+                        onClick={() => deleteTrip({ id: trip.id })}
+                    />
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', paddingTop: 8 }}>
                     <Flag
