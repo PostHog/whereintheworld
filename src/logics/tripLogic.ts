@@ -4,7 +4,9 @@ import { TripType } from '../types'
 import { tripLogicType } from './tripLogicType'
 import { userLogic } from './userLogic'
 
-type TripPayload = Pick<TripType, 'cityId' | 'start' | 'end'>
+interface TripPayload extends Pick<TripType, 'start' | 'end'> {
+    city: number
+}
 
 export const tripLogic = kea<tripLogicType<TripPayload>>({
     actions: {

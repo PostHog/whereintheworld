@@ -4,14 +4,14 @@ import React from 'react'
 import Flag from 'react-flagkit'
 import { TripType } from 'types'
 import clsx from 'clsx'
-import { Button } from './Button'
+// import { Button } from './Button'
 import { formatCity } from 'utils'
 import dayjs from 'dayjs'
 import { useActions } from 'kea'
 import { tripLogic } from 'logics/tripLogic'
 
 export function TripCard({ trip }: { trip: TripType }): JSX.Element {
-    const highlightMatches = !!trip.matches?.length
+    const highlightMatches = false
     const { setOpenTripId } = useActions(tripLogic)
 
     return (
@@ -25,14 +25,14 @@ export function TripCard({ trip }: { trip: TripType }): JSX.Element {
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', paddingTop: 8 }}>
                     <Flag
-                        country={trip.City.country_code}
+                        country={trip.city.country.code}
                         size={28}
                         style={{ borderRadius: '50%', objectFit: 'cover', marginRight: 8 }}
                     />
-                    <b>{formatCity(trip.City)}</b>
+                    <b>{formatCity(trip.city)}</b>
                 </div>
             </div>
-            {highlightMatches && (
+            {/* {highlightMatches && (
                 <div className="highlighter">
                     <img
                         className="avatar-highlight"
@@ -43,7 +43,7 @@ export function TripCard({ trip }: { trip: TripType }): JSX.Element {
                         Contact
                     </Button>
                 </div>
-            )}
+            )} */}
         </div>
     )
 }

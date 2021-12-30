@@ -5,6 +5,7 @@ import { Avatar } from './Avatar'
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
 import { useValues } from 'kea'
 import { authLogic } from 'logics/authLogic'
+import { formatCity } from 'utils'
 
 export function WhoAmI(): JSX.Element | null {
     const { user } = useValues(authLogic)
@@ -16,17 +17,15 @@ export function WhoAmI(): JSX.Element | null {
     return (
         <div className="whoami">
             <div>
-                <Avatar icon={<Flag country="ES" size={10} />} avatarUrl={user?.avatar} />
+                <Avatar icon={<Flag country={user.home_city.country.code} size={10} />} avatarUrl={user.avatar_url} />
             </div>
             <div>
                 {user.first_name}
-                {/* {user.location && (
+                {user.home_city && (
                     <div className="text-muted" style={{ fontSize: '0.75em' }}>
-                        <b>
-                            {profile.location.name}, {profile.location.country_code}
-                        </b>
+                        <b>{formatCity(user.home_city)}</b>
                     </div>
-                )} */}
+                )}
             </div>
             <div style={{ marginLeft: 16, color: 'var(--primary)' }}>
                 <a href="/logout">

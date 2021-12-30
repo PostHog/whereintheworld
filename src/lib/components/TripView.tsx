@@ -39,7 +39,7 @@ export function TripView(): JSX.Element {
         setFormState('submitted')
         if (formValues.destination && formValues.dates[0] && formValues.dates[1]) {
             saveTrip({
-                cityId: formValues.destination,
+                city: formValues.destination,
                 start: dayjs(formValues.dates[0]).format('YYYY-MM-DD'),
                 end: dayjs(formValues.dates[1]).format('YYYY-MM-DD'),
             })
@@ -77,7 +77,7 @@ export function TripView(): JSX.Element {
                             }
                             getOptionLabel={(option: CityType) => (
                                 <>
-                                    <Flag size={12} country={option.country_code} style={{ marginRight: 4 }} />
+                                    <Flag size={12} country={option.country.code} style={{ marginRight: 4 }} />
                                     {formatCity(option)}
                                 </>
                             )}

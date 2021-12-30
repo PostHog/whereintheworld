@@ -1,7 +1,7 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faThumbtack, faPlusCircle } from '@fortawesome/free-solid-svg-icons'
-import { LocationAvatar } from './LocationAvatar'
+// import { LocationAvatar } from './LocationAvatar'
 import { TripCard } from './TripCard'
 import { Button } from './Button'
 import { useActions, useValues } from 'kea'
@@ -9,14 +9,16 @@ import { tripLogic } from 'logics/tripLogic'
 import { useEffect } from 'react'
 import { useRef } from 'react'
 import { userLogic } from 'logics/userLogic'
-import { formatCity } from 'utils'
 import dayjs from 'dayjs'
+import { authLogic } from 'logics/authLogic'
+import { formatCity } from 'utils'
 
 export function MainOverlay(): JSX.Element {
     const { toggleTripView, clearSavedtrip } = useActions(tripLogic)
     const { savedTrip, trips } = useValues(tripLogic)
     const tripListRef = useRef<HTMLDivElement>(null)
     const { users, currentDate } = useValues(userLogic)
+    const { user } = useValues(authLogic)
 
     useEffect(() => {
         if (savedTrip) {
@@ -35,7 +37,7 @@ export function MainOverlay(): JSX.Element {
                     </h2>
                     <div className="away-today">
                         {users.length === 0 && 'No one is on a trip.'}
-                        {users.map((user) => {
+                        {/* {users.map((user) => {
                             if (user.location.isHome) {
                                 return null
                             }
@@ -47,7 +49,7 @@ export function MainOverlay(): JSX.Element {
                                     locationText={formatCity(user.location)}
                                 />
                             )
-                        })}
+                        })} */}
                     </div>
                 </div>
             </div>
@@ -70,7 +72,7 @@ export function MainOverlay(): JSX.Element {
                     Home Location
                     <div>
                         <FontAwesomeIcon icon={faThumbtack} />
-                        <b style={{ paddingLeft: 4 }}>Tartu, EE</b>
+                        <b style={{ paddingLeft: 4 }}>{formatCity(user.home_city)}</b>
                     </div>
                 </div>
             </div>

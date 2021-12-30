@@ -6,7 +6,7 @@ import type { authLogicType } from './authLogicType'
 export const authLogic = kea<authLogicType>({
     loaders: {
         user: [
-            null as UserType | null,
+            {} as UserType,
             {
                 loadUser: async () => await api.get('/users/me'),
             },

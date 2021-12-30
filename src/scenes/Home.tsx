@@ -10,6 +10,10 @@ import { WhoAmI } from 'lib/components/WhoAmI'
 import { TimeTravel } from 'lib/components/TimeTravel'
 import { userLogic } from 'logics/userLogic'
 
+{
+    /* TODO: Handle no home_city properly */
+}
+
 export function Home(): JSX.Element {
     const { openTripId } = useValues(tripLogic)
     const { users } = useValues(userLogic)
@@ -42,10 +46,11 @@ export function Home(): JSX.Element {
             >
                 {users.map((user) => (
                     <MapPin
-                        lat={user.location.latitude}
-                        lng={user.location.longitude}
-                        avatarUrl={(user.avatar || '').replace('_1024.', '_72.')} // try loading a smaller image if from slack
-                        travelState={user.location.isHome ? 'home' : 'away'}
+                        lat={user.home_city.location[0]}
+                        lng={user.home_city.location[1]}
+                        avatarUrl={(user.avatar_url || '').replace('_1024.', '_72.')} // try loading a smaller image if from slack
+                        travelState="home"
+                        //travelState={user.location.isHome ? 'home' : 'away'}
                         key={user.id}
                     />
                 ))}
