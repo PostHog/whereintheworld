@@ -45,11 +45,11 @@ export const tripLogic = kea<tripLogicType<TripPayload>>({
                 },
             },
         ],
-        trips: [
+        myTrips: [
             [] as TripType[],
             {
                 loadTrips: async () => {
-                    const response = await api.get('trips')
+                    const response = await api.get('trips?me=true')
                     return response.results as TripType[]
                 },
             },

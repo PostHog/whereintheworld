@@ -14,7 +14,7 @@ import { formatCity } from 'utils'
 
 export function MainOverlay(): JSX.Element {
     const { toggleOpenTrip } = useActions(tripLogic)
-    const { trips } = useValues(tripLogic)
+    const { myTrips } = useValues(tripLogic)
     const tripListRef = useRef<HTMLDivElement>(null)
     const { users, currentDate } = useValues(userLogic)
     const { user } = useValues(authLogic)
@@ -53,8 +53,8 @@ export function MainOverlay(): JSX.Element {
                             <FontAwesomeIcon icon={faPlusCircle} /> Add a trip
                         </Button>
                     </div>
-                    {trips.length === 0 && "You don't have any upcoming trips."}
-                    {trips.map((trip) => (
+                    {myTrips.length === 0 && "You don't have any upcoming trips."}
+                    {myTrips.map((trip) => (
                         <React.Fragment key={trip.id}>
                             <TripCard trip={trip} />
                         </React.Fragment>
