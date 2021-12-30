@@ -23,6 +23,8 @@ export const userLogic = kea<userLogicType>({
             [] as UserType[],
             {
                 loadUsers: async (date: string = '') => {
+                    // TODO
+                    return []
                     const parsedDate = dayjs(date || new Date()).format('YYYY-MM-DD')
                     if (cache[parsedDate]) {
                         return cache[parsedDate]

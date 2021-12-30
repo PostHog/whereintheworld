@@ -31,7 +31,7 @@ export function Home(): JSX.Element {
                 bootstrapURLKeys={{
                     key:
                         (typeof window !== 'undefined' &&
-                            window.location.origin === 'https://whereintheworld.posthog.com' &&
+                            window.location.origin === 'http://localhost:8000' &&
                             'AIzaSyDOV1fvZoiOUskMxIYF8sSBNgVhoCNzxsk') ||
                         '',
                 }}

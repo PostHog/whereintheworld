@@ -57,6 +57,8 @@ export const tripLogic = kea<tripLogicType<TripPayload>>({
             [] as TripType[],
             {
                 loadTrips: async () => {
+                    // TODO
+                    return []
                     const response = await (await fetch(`${API}/trips`, { credentials: 'include' })).json()
                     return response as TripType[]
                 },
