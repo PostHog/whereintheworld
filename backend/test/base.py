@@ -1,7 +1,6 @@
 from typing import Dict, Optional
 
 from cities.models import City, Country, Region
-from django.contrib.auth import get_user_model
 from django.contrib.gis.geos import Point
 from django.test import TestCase
 from faker import Faker
@@ -181,14 +180,6 @@ class TestMixin:
         if abs((date2 - date1).total_seconds()) < tolerance:
             return True
         return False
-
-    def auth(self, login, password=CONFIG_PASSWORD):
-
-        email = login.email if isinstance(login, get_user_model()) else login
-
-        response = self.client.post("/api/jwt", {"email": email, "password": password})
-
-        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + response.data["token"])
 
 
 class BaseTest(TestMixin, ErrorResponsesMixin, TestCase):

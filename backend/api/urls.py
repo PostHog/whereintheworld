@@ -1,13 +1,10 @@
 from typing import Any, List
 
-from django.conf.urls import url
 from django.urls import path, register_converter
-from rest_framework_jwt.blacklist.views import BlacklistView
-from rest_framework_jwt.views import obtain_jwt_token, verify_jwt_token
 
 from backend.api import converters
 
-from .views import CityViewSet, JWTIssueView, MatchViewSet, TripViewSet, UserViewSet
+from .views import CityViewSet, MatchViewSet, TripViewSet, UserViewSet
 
 register_converter(converters.TransactionalIDConverter, "id")
 
@@ -38,14 +35,5 @@ urlpatterns: List[Any] = [
         "api/matches/<id:transactional_id>",
         MatchViewSet.as_view({"get": "retrieve"}),
         name="match",
-    ),
-    # JWT routes
-    path("api/jwt/issue", JWTIssueView.as_view(), name="jwt_generate"),
-    url(r"^api/jwt$", obtain_jwt_token, name="auth_login"),
-    url(r"^api/jwt/verify$", verify_jwt_token, name="auth_verify"),
-    path(
-        "api/jwt/logout",
-        view=BlacklistView.as_view({"post": "create"}),
-        name="auth_logout",
     ),
 ]

@@ -2,14 +2,11 @@ from typing import Any, ClassVar, Dict, Optional
 
 from cities.models import City
 from django.db import models
-from django.shortcuts import redirect
 from django.utils import timezone
 from rest_framework import filters, permissions, serializers, status
 from rest_framework.exceptions import ValidationError
-from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from social_core.pipeline.partial import partial
 from social_django.strategy import DjangoStrategy
 
@@ -170,13 +167,3 @@ class MatchViewSet(BaseModelViewSet):
         # When retrieving we can fetch all matches for the user's team so a proper 403
         # response is returned if applicable
         return Match.objects.filter(source_user__team=self.request.user.team).order_by("overlap_start")
-
-
-class JWTIssueView(GenericAPIView):
-    def get(self, request, *args, **kwargs):
-        """
-        Issues a new JWT based on an existing session (i.e. mainly after social auth)
-        """
-        payload = JSONWebTokenAuthentication.jwt_create_payload(request.user)
-        token = JSONWebTokenAuthentication.jwt_encode_payload(payload)
-        return redirect(f"/?jwt={token}")
