@@ -72,7 +72,7 @@ export function MainOverlay(): JSX.Element {
                     Home Location
                     <div>
                         <FontAwesomeIcon icon={faThumbtack} />
-                        <b style={{ paddingLeft: 4 }}>{formatCity(user.home_city)}</b>
+                        <b style={{ paddingLeft: 4 }}>{user?.home_city ? formatCity(user.home_city) : 'The World'}</b>
                     </div>
                 </div>
             </div>

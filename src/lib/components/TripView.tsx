@@ -2,37 +2,23 @@ import React, { useState } from 'react'
 import { useActions, useValues } from 'kea'
 import { tripLogic } from 'logics/tripLogic'
 import { Button } from './Button'
-// @ts-ignore
-import AsyncSelect from 'react-select/async'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash, faTimes } from '@fortawesome/free-solid-svg-icons'
 // @ts-ignore
 import DateRangePicker from '@wojtekmaj/react-daterange-picker/dist/entry.nostyle'
 import clsx from 'clsx'
-import { CityType } from 'types'
-import Flag from 'react-flagkit'
-import { formatCity } from 'utils'
 import dayjs from 'dayjs'
-import { API } from 'const'
+import { CitySelector } from './CitySelector'
 
 export function TripView(): JSX.Element {
     const { saveTrip, deleteTrip } = useActions(tripLogic)
     const { openTripId } = useValues(tripLogic)
-    const [destSearch, setDestSearch] = useState('')
     const [formValues, setFormValues] = useState({
         dates: [new Date(), new Date()],
         destination: null as null | number,
     })
-    const [formState, setFormState] = useState('untouched' as 'untouched' | 'submitted')
 
-    const handleDestSearch = (newValue: string) => {
-        const inputValue = newValue.replace(
-            /[^a-zA-z 0-9àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛãñõÃÑÕäëïöüÿÄËÏÖÜŸçÇßØøÅåÆæœ]/g,
-            ''
-        )
-        setDestSearch(inputValue)
-        return inputValue
-    }
+    const [formState, setFormState] = useState('untouched' as 'untouched' | 'submitted')
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
@@ -44,13 +30,6 @@ export function TripView(): JSX.Element {
                 end: dayjs(formValues.dates[1]).format('YYYY-MM-DD'),
             })
         }
-    }
-
-    // TODO: This should be debounced
-    // TODO: Type properly
-    const loadCities = async (searchString: string, callback: (response: any) => void) => {
-        const response = await (await fetch(`${API}/cities?name=${searchString}`, { credentials: 'include' })).json()
-        callback(response)
     }
 
     const destErrored = formState === 'submitted' && !formValues.destination
@@ -65,28 +44,7 @@ export function TripView(): JSX.Element {
                 <div style={{ flexGrow: 1 }}>
                     <div className="form-group">
                         <label htmlFor="destination">Destination</label>
-                        <AsyncSelect
-                            name="destination"
-                            //cacheOptions
-                            loadOptions={loadCities}
-                            defaultOptions
-                            onInputChange={handleDestSearch}
-                            inputValue={destSearch}
-                            onChange={(newOption: CityType) =>
-                                setFormValues({ ...formValues, destination: newOption?.id || null })
-                            }
-                            getOptionLabel={(option: CityType) => (
-                                <>
-                                    <Flag size={12} country={option.country.code} style={{ marginRight: 4 }} />
-                                    {formatCity(option)}
-                                </>
-                            )}
-                            getOptionValue={(option: CityType) => option.id}
-                            className={clsx({ 'react-select__errored': destErrored })}
-                            classNamePrefix="react-select"
-                            escapeClearsValue
-                            isClearable
-                        />
+                        <CitySelector />
                         {destErrored && <div className="help-text text-danger">This field is required.</div>}
                     </div>
                     <div className="form-group">

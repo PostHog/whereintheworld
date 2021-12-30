@@ -13,11 +13,14 @@ export function WhoAmI(): JSX.Element | null {
         // TODO: Loading state
         return null
     }
-    console.log(user)
+
     return (
         <div className="whoami">
             <div>
-                <Avatar icon={<Flag country={user.home_city.country.code} size={10} />} avatarUrl={user.avatar_url} />
+                <Avatar
+                    icon={user.home_city ? <Flag country={user.home_city.country.code} size={10} /> : <></>}
+                    avatarUrl={user.avatar_url}
+                />
             </div>
             <div>
                 {user.first_name}
