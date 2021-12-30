@@ -28,8 +28,10 @@ export function WhoAmI(): JSX.Element | null {
                     </div>
                 )} */}
             </div>
-            <div style={{ cursor: 'pointer', marginLeft: 16, color: 'var(--primary)' }}>
-                <FontAwesomeIcon icon={faSignOutAlt} />
+            <div style={{ marginLeft: 16, color: 'var(--primary)' }}>
+                <a href="/logout">
+                    <FontAwesomeIcon icon={faSignOutAlt} />
+                </a>
             </div>
         </div>
     )
