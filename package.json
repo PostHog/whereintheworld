@@ -45,11 +45,12 @@
     },
     "scripts": {
         "start": "concurrently \"yarn start:app\" \"kea-typegen watch\" -n APP,KEA -c blue,green",
-        "start:app": "react-app-rewired start",
-        "build": "react-app-rewired build",
+        "start:app": "yarn clean && BROWSER=none react-app-rewired start",
+        "build": "yarn clean && react-app-rewired build",
         "test": "react-app-rewired test",
         "eject": "react-scripts eject",
-        "typegen:write": "kea-typegen write"
+        "typegen:write": "kea-typegen write",
+        "clean": "rm -rf build/"
     },
     "eslintConfig": {
         "extends": [

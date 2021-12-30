@@ -15,12 +15,4 @@ export const authLogic = kea<authLogicType>({
     events: ({ actions }) => ({
         afterMount: [actions.loadUser],
     }),
-    urlToAction: () => ({
-        '*': (_: any, { jwt }: { jwt?: string }) => {
-            if (jwt) {
-                window.localStorage.setItem('token', jwt)
-                window.location.reload()
-            }
-        },
-    }),
 })

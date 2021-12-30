@@ -35,7 +35,7 @@ interface LocationType extends CityType {
 
 export interface UserType {
     id: number
-    fullName: string
+    first_name: string
     email: string
     avatar: string
     cityId: number

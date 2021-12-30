@@ -1,7 +1,7 @@
 /* config-overrides.js */
 module.exports = {
     webpack: function (config, env) {
-        // ...add your webpack config
+        // We append /static as Django serves files from /static
         config.output.publicPath = '/static/'
         return config
     },

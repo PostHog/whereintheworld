@@ -43,7 +43,7 @@ export function MainOverlay(): JSX.Element {
                                 <LocationAvatar
                                     avatarUrl={user.avatar}
                                     country={user.location.country_code}
-                                    personName={user.fullName}
+                                    personName={user.first_name}
                                     locationText={formatCity(user.location)}
                                 />
                             )

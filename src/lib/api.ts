@@ -19,22 +19,13 @@ const normalize_url = (url: string): string => {
     return url
 }
 
-const authHeaders = (): Record<string, string> => {
-    const jwt = window.localStorage.getItem('token')
-    return jwt
-        ? {
-              Authorization: `Bearer ${window.localStorage.getItem('token')}`,
-          }
-        : {}
-}
-
 const api = {
     async get(url: string, signal?: AbortSignal): Promise<any> {
         url = normalize_url(url)
         let response
         const startTime = new Date().getTime()
         try {
-            response = await fetch(url, { signal, headers: authHeaders() })
+            response = await fetch(url, { signal })
         } catch (e) {
             throw { status: 0, message: e }
         }
@@ -55,7 +46,6 @@ const api = {
             method: 'PATCH',
             headers: {
                 ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
-                ...authHeaders(),
             },
             body: isFormData ? data : JSON.stringify(data),
         })
@@ -79,7 +69,6 @@ const api = {
             method: 'POST',
             headers: {
                 ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
-                ...authHeaders(),
             },
             body: data ? (isFormData ? data : JSON.stringify(data)) : undefined,
         })
@@ -102,7 +91,6 @@ const api = {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
-                ...authHeaders(),
             },
         })
 
@@ -118,12 +106,8 @@ const api = {
 function reportError(method: string, url: string, response: Response, startTime: number): void {
     const duration = new Date().getTime() - startTime
     const pathname = new URL(url, window.location.origin).pathname
+    // TODO: Use posthog-js
     console.log('client_request_failure', { pathname, method, duration, status: response.status })
-
-    if (response.status === 401) {
-        // TODO: Nicer handling
-        window.location.href = `${API.replace('api', '')}login/google-oauth2/`
-    }
 }
 
 export default api
