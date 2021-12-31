@@ -20,7 +20,7 @@ export const tripLogic = kea<tripLogicType<TripPayload>>({
                 toggleOpenTrip: (state) => !state,
             },
         ],
-        trips: [
+        myTrips: [
             [] as TripType[],
             {
                 appendTrip: (state, { trip }) => [trip, ...state],
@@ -34,7 +34,7 @@ export const tripLogic = kea<tripLogicType<TripPayload>>({
             {
                 createTrip: async (payload: TripPayload) => {
                     const trip = await api.create('trips', payload)
-                    actions.appendTrip(trip)
+                    actions.appendTrip(trip as TripType)
                     actions.toggleOpenTrip()
                     return trip.id
                 },

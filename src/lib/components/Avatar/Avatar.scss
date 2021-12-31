@@ -1,0 +1,41 @@
+@use 'sass:math';
+@import '_vars';
+
+.avatar {
+    position: relative;
+    display: inline-block;
+
+    .avatar-img {
+        width: 48px;
+        height: 48px;
+        border-radius: $radius_sm;
+    }
+
+    .fallback-img {
+        width: 48px;
+        height: 48px;
+        background-color: #e2e9ff;
+        border-radius: $radius_sm;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.2em;
+    }
+
+    .icon-wrapper {
+        width: 18px;
+        height: 18px;
+        border-radius: math.div($radius_sm, 2);
+        background-color: $bg;
+        position: absolute;
+        bottom: 0;
+        right: -6px;
+        border: 2px solid white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        padding: 4px;
+    }
+}

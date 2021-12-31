@@ -44,4 +44,10 @@ export interface UserType {
     email: string
     avatar_url: string
     home_city: CityType
+    trips?: Omit<TripType, 'user'>[]
+}
+
+export interface UserTravelingType {
+    user: Omit<UserType, 'trips'>
+    trip: Omit<TripType, 'user'>
 }

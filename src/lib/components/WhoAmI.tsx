@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
 import Flag from 'react-flagkit'
-import { Avatar } from './Avatar'
+import { Avatar } from './Avatar/Avatar'
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
 import { useValues } from 'kea'
 import { authLogic } from 'logics/authLogic'

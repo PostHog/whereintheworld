@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHome, faPlane } from '@fortawesome/free-solid-svg-icons'
 import React from 'react'
 import clsx from 'clsx'
-import { Avatar } from './Avatar'
+import { Avatar } from './Avatar/Avatar'
 
 interface MapPinProps {
     lat: number

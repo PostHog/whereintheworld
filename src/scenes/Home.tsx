@@ -1,7 +1,7 @@
 import React from 'react'
 import GoogleMapReact from 'google-map-react'
 import { MapPin } from 'lib/components/MapPin'
-import { MainOverlay } from 'lib/components/MainOverlay'
+import { MainOverlay } from 'lib/components/MainOverlay/MainOverlay'
 import { TripView } from 'lib/components/TripView'
 import { tripLogic } from 'logics/tripLogic'
 import { useValues } from 'kea'

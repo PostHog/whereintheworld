@@ -2,6 +2,7 @@ from typing import Tuple
 
 from cities.models import City, Country, Region
 from rest_framework import serializers
+from rest_framework.fields import empty
 
 from backend.models import Match, Trip, User
 
@@ -119,7 +120,7 @@ class TripSerializer(ReadOnlySerializer):
             "notes",  # TODO: only available for your trips
         )
 
-    def __init__(self, instance=None, data=..., **kwargs):
+    def __init__(self, instance=None, data=empty, **kwargs):
         simple = kwargs.pop("simple", False)
         super().__init__(instance=instance, data=data, **kwargs)
         if simple:

@@ -1,10 +1,8 @@
-import dayjs from 'dayjs'
 import { kea } from 'kea'
-import { API } from 'const'
-import { UserType } from '../types'
+import { UserTravelingType, UserType } from '../types'
 import { userLogicType } from './userLogicType'
-
-let cache = {}
+import api from 'lib/api'
+import dayjs from 'dayjs'
 
 export const userLogic = kea<userLogicType>({
     actions: {
@@ -22,29 +20,31 @@ export const userLogic = kea<userLogicType>({
         users: [
             [] as UserType[],
             {
-                loadUsers: async (date: string = '') => {
-                    // TODO
-                    return []
-                    const parsedDate = dayjs(date || new Date()).format('YYYY-MM-DD')
-                    if (cache[parsedDate]) {
-                        return cache[parsedDate]
-                    }
-                    const response = await (
-                        await fetch(`${API}/users/location/${parsedDate}`, {
-                            credentials: 'include',
-                        })
-                    ).json()
-                    cache[parsedDate] = response
-                    return response as UserType[]
+                loadUsers: async () => {
+                    const response = await api.get('users')
+                    return response.results as UserType[]
                 },
             },
         ],
     },
-    listeners: ({ actions }) => ({
-        setCurrentDate: ({ date }) => {
-            actions.loadUsers(date.toISOString())
-        },
-    }),
+    selectors: {
+        travelingAtDate: [
+            (s) => [s.users, s.currentDate],
+            (users, currentDate): UserTravelingType[] => {
+                const output: UserTravelingType[] = []
+                const date = dayjs(currentDate).startOf('day')
+                for (const user of users) {
+                    const trip = user.trips?.find(
+                        (trip) => dayjs(trip.start) <= date && dayjs(trip.end) >= date.endOf('day')
+                    )
+                    if (trip) {
+                        output.push({ user, trip })
+                    }
+                }
+                return output
+            },
+        ],
+    },
     events: ({ actions }) => ({
         afterMount: [actions.loadUsers],
     }),

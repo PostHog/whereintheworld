@@ -1,6 +1,6 @@
 import React from 'react'
 import Flag from 'react-flagkit'
-import { Avatar } from './Avatar'
+import { Avatar } from './Avatar/Avatar'
 
 interface LocationAvatarProps {
     avatarUrl: string
