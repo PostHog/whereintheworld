@@ -16,7 +16,7 @@ import { userLogic } from 'logics/userLogic'
 
 export function Home(): JSX.Element {
     const { openTrip } = useValues(tripLogic)
-    const { users } = useValues(userLogic)
+    const { users, travelingAtDate } = useValues(userLogic)
     const defaultProps = {
         center: {
             lat: 51.5,
@@ -24,6 +24,7 @@ export function Home(): JSX.Element {
         },
         zoom: 1,
     }
+
     return (
         <div className="map-container">
             <WhoAmI />
@@ -44,16 +45,20 @@ export function Home(): JSX.Element {
                 //fullscreenControl={false}
                 options={{ fullscreenControl: false }}
             >
-                {users.map((user) => (
-                    <MapPin
-                        lat={user.home_city.location[0]}
-                        lng={user.home_city.location[1]}
-                        avatarUrl={(user.avatar_url || '').replace('_1024.', '_72.')} // try loading a smaller image if from slack
-                        travelState="home"
-                        //travelState={user.location.isHome ? 'home' : 'away'}
-                        key={user.id}
-                    />
-                ))}
+                {users.map((user) => {
+                    const travelRecord = travelingAtDate.find((item) => item.user.id === user.id)
+                    const location = travelRecord ? travelRecord.trip.city.location : user.home_city.location
+                    // TODO: Handle multiple people at the same location
+                    return (
+                        <MapPin
+                            lat={location[1]}
+                            lng={location[0]}
+                            avatarUrl={user.avatar_url}
+                            travelState={travelRecord ? 'away' : 'home'}
+                            key={user.id}
+                        />
+                    )
+                })}
             </GoogleMapReact>
         </div>
     )

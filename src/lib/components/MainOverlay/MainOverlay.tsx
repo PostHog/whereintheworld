@@ -16,9 +16,7 @@ export function MainOverlay(): JSX.Element {
     const { toggleOpenTrip } = useActions(tripLogic)
     const { myTrips } = useValues(tripLogic)
     const tripListRef = useRef<HTMLDivElement>(null)
-    const { users, currentDate, travelingAtDate } = useValues(userLogic)
-
-    console.log(travelingAtDate)
+    const { currentDate, travelingAtDate } = useValues(userLogic)
 
     return (
         <div className="main-overlay">
@@ -32,7 +30,7 @@ export function MainOverlay(): JSX.Element {
                             : `on ${dayjs(currentDate).format('YYYY-MM-DD')}`}
                     </h2>
                     <div className="away-today">
-                        {users.length === 0 && 'Be the first to schedule a trip.'}
+                        {travelingAtDate.length === 0 && 'Be the first to schedule a trip.'}
                         {travelingAtDate.map(({ user, trip }) => {
                             return (
                                 <LocationAvatar
