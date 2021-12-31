@@ -119,6 +119,13 @@ class TripSerializer(ReadOnlySerializer):
             "notes",  # TODO: only available for your trips
         )
 
+    def __init__(self, instance=None, data=..., **kwargs):
+        simple = kwargs.pop("simple", False)
+        super().__init__(instance=instance, data=data, **kwargs)
+        if simple:
+            self.fields.pop("user")
+            self.fields.pop("notes")
+
 
 class TripCreateSerializer(BaseSerializer):
     city = serializers.SlugRelatedField(slug_field="id", queryset=City.objects.all())
@@ -141,6 +148,21 @@ class TripCreateSerializer(BaseSerializer):
         assert "request" in self.context, "`request` must be passed in context"
         validated_data["user"] = self.context["request"].user
         return super().create(validated_data)
+
+
+class UserListSerializer(UserSerializer):
+    trips = TripSerializer(many=True, read_only=True, simple=True)
+
+    class Meta:
+        model = User
+        fields = (
+            "id",
+            "first_name",
+            "avatar_url",
+            "home_city",
+            "email",
+            "trips",
+        )
 
 
 class MatchSerializer(ReadOnlySerializer):

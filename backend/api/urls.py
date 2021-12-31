@@ -11,6 +11,11 @@ register_converter(converters.TransactionalIDConverter, "id")
 urlpatterns: List[Any] = [
     path("api/cities", CityViewSet.as_view({"get": "list"}), name="cities"),
     path(
+        "api/users",
+        UserViewSet.as_view({"get": "list"}),
+        name="users",
+    ),
+    path(
         "api/users/me",
         UserViewSet.as_view({"get": "retrieve", "patch": "partial_update"}),
         name="users_me",

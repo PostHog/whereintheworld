@@ -16,6 +16,7 @@ from backend.api.serializers import (
     MatchSerializer,
     TripCreateSerializer,
     TripSerializer,
+    UserListSerializer,
     UserSerializer,
     UserUpdateSerializer,
 )
@@ -72,19 +73,24 @@ class CityViewSet(BaseModelViewSet):
 
 class UserViewSet(BaseModelViewSet):
     """
-    Retrieve and update current user.
+    List users, retrieve and update current user.
     """
 
     serializer_class = UserSerializer
     write_serializer = UserUpdateSerializer
 
     def get_queryset(self):
-        return User.objects.none()
+        return User.objects.filter(team=self.request.user.team).order_by("first_name")
 
     def get_object(self):
         if self.kwargs.get("me"):
             return self.request.user
         return super().get_object()
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return UserListSerializer
+        return super().get_serializer_class()
 
 
 @partial
