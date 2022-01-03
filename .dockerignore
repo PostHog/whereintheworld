@@ -1,0 +1,14 @@
+*
+!bin
+!requirements.txt
+!requirements-test.txt
+!backend
+!staticfiles
+!manage.py
+!package.json
+!config-overrides.js
+!yarn.lock
+!.kearc
+!tsconfig.json
+!src
+!public
