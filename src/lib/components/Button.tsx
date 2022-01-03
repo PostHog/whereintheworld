@@ -7,9 +7,13 @@ interface ButtonProps
     styling?: 'default' | 'inverse' | 'link'
 }
 
-export function Button({ className, children, size, styling, ...props }: ButtonProps): JSX.Element {
+export function Button({ className, children, size, styling, disabled, ...props }: ButtonProps): JSX.Element {
     return (
-        <button className={clsx('btn', className, styling, size)} {...props}>
+        <button
+            className={clsx('btn', className, styling, size, disabled && 'disabled')}
+            disabled={disabled}
+            {...props}
+        >
             {children}
         </button>
     )

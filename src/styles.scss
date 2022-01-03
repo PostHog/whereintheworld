@@ -10,6 +10,7 @@
     --secondary: #{$secondary};
     --orange: #{$orange};
     --danger: #{$danger};
+    --text-default: #{$text_default};
     --text-muted: #{$text_muted};
 }
 
@@ -110,6 +111,12 @@ button {
             background-color: $primary;
             color: white;
         }
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+        background-color: lighten($primary, 10%);
+        border-color: lighten($primary, 10%);
     }
 
     &.link {

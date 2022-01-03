@@ -5,7 +5,7 @@ import React, { Suspense } from 'react'
 export function Scene(): JSX.Element {
     const { scene, params } = useValues(sceneLogic)
 
-    const Scene = scenes[scene] || scenes.error404
+    const Scene = scenes[scene] || scenes.notFound
 
     return (
         <Suspense fallback={<div>Loading...</div>}>

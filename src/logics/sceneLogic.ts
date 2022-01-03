@@ -1,31 +1,31 @@
 import { kea } from 'kea'
-import { lazy } from 'react'
+import { lazy, LazyExoticComponent } from 'react'
 import type { sceneLogicType } from './sceneLogicType'
 
 type ParamsType = Record<string, any>
 
 export enum Scene {
-    Error404 = '404',
+    Error404 = 'notFound',
     Home = 'home',
-    Me = 'me',
+    Welcome = 'welcome',
 }
 
 export const urls = {
     default: () => '/',
-    me: () => '/me',
+    welcome: () => '/welcome',
     notFound: () => '/404',
 }
 
 export const routes: Record<string, Scene> = {
     [urls.default()]: Scene.Home,
-    [urls.me()]: Scene.Me,
+    [urls.welcome()]: Scene.Welcome,
     [urls.notFound()]: Scene.Error404,
 }
 
-export const scenes = {
-    error404: () => 'Not Found',
+export const scenes: Record<Scene, LazyExoticComponent<() => JSX.Element> | (() => JSX.Element)> = {
     home: lazy(() => import('../scenes/Home')),
-    me: () => 'Hello',
+    welcome: lazy(() => import('../scenes/Welcome')),
+    notFound: lazy(() => import('../scenes/NotFound')),
 }
 
 export const sceneLogic = kea<sceneLogicType<ParamsType, Scene>>({
