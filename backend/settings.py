@@ -88,9 +88,9 @@ DATABASES = {
     "default": {
         "ENGINE": "django.contrib.gis.db.backends.postgis",
         "NAME": "whereintheworld",
-        "USER": os.getenv("POSTHOG_DB_USER", "whereintheworld"),
-        "PASSWORD": os.getenv("POSTHOG_DB_PASSWORD", "whereintheworld"),
-        "HOST": os.getenv("POSTHOG_POSTGRES_HOST", "localhost"),
+        "USER": os.getenv("DB_USER", "whereintheworld"),
+        "PASSWORD": os.getenv("DB_PASSWORD", "whereintheworld"),
+        "HOST": os.getenv("DB_HOST", "localhost"),
         "PORT": "5432",
     }
 }

@@ -1,9 +1,7 @@
-FROM python:3.8-alpine3.14
+FROM python:3.9-alpine3.14
 
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
-ENV CPLUS_INCLUDE_PATH=/usr/include/gdal
-ENV C_INCLUDE_PATH=/usr/include/gdal
 
 WORKDIR /code
 
@@ -13,11 +11,13 @@ WORKDIR /code
 # If you temporary need a package to build a Python or npm
 # dependency take a look at the sections below.
 RUN apk --update --no-cache add \
+    "geos~=3" \
+    "gdal~=3" \
     "binutils" \
-    "gdal" \
-    "geos" \
     "nodejs" \
     "npm" \
+    && ln -s /usr/lib/libgdal.so.28 /usr/lib/libgdal.so \
+    && ln -s /usr/lib/libgeos_c.so.1 /usr/lib/libgeos_c.so \
     && npm install -g yarn@1
 
 # Compile and install Python dependencies.
@@ -50,7 +50,7 @@ RUN apk --update --no-cache --virtual .build-deps add \
 #
 # - we need few additional OS packages for this. Let's install
 #   and then uninstall them when the compilation is completed.
-COPY package.json yarn.lock config-overrides.js ./
+COPY package.json yarn.lock ./
 RUN yarn config set network-timeout 300000 && \
     yarn install --frozen-lockfile && \
     yarn cache clean
