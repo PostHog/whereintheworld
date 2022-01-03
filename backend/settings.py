@@ -33,6 +33,7 @@ ALLOWED_HOSTS: List[str] = []
 # Application definition
 
 INSTALLED_APPS = [
+    "whitenoise.runserver_nostatic",  # makes sure that whitenoise handles static files in development
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -50,6 +51,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -83,19 +85,19 @@ WSGI_APPLICATION = "backend.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-
 DATABASES = {
     "default": {
         "ENGINE": "django.contrib.gis.db.backends.postgis",
         "NAME": "whereintheworld",
-        "USER": os.getenv("POSTHOG_DB_USER", "whereintheworld"),
-        "PASSWORD": os.getenv("POSTHOG_DB_PASSWORD", "whereintheworld"),
-        "HOST": os.getenv("POSTHOG_POSTGRES_HOST", "localhost"),
+        "USER": os.getenv("DB_USER", "whereintheworld"),
+        "PASSWORD": os.getenv("DB_PASSWORD", "whereintheworld"),
+        "HOST": os.getenv("DB_HOST", "localhost"),
         "PORT": "5432",
     }
 }
 
 # PostGIS (M1 support)
+
 if os.getenv("GDAL_LIBRARY_PATH") and os.getenv("GEOS_LIBRARY_PATH"):
     GDAL_LIBRARY_PATH = os.getenv("GDAL_LIBRARY_PATH")
     GEOS_LIBRARY_PATH = os.getenv("GEOS_LIBRARY_PATH")
@@ -162,6 +164,8 @@ TEMPLATES = [
         },
     },
 ]
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
 # Default primary key field type
