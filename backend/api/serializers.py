@@ -141,14 +141,15 @@ class TripCreateSerializer(BaseSerializer):
         )
 
     def validate(self, attrs):
+        assert "request" in self.context, "`request` must be passed in context"
+        attrs["user"] = self.context["request"].user
+
         if attrs["start"] > attrs["end"]:
             raise serializers.ValidationError({"end": "Must be before start."}, code="invalid_date_range")
-        return attrs
 
-    def create(self, validated_data):
-        assert "request" in self.context, "`request` must be passed in context"
-        validated_data["user"] = self.context["request"].user
-        return super().create(validated_data)
+        if Trip.objects.filter(user=attrs["user"]).filter(start__lt=attrs["end"], end__gt=attrs["start"]).exists():
+            raise serializers.ValidationError({"end": "You cannot add an overlapping trip."}, code="overlapping_trip")
+        return attrs
 
 
 class UserListSerializer(UserSerializer):
