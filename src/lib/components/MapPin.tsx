@@ -9,12 +9,17 @@ interface MapPinProps {
     lng: number
     avatarUrl: string
     travelState: 'home' | 'away'
+    userName: string
 }
 
-export function MapPin({ avatarUrl, travelState }: MapPinProps): JSX.Element {
+export function MapPin({ avatarUrl, travelState, userName }: MapPinProps): JSX.Element {
     return (
-        <div className={clsx('map-pin', travelState)}>
-            <Avatar avatarUrl={avatarUrl} icon={<FontAwesomeIcon icon={travelState === 'home' ? faHome : faPlane} />} />
+        <div className={clsx('map-pin', travelState)} title={userName}>
+            <Avatar
+                avatarUrl={avatarUrl}
+                icon={<FontAwesomeIcon icon={travelState === 'home' ? faHome : faPlane} />}
+                userName={userName}
+            />
         </div>
     )
 }

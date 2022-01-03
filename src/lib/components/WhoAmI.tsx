@@ -30,6 +30,7 @@ export function WhoAmI(): JSX.Element | null {
                         )
                     }
                     avatarUrl={user.avatar_url}
+                    userName={user.first_name}
                 />
             </div>
             <div>

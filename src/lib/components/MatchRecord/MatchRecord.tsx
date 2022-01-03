@@ -21,6 +21,7 @@ export function MatchRecord({ match }: { match: MatchType }): JSX.Element {
                 avatarUrl={otherParty.avatar_url}
                 size="sm"
                 icon={<Flag country={matchCity.country.code} size={8} />}
+                userName={otherParty.first_name}
             />
             <div>
                 <div>{otherParty.first_name}</div>
