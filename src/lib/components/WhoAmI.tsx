@@ -1,36 +1,49 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
 import Flag from 'react-flagkit'
-import { Avatar } from './Avatar'
-import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
-import { useEffect } from 'react'
-import { useState } from 'react'
-import { API } from 'const'
+import { Avatar } from './Avatar/Avatar'
+import { faSignOutAlt, faGlobeAmericas } from '@fortawesome/free-solid-svg-icons'
+import { useValues } from 'kea'
+import { authLogic } from 'logics/authLogic'
+import { formatCity } from 'utils'
 
 export function WhoAmI(): JSX.Element | null {
-    const [profile, setProfile] = useState(false as any)
-    useEffect(() => {
-        ;(async () => {
-            setProfile(await (await fetch(`${API}/profile`, { credentials: 'include' })).json())
-        })()
-    }, [])
-    return profile === false ? null : (
+    const { user } = useValues(authLogic)
+    if (!user) {
+        // TODO: Nice loading state
+        return null
+    }
+
+    return (
         <div className="whoami">
             <div>
-                <Avatar icon={<Flag country="ES" size={10} />} avatarUrl={(profile as any).picture} />
+                <Avatar
+                    icon={
+                        user.home_city ? (
+                            <Flag country={user.home_city.country.code} size={10} />
+                        ) : (
+                            <FontAwesomeIcon
+                                icon={faGlobeAmericas}
+                                size="sm"
+                                style={{ color: 'var(--text-default)' }}
+                            />
+                        )
+                    }
+                    avatarUrl={user.avatar_url}
+                    userName={user.first_name}
+                />
             </div>
             <div>
-                {profile.name}
-                {profile.location && (
-                    <div className="text-muted" style={{ fontSize: '0.75em' }}>
-                        <b>
-                            {profile.location.name}, {profile.location.country_code}
-                        </b>
-                    </div>
-                )}
+                {user.first_name}
+
+                <div className="text-muted" style={{ fontSize: '0.75em' }}>
+                    <b>{user.home_city ? formatCity(user.home_city) : 'The World'}</b>
+                </div>
             </div>
-            <div style={{ cursor: 'pointer', marginLeft: 16, color: 'var(--primary)' }}>
-                <FontAwesomeIcon icon={faSignOutAlt} />
+            <div style={{ marginLeft: 16, color: 'var(--primary)' }}>
+                <a href="/logout">
+                    <FontAwesomeIcon icon={faSignOutAlt} />
+                </a>
             </div>
         </div>
     )

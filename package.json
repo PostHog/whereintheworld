@@ -25,6 +25,7 @@
         "google-map-react": "^2.1.10",
         "kea": "^2.4.7",
         "kea-loaders": "^0.4.0",
+        "kea-router": "^1.0.6",
         "kea-typegen": "^1.1.5",
         "next": "11.1.2",
         "prettier": "^2.3.2",
@@ -45,11 +46,12 @@
     },
     "scripts": {
         "start": "concurrently \"yarn start:app\" \"kea-typegen watch\" -n APP,KEA -c blue,green",
-        "start:app": "react-scripts start",
-        "build": "react-scripts build",
-        "test": "react-scripts test",
+        "start:app": "yarn clean && BROWSER=none react-app-rewired start",
+        "build": "yarn clean && react-app-rewired build",
+        "test": "react-app-rewired test",
         "eject": "react-scripts eject",
-        "typegen:write": "kea-typegen write"
+        "typegen:write": "kea-typegen write",
+        "clean": "rm -rf build/"
     },
     "eslintConfig": {
         "extends": [
@@ -68,5 +70,9 @@
             "last 1 firefox version",
             "last 1 safari version"
         ]
+    },
+    "devDependencies": {
+        "install": "^0.13.0",
+        "react-app-rewired": "^2.1.10"
     }
 }

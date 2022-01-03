@@ -111,6 +111,60 @@ class TestTrips(APIBaseTest):
         self.assertEqual(trip.start, dt.date(2021, 12, 15))
         self.assertEqual(trip.end, dt.date(2021, 12, 18))
 
+    def test_can_create_same_day_trip(self):
+        count = Trip.objects.count()
+        response = self.client.post(
+            "/api/trips",
+            {
+                "city": int(self.frankfurt.pk),
+                "start": "2021-09-05",
+                "end": "2021-09-05",
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        json_response = response.json()
+        self.assertEqual(json_response["city"]["name"], "Frankfurt")
+
+        self.assertEqual(Trip.objects.count(), count + 1)
+        trip = Trip.objects.last()
+        self.assertEqual(trip.user, self.user)
+        self.assertEqual(trip.start, dt.date(2021, 9, 5))
+        self.assertEqual(trip.end, dt.date(2021, 9, 5))
+
+    def test_cannot_create_overlapping_trip(self):
+        count = Trip.objects.count()
+
+        # Reference trip: 2021-09-01 to 2021-09-05
+        invalid_overlaps = [
+            ["2021-09-04", "2021-09-05"],  # inside overlap
+            ["2021-08-30", "2021-09-08"],  # outside overlap
+            ["2021-08-30", "2021-09-03"],  # starts outside, ends inside
+            ["2021-08-03", "2021-09-10"],  # starts inside, ends outside
+        ]
+
+        for params in invalid_overlaps:
+            response = self.client.post(
+                "/api/trips",
+                {
+                    "city": int(self.frankfurt.pk),
+                    "start": params[0],
+                    "end": params[1],
+                },
+            )
+
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+            self.assertEqual(
+                response.json(),
+                {
+                    "type": "validation_error",
+                    "code": "overlapping_trip",
+                    "detail": "You cannot add an overlapping trip.",
+                    "attr": "end",
+                },
+            )
+
+        self.assertEqual(Trip.objects.count(), count)
+
     def test_cannot_create_trip_without_required_attributes(self):
         count = Trip.objects.count()
 

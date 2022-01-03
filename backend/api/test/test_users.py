@@ -8,6 +8,7 @@ from backend.test.base import APIBaseTest
 
 class TestUsers(APIBaseTest):
     SERIALIZER_ATTRIBUTES = ["id", "first_name", "avatar_url", "home_city", "email"]
+    LIST_SERIALIZER_ATTRIBUTES = SERIALIZER_ATTRIBUTES + ["trips"]
 
     @classmethod
     def setUpTestData(cls):
@@ -28,15 +29,36 @@ class TestUsers(APIBaseTest):
         self.assertEqual(json_response["home_city"]["name"], "Paris")
         self.assertEqual(json_response["home_city"]["country"]["code"], "FR")
 
-    def test_listing_users_not_implemented(self):
+    def test_list_users(self):
+        user2 = User.objects.create(
+            email="u2@posthog.com",
+            team=self.team,
+            home_city=self.paris,
+            first_name="Zed",
+        )
+
+        trip1 = Trip.objects.create(
+            city=self.edinburgh,
+            user=user2,
+            start=dt.date(2021, 9, 1),
+            end=dt.date(2021, 9, 5),
+        )
+
         response = self.client.get("/api/users")
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.json(), self.not_found_response())
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        json_response = response.json()
+        self.assertEqual(json_response["count"], 2)
+        self.assertEqual(len(json_response["results"][1].keys()), len(self.LIST_SERIALIZER_ATTRIBUTES))
+        self.assertEqual(json_response["results"][1]["first_name"], "Zed")
+        self.assertEqual(json_response["results"][1]["trips"][0]["id"], trip1.transactional_id)
+        self.assertEqual(json_response["results"][1]["trips"][0]["start"], "2021-09-01")
+        self.assertEqual(json_response["results"][1]["trips"][0]["end"], "2021-09-05")
 
     def test_cant_see_users_if_unauthenticated(self):
         self.client.logout()
         response = self.client.get("/api/users/me")
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        # TODO: This should be 401
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(response.json(), self.unauthenticated_response())
 
     def test_can_update_home_location(self):

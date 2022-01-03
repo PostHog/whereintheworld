@@ -60,6 +60,9 @@ class TestMatches(APIBaseTest):
         self.assertEqual(json_response["results"][0]["source_user"]["first_name"], "Alice")
         self.assertEqual(json_response["results"][0]["target_user"]["email"], "u2@posthog.com")
 
+        # Trip does not repeat user information
+        self.assertNotIn("user", json_response["results"][0]["source_trip"])
+
         # Can retrieve match
         retrieve_response = self.client.get(f"/api/matches/{match_id}")
         self.assertEqual(retrieve_response.status_code, status.HTTP_200_OK)

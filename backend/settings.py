@@ -10,7 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
-import datetime as dt
 import os
 from pathlib import Path
 from typing import List
@@ -46,7 +45,6 @@ INSTALLED_APPS = [
     "corsheaders",
     "cities",
     "social_django",
-    "rest_framework_jwt.blacklist",
     "backend.apps.WhereInTheWorldConfig",
 ]
 
@@ -183,7 +181,6 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 100,
     "EXCEPTION_HANDLER": "exceptions_hog.exception_handler",
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework_jwt.authentication.JSONWebTokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
@@ -195,18 +192,6 @@ REST_FRAMEWORK = {
 # https://github.com/adamchainz/django-cors-headers
 
 CORS_ALLOW_ALL_ORIGINS = True  # TODO: Allow granular CORS controls
-
-
-# JWT Authentication
-# https://styria-digital.github.io/django-rest-framework-jwt/#additional-settings
-
-JWT_AUTH = {
-    "JWT_ALLOW_REFRESH": False,
-    "JWT_DELETE_STALE_BLACKLISTED_TOKENS": True,
-    "JWT_EXPIRATION_DELTA": dt.timedelta(days=60),
-    "JWT_PAYLOAD_HANDLER": "backend.api.handlers.jwt_payload_handler",
-    "JWT_PAYLOAD_GET_USERNAME_HANDLER": "backend.api.handlers.jwt_get_username_from_payload_handler",
-}
 
 
 # Django cities
@@ -228,7 +213,7 @@ SOCIAL_AUTH_JSONFIELD_ENABLED = True
 SOCIAL_AUTH_USER_MODEL = "backend.User"
 SOCIAL_AUTH_STRATEGY = "social_django.strategy.DjangoStrategy"
 SOCIAL_AUTH_STORAGE = "social_django.models.DjangoStorage"
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = "/api/jwt/issue"
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = "/"
 SOCIAL_AUTH_PIPELINE = (
     "social_core.pipeline.social_auth.social_details",
     "social_core.pipeline.social_auth.social_uid",

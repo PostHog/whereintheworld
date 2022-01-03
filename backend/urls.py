@@ -4,7 +4,12 @@ The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.2/topics/http/urls/
 """
 
+from functools import wraps
+
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
+from django.contrib.auth.decorators import login_required as base_login_required
+from django.shortcuts import redirect
 from django.urls import include, path, re_path
 from rest_framework import decorators, exceptions
 
@@ -24,10 +29,23 @@ def frontend(request, *args, **kwargs):
     return render_template("index.html", request)
 
 
+def login_required(view):
+    base_handler = base_login_required(view)
+
+    @wraps(view)
+    def handler(request, *args, **kwargs):
+        if not request.user or not request.user.is_authenticated:
+            return redirect("/login/google-oauth2/")
+        return base_handler(request, *args, **kwargs)
+
+    return handler
+
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     *api_url_patterns,
     path("", include("social_django.urls", namespace="social")),
+    path("logout", auth_views.logout_then_login, name="logout"),
     re_path(r"^api.+", api_not_found),
-    re_path(r"^.*", frontend),
+    re_path(r"^.*", login_required(frontend)),
 ]

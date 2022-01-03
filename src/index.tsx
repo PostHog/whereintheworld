@@ -1,22 +1,22 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import 'styles.scss'
 import reportWebVitals from './reportWebVitals'
 import { resetContext, Provider } from 'kea'
 import { loadersPlugin } from 'kea-loaders'
-import { Home } from 'scenes/Home'
+import { routerPlugin } from 'kea-router'
+import { App } from './App'
 
 resetContext({
     createStore: {
         // options for redux (e.g. middleware, reducers, ...)
     },
-    plugins: [loadersPlugin({})],
+    plugins: [loadersPlugin({}), routerPlugin({})],
 })
 
 ReactDOM.render(
     <React.StrictMode>
         <Provider>
-            <Home />
+            <App />
         </Provider>
     </React.StrictMode>,
     document.getElementById('root')

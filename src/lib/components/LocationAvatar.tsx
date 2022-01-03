@@ -1,6 +1,6 @@
 import React from 'react'
 import Flag from 'react-flagkit'
-import { Avatar } from './Avatar'
+import { Avatar } from './Avatar/Avatar'
 
 interface LocationAvatarProps {
     avatarUrl: string
@@ -12,7 +12,7 @@ interface LocationAvatarProps {
 export function LocationAvatar({ avatarUrl, country, personName, locationText }: LocationAvatarProps): JSX.Element {
     return (
         <div className="location-avatar">
-            <Avatar avatarUrl={avatarUrl} icon={<Flag country={country} size={10} />} />
+            <Avatar avatarUrl={avatarUrl} icon={<Flag country={country} size={10} />} userName={personName} />
             <div>
                 {personName}
                 <div className="location-text">{locationText}</div>

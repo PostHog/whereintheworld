@@ -2,6 +2,7 @@ from typing import Tuple
 
 from cities.models import City, Country, Region
 from rest_framework import serializers
+from rest_framework.fields import empty
 
 from backend.models import Match, Trip, User
 
@@ -119,6 +120,13 @@ class TripSerializer(ReadOnlySerializer):
             "notes",  # TODO: only available for your trips
         )
 
+    def __init__(self, instance=None, data=empty, **kwargs):
+        simple = kwargs.pop("simple", False)
+        super().__init__(instance=instance, data=data, **kwargs)
+        if simple:
+            self.fields.pop("user")
+            self.fields.pop("notes")
+
 
 class TripCreateSerializer(BaseSerializer):
     city = serializers.SlugRelatedField(slug_field="id", queryset=City.objects.all())
@@ -133,22 +141,37 @@ class TripCreateSerializer(BaseSerializer):
         )
 
     def validate(self, attrs):
+        assert "request" in self.context, "`request` must be passed in context"
+        attrs["user"] = self.context["request"].user
+
         if attrs["start"] > attrs["end"]:
             raise serializers.ValidationError({"end": "Must be before start."}, code="invalid_date_range")
+
+        if Trip.objects.filter(user=attrs["user"]).filter(start__lt=attrs["end"], end__gt=attrs["start"]).exists():
+            raise serializers.ValidationError({"end": "You cannot add an overlapping trip."}, code="overlapping_trip")
         return attrs
 
-    def create(self, validated_data):
-        assert "request" in self.context, "`request` must be passed in context"
-        validated_data["user"] = self.context["request"].user
-        return super().create(validated_data)
+
+class UserListSerializer(UserSerializer):
+    trips = TripSerializer(many=True, read_only=True, simple=True)
+
+    class Meta:
+        model = User
+        fields = (
+            "id",
+            "first_name",
+            "avatar_url",
+            "home_city",
+            "email",
+            "trips",
+        )
 
 
 class MatchSerializer(ReadOnlySerializer):
     source_user = UserSerializer(many=False, read_only=True)
     target_user = UserSerializer(many=False, read_only=True)
-    # TODO: Consider removing `user` from TripSerializer (duplicate / performance)
-    source_trip = TripSerializer(many=False, read_only=True)
-    target_trip = TripSerializer(many=False, read_only=True)
+    source_trip = TripSerializer(many=False, read_only=True, simple=True)
+    target_trip = TripSerializer(many=False, read_only=True, simple=True)
 
     class Meta:
         model = Match

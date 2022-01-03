@@ -1,38 +1,64 @@
-// TODO
-export interface TripType {
-    id: number
-    cityId: number
-    start: string
-    end: string
-    userId: number
-    City: CityType
-    matches: TripMatchType[]
+export interface PaginatedResponse<T> {
+    results: T[]
+    next?: string
+    previous?: string
 }
 
-export interface TripMatchType {
-    avatarUrl: string
-    personName: string
+export interface TripType {
+    id: string
+    start: string
+    end: string
+    city: CityType
+    user: UserType
+    notes?: string // `notes` is not present when viewing others' trips
+}
+
+export interface CountryType {
+    code: string
+    code3: string
+    name: string
+    currency: string
+    tld: string
+    capital: string
+}
+
+export interface RegionType {
+    // First-level administrative organization; e.g. states (US) or provinces (CA).
+    code: string
+    name: string
 }
 
 export interface CityType {
-    id: number
+    id: number // Only `id` that is numberic
     name: string
-    latitude: number
-    longitude: number
-    admin1_code: string // Administrative region 1 code (e.g. State/Province)
-    country_code: string
+    country: CountryType
+    region: RegionType
+    location: number[]
+    kind: string
     timezone: string
 }
 
-interface LocationType extends CityType {
-    isHome: boolean
+export interface UserType {
+    id: string
+    first_name: string
+    email: string
+    avatar_url: string
+    home_city: CityType
+    trips?: Omit<TripType, 'user' | 'notes'>[]
 }
 
-export interface UserType {
-    id: number
-    fullName: string
-    email: string
-    avatar: string
-    cityId: number
-    location: LocationType
+export interface UserTravelingType {
+    user: Omit<UserType, 'trips'>
+    trip: Omit<TripType, 'user'>
+}
+
+export interface MatchType {
+    id: string
+    source_user: Omit<UserType, 'trips'>
+    target_user: Omit<UserType, 'trips'>
+    distance: number
+    overlap_start: string
+    overlap_end: string
+    source_trip?: Omit<TripType, 'user' | 'notes'>
+    target_trip?: Omit<TripType, 'user' | 'notes'>
 }

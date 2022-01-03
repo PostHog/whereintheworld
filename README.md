@@ -4,7 +4,7 @@
 
 The code for the server is located in the [`backend`](./backend) directory.
 
-### 1. Install dependencies**
+### 1. Install dependencies
 
 1. Install [Postgres.app](https://postgresapp.com/) and follow the [instructions](https://postgresapp.com/documentation/install.html) to add it to your path.
 

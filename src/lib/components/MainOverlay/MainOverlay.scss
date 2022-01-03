@@ -1,0 +1,51 @@
+@use 'sass:math';
+@import '_vars';
+
+.main-overlay {
+    @extend .mixin-elevated;
+    position: fixed;
+    border-top-right-radius: $radius;
+    border-bottom-right-radius: $radius;
+    background-color: $bg;
+    width: 320px;
+
+    min-height: 500px;
+    z-index: 400;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+
+    .overlay-inner {
+        padding: 0 $default_spacing;
+    }
+
+    .today {
+        background-color: white;
+        border-radius: $radius;
+        color: $text_default;
+        width: 100%;
+        padding: $default_spacing;
+
+        h2 {
+            margin-top: 0;
+            text-align: left;
+        }
+
+        .away-today {
+            overflow: auto;
+            white-space: nowrap;
+        }
+    }
+
+    .trips {
+        margin-top: $default_spacing;
+        flex-grow: 1;
+        overflow-y: auto;
+
+        .trip-card {
+            margin-bottom: $default_spacing;
+        }
+    }
+}

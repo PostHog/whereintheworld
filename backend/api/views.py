@@ -2,14 +2,11 @@ from typing import Any, ClassVar, Dict, Optional
 
 from cities.models import City
 from django.db import models
-from django.shortcuts import redirect
 from django.utils import timezone
 from rest_framework import filters, permissions, serializers, status
 from rest_framework.exceptions import ValidationError
-from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from social_core.pipeline.partial import partial
 from social_django.strategy import DjangoStrategy
 
@@ -19,6 +16,7 @@ from backend.api.serializers import (
     MatchSerializer,
     TripCreateSerializer,
     TripSerializer,
+    UserListSerializer,
     UserSerializer,
     UserUpdateSerializer,
 )
@@ -48,7 +46,7 @@ class BaseModelViewSet(ModelViewSet):
         headers = self.get_success_headers(serializer.data)
 
         # Objects are now returned with the list serializer (to return the full object)
-        serializer = self.serializer_class(serializer.instance, context={"request": request})
+        serializer = self.serializer_class(instance=serializer.instance, context={"request": request})
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def update(self, request, *args, **kwargs):
@@ -75,19 +73,24 @@ class CityViewSet(BaseModelViewSet):
 
 class UserViewSet(BaseModelViewSet):
     """
-    Retrieve and update current user.
+    List users, retrieve and update current user.
     """
 
     serializer_class = UserSerializer
     write_serializer = UserUpdateSerializer
 
     def get_queryset(self):
-        return User.objects.none()
+        return User.objects.filter(team=self.request.user.team).order_by("first_name")
 
     def get_object(self):
         if self.kwargs.get("me"):
             return self.request.user
         return super().get_object()
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return UserListSerializer
+        return super().get_serializer_class()
 
 
 @partial
@@ -170,13 +173,3 @@ class MatchViewSet(BaseModelViewSet):
         # When retrieving we can fetch all matches for the user's team so a proper 403
         # response is returned if applicable
         return Match.objects.filter(source_user__team=self.request.user.team).order_by("overlap_start")
-
-
-class JWTIssueView(GenericAPIView):
-    def get(self, request, *args, **kwargs):
-        """
-        Issues a new JWT based on an existing session (i.e. mainly after social auth)
-        """
-        payload = JSONWebTokenAuthentication.jwt_create_payload(request.user)
-        token = JSONWebTokenAuthentication.jwt_encode_payload(payload)
-        return redirect(f"/?jwt={token}")

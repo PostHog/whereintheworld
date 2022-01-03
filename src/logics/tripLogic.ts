@@ -1,75 +1,59 @@
 import { kea } from 'kea'
-import { API } from 'const'
 import { TripType } from '../types'
 import { tripLogicType } from './tripLogicType'
-import { userLogic } from './userLogic'
+import api from 'lib/api'
 
-type TripPayload = Pick<TripType, 'cityId' | 'start' | 'end'>
+interface TripPayload extends Pick<TripType, 'start' | 'end'> {
+    city: number
+}
 
 export const tripLogic = kea<tripLogicType<TripPayload>>({
     actions: {
-        setOpenTripId: (tripId: number | null | 'new') => ({ tripId }),
-        toggleTripView: true,
-        clearSavedtrip: true,
+        toggleOpenTrip: true,
+        appendTrip: (trip: TripType) => ({ trip }),
+        removeTrip: (id: string) => ({ id }),
     },
     reducers: {
-        openTripId: [
-            null as number | null | 'new',
+        openTrip: [
+            false,
             {
-                setOpenTripId: (_, { tripId }) => tripId,
-                toggleTripView: (state) => (state ? null : 'new'),
+                toggleOpenTrip: (state) => !state,
+            },
+        ],
+        myTrips: [
+            [] as TripType[],
+            {
+                appendTrip: (state, { trip }) => [trip, ...state],
+                removeTrip: (state, { id }) => state.filter((trip) => trip.id !== id),
             },
         ],
     },
-    loaders: ({ values, actions }) => ({
-        savedTrip: [
-            null as 'new' | 'updated' | null,
+    loaders: ({ actions }) => ({
+        _createdTrip: [
+            null as string | null,
             {
-                saveTrip: async (payload: TripPayload): Promise<'new' | 'updated' | null> => {
-                    if (values.openTripId === 'new') {
-                        await fetch(`${API}/trips`, {
-                            method: 'POST',
-                            body: JSON.stringify(payload),
-                            credentials: 'include',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                        })
-                        actions.loadTrips()
-                        userLogic.actions.loadUsers()
-                        return 'new'
-                    }
-                    return null
+                createTrip: async (payload: TripPayload) => {
+                    const trip = await api.create('trips', payload)
+                    actions.appendTrip(trip as TripType)
+                    actions.toggleOpenTrip()
+                    return trip.id
                 },
-                clearSavedtrip: async () => null,
-                deleteTrip: async () => {
-                    await fetch(`${API}/trips/${values.openTripId}`, {
-                        method: 'DELETE',
-                        credentials: 'include',
-                    })
-                    actions.loadTrips()
-                    userLogic.actions.loadUsers()
+                deleteTrip: async ({ id }: { id: string }) => {
+                    await api.delete(`trips/${id}`)
+                    actions.removeTrip(id)
                     return null
                 },
             },
         ],
-        trips: [
+        myTrips: [
             [] as TripType[],
             {
                 loadTrips: async () => {
-                    const response = await (await fetch(`${API}/trips`, { credentials: 'include' })).json()
-                    return response as TripType[]
+                    const response = await api.get('trips?me=true')
+                    return response.results as TripType[]
                 },
             },
         ],
-    }),
-    listeners: ({ actions }) => ({
-        saveTripSuccess: () => {
-            actions.setOpenTripId(null)
-        },
-        deleteTripSuccess: () => {
-            actions.setOpenTripId(null)
-        },
     }),
     events: ({ actions }) => ({
         afterMount: [actions.loadTrips],
