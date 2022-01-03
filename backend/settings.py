@@ -14,6 +14,8 @@ import os
 from pathlib import Path
 from typing import List
 
+from backend.utils import get_from_env, get_list, str_to_bool
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -22,12 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-*ojrg_(s)1)r_(6u8d4#5$czit*wttor(=wx+8ldoprb9(-wbq"
+SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-*ojrg_(s)1)r_(6u8d4#5$czit*wttor(=wx+8ldoprb9(-wbq")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = get_from_env("DEBUG", False, type_cast=str_to_bool)
 
-ALLOWED_HOSTS: List[str] = []
+ALLOWED_HOSTS: List[str] = get_list(os.getenv("ALLOWED_HOSTS", ""))
 
 
 # Application definition
@@ -241,3 +243,4 @@ AUTHENTICATION_BACKENDS = (
 # https://github.com/PostHog/whereintheworld
 
 DISTANCE_THRESHOLD = 1.8  # 1.8 degrees is approximately 200km
+MAPS_API_KEY = os.getenv("MAPS_API_KEY")

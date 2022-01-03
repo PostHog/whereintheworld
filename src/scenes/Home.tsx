@@ -34,11 +34,8 @@ export default function Home(): JSX.Element {
 
             <GoogleMapReact
                 bootstrapURLKeys={{
-                    key:
-                        (typeof window !== 'undefined' &&
-                            window.location.origin === 'http://localhost:8000' &&
-                            'AIzaSyDOV1fvZoiOUskMxIYF8sSBNgVhoCNzxsk') ||
-                        '',
+                    // TODO: Type `window` properly
+                    key: (window as any).MAPS_API_KEY,
                 }}
                 defaultCenter={defaultProps.center}
                 defaultZoom={defaultProps.zoom}
