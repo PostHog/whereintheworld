@@ -6,17 +6,18 @@ import { TripCard } from '../TripCard'
 import { Button } from '../Button'
 import { useActions, useValues } from 'kea'
 import { tripLogic } from 'logics/tripLogic'
-import { useRef } from 'react'
 import { userLogic } from 'logics/userLogic'
 import dayjs from 'dayjs'
 import './MainOverlay.scss'
 import { formatCity } from 'utils'
+import { matchLogic } from 'logics/matchLogic'
+import { MatchRecord } from '../MatchRecord/MatchRecord'
 
 export function MainOverlay(): JSX.Element {
     const { toggleOpenTrip } = useActions(tripLogic)
     const { myTrips } = useValues(tripLogic)
-    const tripListRef = useRef<HTMLDivElement>(null)
     const { currentDate, travelingAtDate } = useValues(userLogic)
+    const { matches } = useValues(matchLogic)
 
     return (
         <div className="main-overlay">
@@ -44,7 +45,19 @@ export function MainOverlay(): JSX.Element {
                     </div>
                 </div>
 
-                <div className="trips" ref={tripListRef}>
+                <div className="matches">
+                    <h2>Meetup opportunities</h2>
+                    {matches.length === 0 && (
+                        <div className="text-muted">You don't have any upcoming meetup opportunities.</div>
+                    )}
+                    {matches.map((match) => (
+                        <React.Fragment key={match.id}>
+                            <MatchRecord match={match} />
+                        </React.Fragment>
+                    ))}
+                </div>
+
+                <div className="trips">
                     <div className="flex-center">
                         <h2 style={{ flexGrow: 1 }}>My Trips</h2>
                         <Button onClick={toggleOpenTrip}>

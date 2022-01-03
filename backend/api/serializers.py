@@ -169,9 +169,8 @@ class UserListSerializer(UserSerializer):
 class MatchSerializer(ReadOnlySerializer):
     source_user = UserSerializer(many=False, read_only=True)
     target_user = UserSerializer(many=False, read_only=True)
-    # TODO: Consider removing `user` from TripSerializer (duplicate / performance)
-    source_trip = TripSerializer(many=False, read_only=True)
-    target_trip = TripSerializer(many=False, read_only=True)
+    source_trip = TripSerializer(many=False, read_only=True, simple=True)
+    target_trip = TripSerializer(many=False, read_only=True, simple=True)
 
     class Meta:
         model = Match

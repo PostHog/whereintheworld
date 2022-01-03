@@ -44,10 +44,21 @@ export interface UserType {
     email: string
     avatar_url: string
     home_city: CityType
-    trips?: Omit<TripType, 'user'>[]
+    trips?: Omit<TripType, 'user' | 'notes'>[]
 }
 
 export interface UserTravelingType {
     user: Omit<UserType, 'trips'>
     trip: Omit<TripType, 'user'>
+}
+
+export interface MatchType {
+    id: string
+    source_user: Omit<UserType, 'trips'>
+    target_user: Omit<UserType, 'trips'>
+    distance: number
+    overlap_start: string
+    overlap_end: string
+    source_trip?: Omit<TripType, 'user' | 'notes'>
+    target_trip?: Omit<TripType, 'user' | 'notes'>
 }

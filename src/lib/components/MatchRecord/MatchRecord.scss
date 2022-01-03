@@ -1,0 +1,28 @@
+@use 'sass:math';
+@import '_vars';
+
+.match-record {
+    margin-top: $default_spacing;
+    display: flex;
+    background-color: white;
+    border-radius: $radius;
+    padding: 8px $default_spacing;
+
+    .avatar {
+        margin-right: $default_spacing / 2;
+    }
+
+    .dates {
+        font-size: 0.85em;
+        font-weight: bold;
+        color: $text_muted;
+    }
+
+    .match-location {
+        flex-grow: 1;
+        font-size: 0.85em;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }
+}

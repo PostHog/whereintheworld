@@ -3,7 +3,8 @@
 
 .avatar {
     position: relative;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
 
     .avatar-img {
         width: 48px;
@@ -37,5 +38,23 @@
         justify-content: center;
         color: white;
         padding: 4px;
+    }
+
+    &.sm {
+        .avatar-img {
+            width: 24px;
+            height: 24px;
+        }
+
+        .fallback-img {
+            width: 24px;
+            height: 24px;
+        }
+
+        .icon-wrapper {
+            width: 14px;
+            height: 14px;
+            border-width: 1.4px;
+        }
     }
 }
