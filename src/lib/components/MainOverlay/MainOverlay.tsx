@@ -34,12 +34,14 @@ export function MainOverlay(): JSX.Element {
                         {travelingAtDate.length === 0 && 'Be the first to schedule a trip.'}
                         {travelingAtDate.map(({ user, trip }) => {
                             return (
-                                <LocationAvatar
-                                    avatarUrl={user.avatar_url}
-                                    country={trip.city.country.code}
-                                    personName={user.first_name}
-                                    locationText={formatCity(trip.city)}
-                                />
+                                <React.Fragment key={`${user.id}_${trip.id}`}>
+                                    <LocationAvatar
+                                        avatarUrl={user.avatar_url}
+                                        country={trip.city.country.code}
+                                        personName={user.first_name}
+                                        locationText={formatCity(trip.city)}
+                                    />
+                                </React.Fragment>
                             )
                         })}
                     </div>

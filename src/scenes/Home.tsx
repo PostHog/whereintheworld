@@ -14,7 +14,7 @@ import { userLogic } from 'logics/userLogic'
     /* TODO: Handle no home_city properly */
 }
 
-export function Home(): JSX.Element {
+export default function Home(): JSX.Element {
     const { openTrip } = useValues(tripLogic)
     const { users, travelingAtDate } = useValues(userLogic)
     const defaultProps = {
