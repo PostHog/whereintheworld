@@ -1,5 +1,3 @@
-import { API } from 'const'
-
 async function getJSONOrThrow(response: Response): Promise<any> {
     try {
         return await response.json()
@@ -13,8 +11,7 @@ const normalize_url = (url: string): string => {
         if (!url.startsWith('/')) {
             url = '/' + url
         }
-
-        url = API + url
+        url = '/api' + url
     }
     return url
 }
