@@ -32,7 +32,7 @@ export interface CityType {
     id: number // Only `id` that is numberic
     name: string
     country: CountryType
-    region: RegionType
+    region?: RegionType
     location: number[]
     kind: string
     timezone: string

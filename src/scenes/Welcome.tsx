@@ -24,13 +24,15 @@ export default function Welcome(): JSX.Element {
             <WhoAmI />
             <div className="welcome-inner">
                 <h1>Welcome to #whereintheworld!</h1>
-                <p>Select your home location to get started</p>
+                <p className="text-center">Select your home location to get started</p>
                 <form onSubmit={handleSubmit}>
                     <CitySelector onValueSelect={(city) => setHomeCity(city?.id ?? null)} errored={formErrored} />
 
-                    <Button type="submit" size="lg" disabled={formErrored}>
-                        Save
-                    </Button>
+                    <div className="text-right">
+                        <Button type="submit" size="lg" disabled={formErrored}>
+                            Save
+                        </Button>
+                    </div>
                 </form>
             </div>
         </div>
