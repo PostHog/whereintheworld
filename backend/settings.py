@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 import os
+import sys
 from pathlib import Path
 from typing import List
 
@@ -28,6 +29,10 @@ SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-*ojrg_(s)1)r_(6u8d4#5$czit
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = get_from_env("DEBUG", False, type_cast=str_to_bool)
+
+TEST = (
+    "test" in sys.argv or sys.argv[0].endswith("pytest") or get_from_env("TEST", False, type_cast=str_to_bool)
+)  # type: bool
 
 ALLOWED_HOSTS: List[str] = get_list(os.getenv("ALLOWED_HOSTS", ""))
 

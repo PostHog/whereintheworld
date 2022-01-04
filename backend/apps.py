@@ -12,5 +12,5 @@ class WhereInTheWorldConfig(AppConfig):
 
         posthog.api_key = "phc_EJzNlXWFR9fCwwv9hOTMZooUs0UnnlLLwla07KKXvOi"
 
-        if settings.DEBUG:
+        if settings.DEBUG or settings.TEST:
             posthog.disabled = True
