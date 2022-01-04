@@ -3,6 +3,9 @@ import { router } from 'kea-router'
 import api from 'lib/api'
 import { UserType } from '~/types'
 import type { authLogicType } from './authLogicType'
+import posthog from 'posthog-js'
+
+const ENV = window.location.href.indexOf('localhost') >= 0 ? 'development' : 'production'
 
 interface UserUpdatePayload {
     home_city: number
@@ -26,6 +29,8 @@ export const authLogic = kea<authLogicType<UserUpdatePayload>>({
             if (user && !user.home_city) {
                 router.actions.push('/welcome')
             }
+            posthog.identify(user.id, { email: ENV === 'production' ? user.email : `dev_${user.email}`, env: ENV })
+            posthog.register({ env: ENV })
         },
     },
     events: ({ actions }) => ({

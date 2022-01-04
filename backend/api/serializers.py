@@ -5,6 +5,7 @@ from rest_framework import serializers
 from rest_framework.fields import empty
 
 from backend.models import Match, Trip, User
+from backend.usage import report_object_created
 
 
 class BaseSerializer(serializers.ModelSerializer):
@@ -16,6 +17,12 @@ class BaseSerializer(serializers.ModelSerializer):
         Third-party models (e.g. Cities) do not contain such ID.
         """
         return obj.transactional_id if hasattr(obj, "transactional_id") else obj.id
+
+    def create(self, validated_data):
+        instance = super().create(validated_data)
+        if "request" in self.context:
+            report_object_created(self.context["request"].user, instance)
+        return instance
 
 
 class ReadOnlySerializer(BaseSerializer):

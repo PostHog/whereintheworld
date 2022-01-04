@@ -21,6 +21,7 @@ from backend.api.serializers import (
     UserUpdateSerializer,
 )
 from backend.models import Match, Team, Trip, User
+from backend.usage import report_user_signed_up
 
 
 class BaseModelViewSet(ModelViewSet):
@@ -125,9 +126,13 @@ def social_create_user(
 
     # TODO: whereintheworld is intended for internal use only just yet, multitenancy NOT YET supported
     # team must be assigned based on email's TLD.
+    user = User.objects.create(email=email, first_name=name, team=Team.objects.first(), avatar_url=avatar_url)
+
+    report_user_signed_up(user)
+
     return {
         "is_new": True,
-        "user": User.objects.create(email=email, first_name=name, team=Team.objects.first(), avatar_url=avatar_url),
+        "user": user,
     }
 
 

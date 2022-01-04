@@ -5,6 +5,9 @@ import { resetContext, Provider } from 'kea'
 import { loadersPlugin } from 'kea-loaders'
 import { routerPlugin } from 'kea-router'
 import { App } from './App'
+import posthog from 'posthog-js'
+
+posthog.init('phc_EJzNlXWFR9fCwwv9hOTMZooUs0UnnlLLwla07KKXvOi', { api_host: 'https://app.posthog.com' })
 
 resetContext({
     createStore: {

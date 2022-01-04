@@ -1,5 +1,5 @@
 import datetime as dt
-from typing import List
+from typing import Any, Dict, List
 
 from cities.models import City
 from django.conf import settings
@@ -98,6 +98,14 @@ class Trip(CoreModel):
         if self.start > self.end:
             raise ValidationError({"end": "Must be before start."})
 
+    def analytics_props(self) -> Dict[str, Any]:
+        return {
+            "has_notes": len(self.notes) > 0,
+            "start": self.start,
+            "end": self.end,
+            "country": self.city.country.code,
+        }
+
     def compute_matches(self):
 
         insert_statements = []
@@ -177,7 +185,9 @@ class Trip(CoreModel):
 
                 # User has an overlapping trip in the middle of this match
                 overlapping_trips = (
-                    Trip.objects.filter(user=user).filter(start__lte=self.end, end__gte=self.start).order_by("start")
+                    Trip.objects.filter(user=user)
+                    .filter(start__lte=self.end, end__gte=self.start, user=None)
+                    .order_by("start")
                 )
                 if overlapping_trips.exists():
                     # TODO: Extra extra edge case, you could have multiple overlapping trips
