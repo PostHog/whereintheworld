@@ -65,6 +65,10 @@ export const tripLogic = kea<tripLogicType<TripPayload>>({
             actions.loadMatches()
             actions.loadUsers()
         },
+        deleteTripSuccess: async () => {
+            actions.loadMatches()
+            actions.loadUsers()
+        },
     }),
     events: ({ actions }) => ({
         afterMount: [actions.loadTrips],
