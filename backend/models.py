@@ -1,5 +1,5 @@
 import datetime as dt
-from typing import List
+from typing import Any, Dict, List
 
 from cities.models import City
 from django.conf import settings
@@ -97,6 +97,14 @@ class Trip(CoreModel):
 
         if self.start > self.end:
             raise ValidationError({"end": "Must be before start."})
+
+    def analytics_props(self) -> Dict[str, Any]:
+        return {
+            "has_notes": len(self.notes) > 0,
+            "start": self.start,
+            "end": self.end,
+            "country": self.city.country.code,
+        }
 
     def compute_matches(self):
 
