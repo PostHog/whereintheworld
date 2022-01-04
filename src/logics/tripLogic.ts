@@ -2,12 +2,17 @@ import { kea } from 'kea'
 import { TripType } from '../types'
 import { tripLogicType } from './tripLogicType'
 import api from 'lib/api'
+import { matchLogic } from './matchLogic'
+import { userLogic } from './userLogic'
 
 interface TripPayload extends Pick<TripType, 'start' | 'end'> {
     city: number
 }
 
 export const tripLogic = kea<tripLogicType<TripPayload>>({
+    connect: {
+        actions: [matchLogic, ['loadMatches'], userLogic, ['loadUsers']],
+    },
     actions: {
         toggleOpenTrip: true,
         appendTrip: (trip: TripType) => ({ trip }),
@@ -54,6 +59,16 @@ export const tripLogic = kea<tripLogicType<TripPayload>>({
                 },
             },
         ],
+    }),
+    listeners: ({ actions }) => ({
+        createTripSuccess: async () => {
+            actions.loadMatches()
+            actions.loadUsers()
+        },
+        deleteTripSuccess: async () => {
+            actions.loadMatches()
+            actions.loadUsers()
+        },
     }),
     events: ({ actions }) => ({
         afterMount: [actions.loadTrips],
