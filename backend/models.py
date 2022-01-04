@@ -185,9 +185,7 @@ class Trip(CoreModel):
 
                 # User has an overlapping trip in the middle of this match
                 overlapping_trips = (
-                    Trip.objects.filter(user=user)
-                    .filter(start__lte=self.end, end__gte=self.start, user=None)
-                    .order_by("start")
+                    Trip.objects.filter(user=user).filter(start__lte=self.end, end__gte=self.start).order_by("start")
                 )
                 if overlapping_trips.exists():
                     # TODO: Extra extra edge case, you could have multiple overlapping trips
