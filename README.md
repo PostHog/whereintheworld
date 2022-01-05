@@ -31,6 +31,7 @@ psql
 CREATE DATABASE whereintheworld;
 CREATE USER whereintheworld WITH PASSWORD 'whereintheworld';
 GRANT ALL PRIVILEGES ON DATABASE whereintheworld TO whereintheworld;
+ALTER ROLE whereintheworld SUPERUSER;
 ```
 
 **Migrate the database and start the server**
