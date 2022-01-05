@@ -15,7 +15,6 @@ import sys
 from pathlib import Path
 from typing import List
 
-import posthog
 import sentry_sdk
 from posthog.sentry.posthog_integration import PostHogIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
@@ -257,7 +256,6 @@ SOCIAL_AUTH_REDIRECT_IS_HTTPS = not DEBUG
 if not TEST and os.getenv("SENTRY_DSN"):
     PostHogIntegration.organization = "posthog2"
     PostHogIntegration.project_id = "6135040"
-    # posthog.api_key = "phc_EJzNlXWFR9fCwwv9hOTMZooUs0UnnlLLwla07KKXvOi"
 
     sentry_sdk.utils.MAX_STRING_LENGTH = 10_000_000
     sentry_sdk.init(
