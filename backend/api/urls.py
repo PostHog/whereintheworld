@@ -8,7 +8,13 @@ from .views import CityViewSet, MatchViewSet, TripViewSet, UserViewSet
 
 register_converter(converters.TransactionalIDConverter, "id")
 
+
+def trigger_error(request):
+    raise KeyError("This is another one.")
+
+
 urlpatterns: List[Any] = [
+    path("sentry-debug/", trigger_error),
     path("api/cities", CityViewSet.as_view({"get": "list"}), name="cities"),
     path(
         "api/users",
