@@ -9,11 +9,15 @@ import { MatchType } from '~/types'
 import { Avatar } from '../Avatar/Avatar'
 import './MatchRecord.scss'
 
-export function MatchRecord({ match }: { match: MatchType }): JSX.Element {
+export function MatchRecord({ match }: { match: MatchType }): JSX.Element | null {
     const { user } = useValues(authLogic)
     const otherParty = match.source_user.id === user.id ? match.target_user : match.source_user
     const myRelatedTrip = match.source_user.id === user.id ? match.source_trip : match.target_trip
     const matchCity = myRelatedTrip ? myRelatedTrip.city : user.home_city
+
+    if (!matchCity) {
+        return null
+    }
 
     return (
         <div className="match-record">

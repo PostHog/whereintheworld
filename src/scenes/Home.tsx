@@ -44,9 +44,9 @@ export default function Home(): JSX.Element {
             >
                 {users.map((user) => {
                     const travelRecord = travelingAtDate.find((item) => item.user.id === user.id)
-                    const location = travelRecord ? travelRecord.trip.city.location : user.home_city.location
+                    const location = travelRecord ? travelRecord.trip.city.location : user.home_city?.location
                     // TODO: Handle multiple people at the same location
-                    return (
+                    return location ? (
                         <MapPin
                             lat={location[1]}
                             lng={location[0]}
@@ -55,7 +55,7 @@ export default function Home(): JSX.Element {
                             travelState={travelRecord ? 'away' : 'home'}
                             key={user.id}
                         />
-                    )
+                    ) : null
                 })}
             </GoogleMapReact>
         </div>

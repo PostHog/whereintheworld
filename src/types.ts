@@ -43,7 +43,7 @@ export interface UserType {
     first_name: string
     email: string
     avatar_url: string
-    home_city: CityType
+    home_city?: CityType
     trips?: Omit<TripType, 'user' | 'notes'>[]
 }
 
