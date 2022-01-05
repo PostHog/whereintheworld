@@ -15,6 +15,10 @@ import sys
 from pathlib import Path
 from typing import List
 
+import sentry_sdk
+from posthog.sentry.posthog_integration import PostHogIntegration
+from sentry_sdk.integrations.django import DjangoIntegration
+
 from backend.utils import get_from_env, get_list, str_to_bool
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -243,6 +247,27 @@ AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
 )
 SOCIAL_AUTH_REDIRECT_IS_HTTPS = not DEBUG
+
+
+# Sentry + PostHog
+# https://docs.sentry.io/platforms/python/guides/django/
+# https://posthog.com/docs/integrate/server/python#sentry
+
+if not TEST and os.getenv("SENTRY_DSN"):
+    PostHogIntegration.organization = "posthog2"
+    PostHogIntegration.project_id = "6135040"
+
+    sentry_sdk.utils.MAX_STRING_LENGTH = 10_000_000
+    sentry_sdk.init(
+        dsn=os.environ["SENTRY_DSN"],
+        integrations=[DjangoIntegration(), PostHogIntegration()],
+        request_bodies="always",
+        send_default_pii=False,
+        environment="production",
+    )
+
+    MIDDLEWARE.append("posthog.sentry.django.PosthogDistinctIdMiddleware")
+    POSTHOG_DJANGO = {"distinct_id": lambda request: request.user and request.user.transactional_id}
 
 
 # Business rules
