@@ -1,14 +1,20 @@
 import React from 'react'
 import GoogleMapReact from 'google-map-react'
-import { MapPin } from 'lib/components/MapPin'
+import { MapPin } from 'lib/components/MapPin/MapPin'
 import { useValues } from 'kea'
 import { TimeTravel } from 'lib/components/TimeTravel/TimeTravel'
 import { userLogic } from 'logics/userLogic'
 import './Home.scss'
 import { WhoAmI } from 'lib/components/WhoAmI/WhoAmI'
+import { authLogic } from 'logics/authLogic'
+import { timeofDay } from 'utils'
+import { matchLogic } from 'logics/matchLogic'
+import { MatchRecord } from 'lib/components/MatchRecord/MatchRecord'
 
 export default function Home(): JSX.Element {
     const { users, travelingAtDate } = useValues(userLogic)
+    const { user } = useValues(authLogic)
+    const { matches } = useValues(matchLogic)
     const defaultProps = {
         center: {
             lat: 51.5,
@@ -56,7 +62,17 @@ export default function Home(): JSX.Element {
                 </div>
                 <WhoAmI />
             </div>
-            <div className="main-section rhs"></div>
+            <div className="main-section rhs">
+                <h1>
+                    Good {timeofDay()}, {user.first_name}
+                </h1>
+
+                <h2>Meet up opportunities</h2>
+                <div>These teammates will be within 200km of you.</div>
+                {matches.map((match) => (
+                    <MatchRecord match={match} key={match.id} />
+                ))}
+            </div>
         </div>
     )
 }

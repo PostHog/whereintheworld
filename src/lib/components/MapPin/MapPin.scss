@@ -1,0 +1,19 @@
+@use 'sass:math';
+@import '_vars';
+
+.map-pin {
+    transform: translate(-50%, -50%);
+    z-index: 10000;
+
+    &.away {
+        .avatar-img,
+        .fallback-img {
+            border-color: $success;
+        }
+    }
+
+    .avatar-img,
+    .fallback-img {
+        border: 2px solid $secondary;
+    }
+}

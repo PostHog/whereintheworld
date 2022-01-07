@@ -39,7 +39,7 @@ export function WhoAmI(): JSX.Element | null {
             <div>
                 {user.first_name}
 
-                <div className="text-muted" style={{ fontSize: '0.85em', fontWeight: 'bold' }}>
+                <div className="text-muted-light" style={{ fontSize: '0.85em', fontWeight: 'bold' }}>
                     <b>Today at {myLocationToday ? formatCity(myLocationToday) : 'The World'}</b>
                 </div>
             </div>

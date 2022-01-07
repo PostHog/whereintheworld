@@ -13,6 +13,7 @@
     --danger: #{$danger};
     --text-default: #{$text_default};
     --text-muted: #{$text_muted};
+    --text-muted-light: #{$text_muted_light};
 }
 
 // Reset styles
@@ -44,6 +45,7 @@ h1 {
 
 h2 {
     font-size: 1.1em;
+    color: $text_muted_light;
 }
 
 input,
@@ -92,6 +94,10 @@ button {
 
 .text-muted {
     color: $text_muted;
+}
+
+.text-muted-light {
+    color: $text_muted_light;
 }
 
 .text-danger {
@@ -178,36 +184,6 @@ a {
         @extend .text-muted;
         font-weight: bold;
         font-size: 0.7em;
-    }
-}
-
-.map-pin {
-    transform: translate(-50%, -50%);
-    z-index: 10000;
-
-    .avatar {
-        .icon-wrapper {
-            width: 14px;
-            height: 14px;
-            font-size: 0.75em;
-            border-color: $secondary;
-            background-color: $secondary;
-        }
-    }
-
-    &.away {
-        .icon-wrapper {
-            background-color: $orange;
-            border-color: $orange;
-        }
-
-        .avatar-img {
-            border-color: $orange;
-        }
-    }
-
-    .avatar-img {
-        border: 2px solid $secondary;
     }
 }
 

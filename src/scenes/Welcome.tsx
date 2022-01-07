@@ -1,7 +1,6 @@
 import { useActions } from 'kea'
 import { Button } from 'lib/components/Button'
 import { CitySelector } from 'lib/components/CitySelector'
-import { WhoAmI } from 'lib/components/WhoAmI/WhoAmI'
 import { authLogic } from 'logics/authLogic'
 import React, { useState } from 'react'
 import './Welcome.scss'
@@ -21,7 +20,6 @@ export default function Welcome(): JSX.Element {
 
     return (
         <div className="welcome-scene">
-            <WhoAmI />
             <div className="welcome-inner">
                 <h1>Welcome to #whereintheworld!</h1>
                 <p className="text-center">Select your home location to get started</p>
