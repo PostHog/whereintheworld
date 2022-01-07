@@ -9,6 +9,7 @@ export const userLogic = kea<userLogicType>({
         setCurrentDate: (date: Date) => ({ date }),
     },
     reducers: {
+        /** Date used for map time travelling */
         currentDate: [
             new Date(),
             {

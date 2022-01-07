@@ -3,13 +3,21 @@
 
 .home-scene {
     .main-section {
+        padding: $default_spacing;
         &.lhs {
             display: flex;
             flex-direction: column;
         }
     }
-    .map-container {
-        padding: $default_spacing;
+    .map-wrapper {
+        padding: $default_spacing 0;
         flex-grow: 1;
+        position: relative;
+        .map-container {
+            width: 100%;
+            height: 100%;
+            border-radius: $radius;
+            overflow: hidden;
+        }
     }
 }
