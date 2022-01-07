@@ -1,14 +1,17 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
 import Flag from 'react-flagkit'
-import { Avatar } from './Avatar/Avatar'
-import { faSignOutAlt, faGlobeAmericas } from '@fortawesome/free-solid-svg-icons'
+import { Avatar } from '../Avatar/Avatar'
+import { faGlobeAmericas } from '@fortawesome/free-solid-svg-icons'
 import { useValues } from 'kea'
 import { authLogic } from 'logics/authLogic'
 import { formatCity } from 'utils'
+import './WhoAmI.scss'
+import { userLogic } from 'logics/userLogic'
 
 export function WhoAmI(): JSX.Element | null {
     const { user } = useValues(authLogic)
+    const { myLocationToday } = useValues(userLogic)
     if (!user) {
         // TODO: Nice loading state
         return null
@@ -19,8 +22,8 @@ export function WhoAmI(): JSX.Element | null {
             <div>
                 <Avatar
                     icon={
-                        user.home_city ? (
-                            <Flag country={user.home_city.country.code} size={10} />
+                        myLocationToday ? (
+                            <Flag country={myLocationToday.country.code} size={10} />
                         ) : (
                             <FontAwesomeIcon
                                 icon={faGlobeAmericas}
@@ -36,13 +39,13 @@ export function WhoAmI(): JSX.Element | null {
             <div>
                 {user.first_name}
 
-                <div className="text-muted" style={{ fontSize: '0.75em' }}>
-                    <b>{user.home_city ? formatCity(user.home_city) : 'The World'}</b>
+                <div className="text-muted" style={{ fontSize: '0.85em', fontWeight: 'bold' }}>
+                    <b>Today at {myLocationToday ? formatCity(myLocationToday) : 'The World'}</b>
                 </div>
             </div>
-            <div style={{ marginLeft: 16, color: 'var(--primary)' }}>
-                <a href="/logout">
-                    <FontAwesomeIcon icon={faSignOutAlt} />
+            <div style={{ flexGrow: 1, textAlign: 'right' }}>
+                <a style={{ color: 'white' }} href="/logout">
+                    Logout
                 </a>
             </div>
         </div>

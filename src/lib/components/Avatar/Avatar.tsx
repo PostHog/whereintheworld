@@ -19,7 +19,11 @@ export function Avatar({ avatarUrl, className, icon, size, userName }: AvatarPro
     return (
         <div className={clsx('avatar', className, size)}>
             {!didImageError ? remoteImage : fallbackImage}
-            {icon && <div className="icon-wrapper">{icon}</div>}
+            {icon && (
+                <div className="icon-wrapper">
+                    <div className="icon-inner">{icon}</div>
+                </div>
+            )}
         </div>
     )
 }

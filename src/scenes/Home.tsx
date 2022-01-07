@@ -5,7 +5,7 @@ import { useValues } from 'kea'
 import { TimeTravel } from 'lib/components/TimeTravel/TimeTravel'
 import { userLogic } from 'logics/userLogic'
 import './Home.scss'
-import { WhoAmI } from 'lib/components/WhoAmI'
+import { WhoAmI } from 'lib/components/WhoAmI/WhoAmI'
 
 export default function Home(): JSX.Element {
     const { users, travelingAtDate } = useValues(userLogic)

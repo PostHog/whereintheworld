@@ -9,14 +9,14 @@
     .avatar-img {
         width: 48px;
         height: 48px;
-        border-radius: $radius_sm;
+        border-radius: 50%;
     }
 
     .fallback-img {
         width: 48px;
         height: 48px;
         background-color: #e2e9ff;
-        border-radius: $radius_sm;
+        border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -27,17 +27,22 @@
     .icon-wrapper {
         width: 18px;
         height: 18px;
-        border-radius: math.div($radius_sm, 2);
-        background-color: $bg;
+        border-radius: 50%;
+        background-color: rgba($primary, 0.9);
+        backdrop-filter: blur(20px);
         position: absolute;
-        bottom: 0;
+        bottom: -6px;
         right: -6px;
-        border: 2px solid white;
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
-        padding: 4px;
+
+        @supports ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
+            background-color: rgba($primary, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
     }
 
     &.sm {

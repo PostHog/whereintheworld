@@ -1,0 +1,16 @@
+@use 'sass:math';
+@import '_vars';
+
+.whoami {
+    padding: $default_spacing * 0.5;
+    display: flex;
+    align-items: center;
+
+    .avatar {
+        margin-right: $default_spacing;
+        .avatar-img {
+            width: 32px;
+            height: 32px;
+        }
+    }
+}

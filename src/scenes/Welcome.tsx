@@ -1,7 +1,7 @@
 import { useActions } from 'kea'
 import { Button } from 'lib/components/Button'
 import { CitySelector } from 'lib/components/CitySelector'
-import { WhoAmI } from 'lib/components/WhoAmI'
+import { WhoAmI } from 'lib/components/WhoAmI/WhoAmI'
 import { authLogic } from 'logics/authLogic'
 import React, { useState } from 'react'
 import './Welcome.scss'
