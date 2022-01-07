@@ -1,15 +1,24 @@
-// Colors
-$primary: #ea638c;
-$secondary: #4b92e5;
-$orange: #f17b60;
-$bg: #e2e9ff;
-$text_default: #484967;
-$text_muted: #adaeb9;
-$border_default: #e2e9ff;
-$danger: #f16060;
+// Main colors
+$primary: #4381c1;
+$secondary: #ec9ded;
+$orange: #e39805; // Restricted use
+
+// Background colors
+$bg: #272f3b;
+$bg_alt: #101419;
+
+// Text colors
+$text_default: #fff;
+$text_muted: #adadad;
+
+// Stateful colors
+$danger: #ef767a;
+$warning: #e3b505;
+$success: #49dcb1;
 
 // Borders & radius
 $radius: 8px;
+$radius_lg: 50%;
 $radius_sm: 4px;
 $default_spacing: 16px;
 

@@ -1,5 +1,6 @@
 @use 'sass:math';
 @import '_vars';
+@import 'fonts';
 @import '../node_modules/@wojtekmaj/react-daterange-picker/dist/DateRangePicker.css';
 @import '../node_modules/react-calendar/dist/Calendar.css';
 @import '../node_modules/rc-slider/assets/index.css';
@@ -30,9 +31,8 @@ body {
     margin: 0;
     padding: 0;
     font-size: 16px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
-        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
-    background: rgba(0, 0, 0, 0.05);
+    font-family: 'Merriweather', serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+    background: $bg;
     overflow: hidden;
     height: 100%;
     color: $text_default;
@@ -56,9 +56,20 @@ button {
 }
 
 // General styles
-.map-container {
+.main-layout {
     height: 100vh;
     width: 100%;
+    display: flex;
+
+    .main-section {
+        flex-grow: 1;
+        padding-right: 8px;
+        height: 100%;
+
+        &.rhs {
+            background-color: $bg_alt;
+        }
+    }
 }
 
 .flex-center {
@@ -234,7 +245,7 @@ button {
         z-index: 950;
 
         .trip-card-header {
-            border-bottom: 1px solid $border_default;
+            border-bottom: 1px solid red;
             display: flex;
             align-items: center;
             font-weight: bold;
@@ -276,7 +287,7 @@ button {
     width: 100%;
     .react-daterange-picker__wrapper {
         border-radius: $radius_sm;
-        border-color: $border_default;
+        border-color: red;
         padding: 8px;
         font-size: 0.85em;
     }
@@ -295,7 +306,7 @@ button {
     @extend .mixin-elevated;
     margin-top: $default_spacing * 0.5;
     border-radius: $radius_sm;
-    border-color: $border_default;
+    border-color: red;
 
     .react-calendar__tile {
         border-radius: $radius_sm;
@@ -335,13 +346,13 @@ button {
 
 .react-select__control {
     font-size: 0.85em;
-    border-color: $border_default !important;
+    border-color: red !important;
     .react-select__placeholder {
         color: $text_muted;
     }
 
     &.react-select__control--is-focused {
-        border-color: darken($border_default, 20%) !important;
+        border-color: darken(red, 20%) !important;
         box-shadow: none !important;
     }
 
@@ -351,7 +362,7 @@ button {
     }
 
     .react-select__indicator-separator {
-        background-color: $border_default;
+        background-color: red;
     }
 }
 

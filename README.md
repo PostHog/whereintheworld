@@ -30,7 +30,6 @@ export GEOS_LIBRARY_PATH=/opt/homebrew/lib/libgeos_c.dylib
 psql
 CREATE DATABASE whereintheworld;
 CREATE USER whereintheworld WITH PASSWORD 'whereintheworld';
-GRANT ALL PRIVILEGES ON DATABASE whereintheworld TO whereintheworld;
 ALTER ROLE whereintheworld SUPERUSER;
 ```
 
@@ -42,7 +41,7 @@ python manage.py cities --import=all
 python manage.py runserver
 ```
 
-The server is now running at [`http://localhost:8000/`](http://localhost:8000/).
+
 
 ### 3. Start the frontend
 
@@ -52,5 +51,4 @@ The code for the frontend is located in the [`src`](./src) directory. Once you l
 yarn
 yarn start
 ```
-
-The app is now running, navigate to [`http://localhost:3000/`](http://localhost:3000/) in your browser to explore its UI.
+The server is now running at [`http://localhost:8000/`](http://localhost:8000/). Don't visit `localhost:3000` as the pure frontend will not work as expected.

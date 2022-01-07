@@ -1,0 +1,15 @@
+@use 'sass:math';
+@import '_vars';
+
+.home-scene {
+    .main-section {
+        &.lhs {
+            display: flex;
+            flex-direction: column;
+        }
+    }
+    .map-container {
+        padding: $default_spacing;
+        flex-grow: 1;
+    }
+}

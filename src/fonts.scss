@@ -1,0 +1,23 @@
+/* merriweather-300 - latin */
+@font-face {
+    font-family: 'Merriweather';
+    font-style: normal;
+    font-weight: 300;
+    src: local(''), url('../public/fonts/merriweather-v28-latin-300.woff2') format('woff2');
+}
+
+/* merriweather-regular - latin */
+@font-face {
+    font-family: 'Merriweather';
+    font-style: normal;
+    font-weight: 400;
+    src: local(''), url('../public/fonts/merriweather-v28-latin-regular.woff2') format('woff2');
+}
+
+/* merriweather-700 - latin */
+@font-face {
+    font-family: 'Merriweather';
+    font-style: normal;
+    font-weight: 700;
+    src: local(''), url('../public/fonts/merriweather-v28-latin-700.woff2') format('woff2');
+}
