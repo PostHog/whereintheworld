@@ -254,7 +254,6 @@ class Match(CoreModel):
     STATE_CHOICES = (
         ("unseen", "Unseen"),
         ("seen", "Seen"),
-        ("meeting", "Meeting"),
         ("dismissed", "Dismissed"),
     )
 
@@ -287,6 +286,7 @@ class Match(CoreModel):
     )  # trip for the target_user that makes up this match (if `None`, `target_user` is at home location)
     source_state = models.CharField(max_length=24, default="unseen", choices=STATE_CHOICES)  # state for `source_user`
     target_state = models.CharField(max_length=24, default="unseen", choices=STATE_CHOICES)  # state for `target_user`
+    are_meeting = models.BooleanField(default=False, blank=True)
 
     class Meta:
         unique_together = (

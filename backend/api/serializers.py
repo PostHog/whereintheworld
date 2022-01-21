@@ -1,7 +1,7 @@
-from typing import Tuple
+from typing import Optional, Tuple
 
 from cities.models import City, Country, Region
-from rest_framework import serializers
+from rest_framework import exceptions, serializers
 from rest_framework.fields import empty
 
 from backend.models import Match, Trip, User
@@ -175,6 +175,7 @@ class MatchSerializer(ReadOnlySerializer):
     target_user = UserSerializer(many=False, read_only=True)
     source_trip = TripSerializer(many=False, read_only=True, simple=True)
     target_trip = TripSerializer(many=False, read_only=True, simple=True)
+    state = serializers.SerializerMethodField()
 
     class Meta:
         model = Match
@@ -187,6 +188,38 @@ class MatchSerializer(ReadOnlySerializer):
             "overlap_end",
             "source_trip",
             "target_trip",
-            "source_state",
-            "target_state",
+            "state",
+            "are_meeting",
         )
+
+    def get_state(self, instance) -> Optional[str]:
+        if "request" not in self.context:
+            return None
+        if self.context["request"].user == instance.source_user:
+            return instance.source_state
+        elif self.context["request"].user == instance.target_user:
+            return instance.target_state
+        return None
+
+
+class MatchUpdateSerializer(serializers.ModelSerializer):
+    state = serializers.ChoiceField(Match.STATE_CHOICES, write_only=True)
+
+    class Meta:
+        model = Match
+        fields = (
+            "state",
+            "are_meeting",
+        )
+
+    def update(self, instance, validated_data):
+        assert "request" in self.context, "`request` must be passed to this serializer."
+        state = validated_data.pop("state", None)
+        if state:
+            if self.context["request"].user == instance.source_user:
+                validated_data["source_state"] = state
+            elif self.context["request"].user == instance.target_user:
+                validated_data["target_state"] = state
+            else:
+                raise exceptions.PermissionDenied()
+        return super().update(instance, validated_data)
