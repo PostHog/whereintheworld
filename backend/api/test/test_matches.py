@@ -16,6 +16,8 @@ class TestMatches(APIBaseTest):
         "overlap_end",
         "source_trip",
         "target_trip",
+        "source_state",
+        "target_state",
     ]
 
     @classmethod

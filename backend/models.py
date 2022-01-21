@@ -251,6 +251,12 @@ class Match(CoreModel):
     """
 
     PREFIXER = "match"
+    STATE_CHOICES = (
+        ("unseen", "Unseen"),
+        ("seen", "Seen"),
+        ("meeting", "Meeting"),
+        ("dismissed", "Dismissed"),
+    )
 
     source_user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -279,6 +285,8 @@ class Match(CoreModel):
         blank=True,
         related_name="target_matches",
     )  # trip for the target_user that makes up this match (if `None`, `target_user` is at home location)
+    source_state = models.CharField(max_length=24, default="unseen", choices=STATE_CHOICES)  # state for `source_user`
+    target_state = models.CharField(max_length=24, default="unseen", choices=STATE_CHOICES)  # state for `target_user`
 
     class Meta:
         unique_together = (

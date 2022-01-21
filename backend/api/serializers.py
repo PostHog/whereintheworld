@@ -187,4 +187,6 @@ class MatchSerializer(ReadOnlySerializer):
             "overlap_end",
             "source_trip",
             "target_trip",
+            "source_state",
+            "target_state",
         )
