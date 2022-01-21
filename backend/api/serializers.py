@@ -91,13 +91,7 @@ class UserSerializer(ReadOnlySerializer):
 
     class Meta:
         model = User
-        fields = (
-            "id",
-            "first_name",
-            "avatar_url",
-            "home_city",
-            "email",
-        )
+        fields = ("id", "first_name", "avatar_url", "home_city", "email", "work_hours")
 
 
 class UserUpdateSerializer(BaseSerializer):
@@ -109,6 +103,7 @@ class UserUpdateSerializer(BaseSerializer):
             "first_name",
             "avatar_url",
             "home_city",
+            "work_hours",
         )
 
 
@@ -170,6 +165,7 @@ class UserListSerializer(UserSerializer):
             "avatar_url",
             "home_city",
             "email",
+            "work_hours",
             "trips",
         )
 

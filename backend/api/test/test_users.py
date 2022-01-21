@@ -7,7 +7,7 @@ from backend.test.base import APIBaseTest
 
 
 class TestUsers(APIBaseTest):
-    SERIALIZER_ATTRIBUTES = ["id", "first_name", "avatar_url", "home_city", "email"]
+    SERIALIZER_ATTRIBUTES = ["id", "first_name", "avatar_url", "home_city", "email", "work_hours"]
     LIST_SERIALIZER_ATTRIBUTES = SERIALIZER_ATTRIBUTES + ["trips"]
 
     @classmethod
@@ -28,6 +28,7 @@ class TestUsers(APIBaseTest):
         self.assertEqual(json_response["email"], self.CONFIG_EMAIL)
         self.assertEqual(json_response["home_city"]["name"], "Paris")
         self.assertEqual(json_response["home_city"]["country"]["code"], "FR")
+        self.assertEqual(json_response["work_hours"], {"start": "08:00", "end": "18:00"})
 
     def test_list_users(self):
         user2 = User.objects.create(
@@ -93,7 +94,7 @@ class TestUsers(APIBaseTest):
         # Ensure previous match is cleared
         self.assertEqual(Match.objects.count(), 0)
 
-    def test_can_update_avatar_url_and_name(self):
+    def test_can_update_avatar_url_name_and_work_hours(self):
         """
         Also tests that other attributes cannot be updated.
         """
@@ -103,6 +104,7 @@ class TestUsers(APIBaseTest):
                 "avatar_url": "https://posthog.com/static/3953b41e0e79b4c1949ca8399ab5b8d0/02b31/max-hedgehog.webp",
                 "email": "my_new_email@posthog.com",
                 "first_name": "Alice B.",
+                "work_hours": {"start": "05:00", "end": "15:00"},
             },
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -121,3 +123,39 @@ class TestUsers(APIBaseTest):
         self.user.refresh_from_db()
         self.assertEqual(self.user.first_name, "Alice B.")
         self.assertEqual(self.user.email, self.CONFIG_EMAIL)
+        self.assertEqual(self.user.work_hours, {"start": "05:00", "end": "15:00"})
+
+    def test_cannot_set_invalid_work_hours(self):
+        response = self.client.patch(
+            "/api/users/me",
+            {
+                "work_hours": ["08:00", "17:00"],
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.json(),
+            {
+                "type": "validation_error",
+                "code": "invalid_input",
+                "detail": "Malformed JSON: ['08:00', '17:00'] is not of type 'object'",
+                "attr": "work_hours",
+            },
+        )
+
+        response = self.client.patch(
+            "/api/users/me",
+            {
+                "work_hours": {"end": "11:00"},
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.json(),
+            {
+                "type": "validation_error",
+                "code": "invalid_input",
+                "detail": "Malformed JSON: 'start' is a required property",
+                "attr": "work_hours",
+            },
+        )
