@@ -70,9 +70,11 @@ export default function Home(): JSX.Element {
                 <h2>Meet up opportunities</h2>
                 <div>These teammates will be within 200km of you.</div>
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    {matches.map((match) => (
-                        <MatchRecord match={match} key={match.id} />
-                    ))}
+                    {matches.length === 0 ? (
+                        <div></div>
+                    ) : (
+                        matches.map((match) => <MatchRecord match={match} key={match.id} />)
+                    )}
                 </div>
             </div>
         </div>

@@ -2,7 +2,12 @@ import dayjs from 'dayjs'
 import { CityType } from './types'
 
 export function formatCity(city: CityType): string {
-    const location = [city.name, city.region?.name, city.country.code]
+    const location = [city.name]
+    if (city.country.code === 'US' && city.region?.name) {
+        location.push(city.region.name)
+    }
+    location.push(city.country.code)
+
     return location.join(', ')
 }
 
