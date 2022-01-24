@@ -35,8 +35,7 @@ export default function Home(): JSX.Element {
                         <MapPin
                             lat={location[1]}
                             lng={location[0]}
-                            userName={user.first_name}
-                            avatarUrl={user.avatar_url}
+                            user={user}
                             travelState={travelRecord ? 'away' : 'home'}
                             key={user.id}
                         />
