@@ -1,4 +1,6 @@
-# #whereintheworld
+# WITW
+
+> 🚧 This app is still in alpha development and we don't recommend using it yet.
 
 ## Development server
 
@@ -33,22 +35,20 @@ CREATE USER whereintheworld WITH PASSWORD 'whereintheworld';
 ALTER ROLE whereintheworld SUPERUSER;
 ```
 
-**Migrate the database and start the server**
+**Migrate the database
 
 ```
 python manage.py migrate
 python manage.py cities --import=all
-python manage.py runserver
 ```
 
 
 
-### 3. Start the frontend
+### 3. Start the app
 
-The code for the frontend is located in the [`src`](./src) directory. Once you launched the server, you can start it as follows:
+The code for the frontend is located in the [`src`](./src) directory. You can start the entire app (frontend & backend) as follows:
 
 ```
-yarn
-yarn start
+./bin/start
 ```
-The server is now running at [`http://localhost:8000/`](http://localhost:8000/). Don't visit `localhost:3000` as the pure frontend will not work as expected.
+The server is now running at [`http://localhost:8000/`](http://localhost:8000/). **Warning:** Don't visit `localhost:3000` as the raw frontend will not work as expected.
