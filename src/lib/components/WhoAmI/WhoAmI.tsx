@@ -19,6 +19,13 @@ export function WhoAmI(): JSX.Element | null {
 
     return (
         <div className="whoami">
+            <div className="text-right">
+                {user.first_name}
+
+                <div className="text-muted-light" style={{ fontSize: '0.85em', fontWeight: 'bold' }}>
+                    <b>Today at {myLocationToday ? formatCity(myLocationToday) : 'The World'}</b>
+                </div>
+            </div>
             <div>
                 <Avatar
                     icon={
@@ -35,18 +42,6 @@ export function WhoAmI(): JSX.Element | null {
                     avatarUrl={user.avatar_url}
                     userName={user.first_name}
                 />
-            </div>
-            <div>
-                {user.first_name}
-
-                <div className="text-muted-light" style={{ fontSize: '0.85em', fontWeight: 'bold' }}>
-                    <b>Today at {myLocationToday ? formatCity(myLocationToday) : 'The World'}</b>
-                </div>
-            </div>
-            <div style={{ flexGrow: 1, textAlign: 'right' }}>
-                <a style={{ color: 'white' }} href="/logout">
-                    Logout
-                </a>
             </div>
         </div>
     )

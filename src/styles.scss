@@ -59,20 +59,8 @@ button {
 
 // General styles
 .main-layout {
-    height: 100vh;
+    height: calc(100vh - 42px); // height of top bar
     width: 100%;
-    display: flex;
-
-    .main-section {
-        flex-grow: 4;
-        padding-right: 8px;
-        height: 100%;
-
-        &.rhs {
-            background-color: $bg_alt;
-            flex-grow: 6;
-        }
-    }
 }
 
 .flex-center {

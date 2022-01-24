@@ -1,0 +1,25 @@
+@use 'sass:math';
+@import '_vars';
+
+.navigation {
+    background-color: $bg;
+    height: 42px;
+    display: flex;
+    padding: 0 $default_spacing;
+    align-items: center;
+
+    .menu-toggle {
+        margin-right: $default_spacing / 2;
+        cursor: pointer;
+    }
+
+    .logo-main {
+        font-size: 1.2em;
+    }
+
+    .nav-section {
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+    }
+}
