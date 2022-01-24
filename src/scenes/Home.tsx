@@ -29,13 +29,15 @@ export default function Home(): JSX.Element {
             >
                 {users.map((user) => {
                     const travelRecord = travelingAtDate.find((item) => item.user.id === user.id)
-                    const location = travelRecord ? travelRecord.trip.city.location : user.home_city?.location
+                    const city = travelRecord ? travelRecord.trip.city : user.home_city
+                    const location = city?.location
                     // TODO: Handle multiple people at the same location
                     return location ? (
                         <MapPin
                             lat={location[1]}
                             lng={location[0]}
                             user={user}
+                            city={city}
                             travelState={travelRecord ? 'away' : 'home'}
                             key={user.id}
                         />
