@@ -1,5 +1,10 @@
 import dayjs from 'dayjs'
-import { CityType } from './types'
+import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
+import { CityType, WorkHoursType } from './types'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 export function formatCity(city: CityType): string {
     const location = [city.name]
@@ -23,4 +28,18 @@ export function timeofDay(date: dayjs.Dayjs = dayjs()): string {
         return 'evening'
     }
     return 'night'
+}
+
+export function userAvailability(tz: string, work_hours?: WorkHoursType): 'available' | 'unavailable' | 'unknown' {
+    if (!work_hours || !work_hours.start || !work_hours.end) {
+        return 'unknown'
+    }
+
+    const startOfWorkDay = dayjs.tz(`${dayjs().format('YYYY-MM-DD')} ${work_hours.start}`, tz)
+    const endOfWorkDay = dayjs.tz(`${dayjs().format('YYYY-MM-DD')} ${work_hours.end}`, tz)
+
+    if (startOfWorkDay.hour() <= dayjs().tz(tz).hour() && endOfWorkDay.hour() > dayjs().tz(tz).hour()) {
+        return 'available'
+    }
+    return 'unavailable'
 }

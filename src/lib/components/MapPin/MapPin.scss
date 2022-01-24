@@ -6,16 +6,23 @@
     z-index: 10000;
     cursor: pointer;
 
-    &.online {
+    &.available {
         .avatar-img,
         .fallback-img {
             border-color: $success;
         }
     }
 
+    &.unavailable {
+        .avatar-img,
+        .fallback-img {
+            border-color: $danger;
+        }
+    }
+
     .avatar-img,
     .fallback-img {
-        border: 2px solid $danger;
+        border: 2px solid #4b4b4b;
     }
 }
 
@@ -25,10 +32,14 @@
     border-radius: $radius;
     padding: $default_spacing * 0.5 $default_spacing;
     line-height: 2em;
-    border: 2px solid $danger;
+    border: 2px solid #4b4b4b;
 
-    &.online {
+    &.available {
         border-color: $success;
+    }
+
+    &.unavailable {
+        border-color: $danger;
     }
 
     b {
@@ -37,7 +48,8 @@
 
     .svg-inline--fa {
         color: rgba(#fff, 0.8);
-        font-size: 1.1em;
+        font-size: 1.3em;
+        margin-right: 4px;
     }
 
     .online-indicator {
@@ -46,9 +58,9 @@
         display: inline-block;
         border-radius: 50%;
         background-color: $danger;
-        margin-right: 4px;
+        margin-right: 2px;
 
-        &.online {
+        &.available {
             background-color: $success;
         }
     }
