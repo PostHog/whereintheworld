@@ -16,6 +16,8 @@ class TestMatches(APIBaseTest):
         "overlap_end",
         "source_trip",
         "target_trip",
+        "state",
+        "are_meeting",
     ]
 
     @classmethod
@@ -43,7 +45,13 @@ class TestMatches(APIBaseTest):
             end=dt.date(2041, 9, 5),
         )
 
+    # Listing / retrieving matches
+
     def test_can_list_and_retrieve_your_matches(self):
+        match1 = Match.objects.first()
+        match1.target_state = "seen"
+        match1.save()
+
         self.client.force_login(self.user2)
         response = self.client.get("/api/matches")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -59,6 +67,7 @@ class TestMatches(APIBaseTest):
         self.assertEqual(json_response["results"][0]["target_trip"], None)
         self.assertEqual(json_response["results"][0]["source_user"]["first_name"], "Alice")
         self.assertEqual(json_response["results"][0]["target_user"]["email"], "u2@posthog.com")
+        self.assertEqual(json_response["results"][0]["state"], "seen")
 
         # Trip does not repeat user information
         self.assertNotIn("user", json_response["results"][0]["source_trip"])
@@ -108,3 +117,82 @@ class TestMatches(APIBaseTest):
         response = self.client.get(f"/api/matches/{match.transactional_id}")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.json(), self.not_found_response())
+
+    # Updating matches
+
+    def test_user_can_update_match_state(self):
+        match = Match.objects.first()
+
+        self.client.force_login(self.user2)
+        response = self.client.patch(f"/api/matches/{match.transactional_id}", {"state": "seen", "are_meeting": True})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        json_response = response.json()
+        self.assertEqual(json_response["state"], "seen")
+        self.assertEqual(json_response["are_meeting"], True)
+
+        match.refresh_from_db()
+        self.assertEqual(match.target_state, "seen")
+        self.assertEqual(match.are_meeting, True)
+
+        # Now test that relevant state is updated if another user updates it
+        self.client.force_login(self.user)
+        response = self.client.patch(f"/api/matches/{match.transactional_id}", {"state": "dismissed"})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        json_response = response.json()
+        self.assertEqual(json_response["state"], "dismissed")
+        self.assertEqual(json_response["are_meeting"], True)
+
+        match.refresh_from_db()
+        self.assertEqual(match.target_state, "seen")
+        self.assertEqual(match.source_state, "dismissed")
+
+    def test_cannot_update_match_irrelevant_for_user(self):
+        match = Match.objects.first()
+
+        self.client.force_login(self.user3)
+        response = self.client.patch(f"/api/matches/{match.transactional_id}", {"state": "seen", "are_meeting": True})
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.json(), self.permission_denied_response())
+
+        match.refresh_from_db()
+        self.assertEqual(match.target_state, "unseen")
+        self.assertEqual(match.are_meeting, False)
+
+    def test_cannot_update_match_for_another_team(self):
+        another_user_team2 = User.objects.create(
+            team=self.team2, email="u2@team2.posthog.com", password=self.CONFIG_PASSWORD
+        )
+        trip = Trip.objects.create(
+            city=self.frankfurt,
+            user=another_user_team2,
+            start=dt.date(2041, 9, 1),
+            end=dt.date(2041, 9, 5),
+        )
+        match = trip.target_matches.first()
+
+        response = self.client.patch(f"/api/matches/{match.transactional_id}", {"state": "seen", "are_meeting": True})
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.json(), self.not_found_response())
+
+        match.refresh_from_db()
+        self.assertEqual(match.source_state, "unseen")
+        self.assertEqual(match.target_state, "unseen")
+        self.assertEqual(match.are_meeting, False)
+
+    def test_cannot_set_invalid_match_state(self):
+        match = Match.objects.first()
+
+        response = self.client.patch(f"/api/matches/{match.transactional_id}", {"state": "hello!"})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.json(),
+            {
+                "type": "validation_error",
+                "code": "invalid_choice",
+                "detail": '"hello!" is not a valid choice.',
+                "attr": "state",
+            },
+        )
+
+        match.refresh_from_db()
+        self.assertEqual(match.source_state, "unseen")

@@ -98,18 +98,6 @@ class TestMixin:
 
     @classmethod
     def setUpTestData(cls):
-        cls.team = Team.objects.create(name=cls.CONFIG_TEAM_NAME)
-        cls.user = User.objects.create(
-            team=cls.team,
-            email=cls.CONFIG_EMAIL,
-            first_name="Alice",
-        )
-        cls.user.set_password(cls.CONFIG_PASSWORD)
-        cls.user.save()
-
-        cls.team2 = Team.objects.create(name="Team 2")
-        cls.team2_user = User.objects.create(team=cls.team2, email="u@team2.posthog.com", password=cls.CONFIG_PASSWORD)
-
         cls.country = Country.objects.create(
             code="US",
             code3="USA",
@@ -167,6 +155,18 @@ class TestMixin:
             country=cls.country,
             name_std="Frankfurt",
             location=Point(50.5069755, 6.3286251),
+        )
+
+        cls.team = Team.objects.create(name=cls.CONFIG_TEAM_NAME)
+        cls.user = User.objects.create(
+            team=cls.team, email=cls.CONFIG_EMAIL, first_name="Alice", work_hours={"start": "08:00", "end": "18:00"}
+        )
+        cls.user.set_password(cls.CONFIG_PASSWORD)
+        cls.user.save()
+
+        cls.team2 = Team.objects.create(name="Team 2")
+        cls.team2_user = User.objects.create(
+            team=cls.team2, email="u@team2.posthog.com", password=cls.CONFIG_PASSWORD, home_city=cls.frankfurt
         )
 
     def create_city(self, **kwargs):

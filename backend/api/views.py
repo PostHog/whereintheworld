@@ -14,6 +14,7 @@ from backend.api.permissions import YourMatchesOnlyPermission, YourTripsOnlyPerm
 from backend.api.serializers import (
     CitySerializer,
     MatchSerializer,
+    MatchUpdateSerializer,
     TripCreateSerializer,
     TripSerializer,
     UserListSerializer,
@@ -161,10 +162,11 @@ class TripViewSet(BaseModelViewSet):
 
 class MatchViewSet(BaseModelViewSet):
     """
-    List and retrieve matches.
+    List, retrieve and update matches.
     """
 
     serializer_class = MatchSerializer
+    write_serializer = MatchUpdateSerializer
     permission_classes = [permissions.IsAuthenticated, YourMatchesOnlyPermission]
 
     def get_queryset(self):

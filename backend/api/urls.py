@@ -38,7 +38,7 @@ urlpatterns: List[Any] = [
     ),
     path(
         "api/matches/<id:transactional_id>",
-        MatchViewSet.as_view({"get": "retrieve"}),
+        MatchViewSet.as_view({"get": "retrieve", "patch": "partial_update"}),
         name="match",
     ),
 ]

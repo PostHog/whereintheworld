@@ -10,6 +10,7 @@ from django.db import models
 from django_extensions.db.models import TimeStampedModel
 
 from .utils import generate_id
+from .validators import JSONValidator
 
 LARGE_DATE = dt.date(2500, 1, 1)
 
@@ -39,6 +40,15 @@ class Team(CoreModel):
     name = models.CharField(max_length=64)
 
 
+WORK_HOURS_SCHEMA = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "required": ["start", "end"],
+    "properties": {"start": {"type": "string"}, "end": {"type": "string"}},
+    "additionalProperties": False,
+}
+
+
 class User(CoreModel, AbstractUser):
     PREFIXER = "user"
     USERNAME_FIELD = "email"
@@ -48,6 +58,12 @@ class User(CoreModel, AbstractUser):
     team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name="users")
     avatar_url = models.CharField(max_length=512, blank=True)
     home_city = models.ForeignKey(City, on_delete=models.deletion.CASCADE, null=True, blank=True)
+    work_hours = models.JSONField(
+        default=None,
+        null=True,
+        blank=True,
+        validators=[JSONValidator(WORK_HOURS_SCHEMA)],
+    )
 
     # AbstractUser overrides
     username = None  # type: ignore
@@ -235,6 +251,11 @@ class Match(CoreModel):
     """
 
     PREFIXER = "match"
+    STATE_CHOICES = (
+        ("unseen", "Unseen"),
+        ("seen", "Seen"),
+        ("dismissed", "Dismissed"),
+    )
 
     source_user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -263,6 +284,9 @@ class Match(CoreModel):
         blank=True,
         related_name="target_matches",
     )  # trip for the target_user that makes up this match (if `None`, `target_user` is at home location)
+    source_state = models.CharField(max_length=24, default="unseen", choices=STATE_CHOICES)  # state for `source_user`
+    target_state = models.CharField(max_length=24, default="unseen", choices=STATE_CHOICES)  # state for `target_user`
+    are_meeting = models.BooleanField(default=False, blank=True)
 
     class Meta:
         unique_together = (
