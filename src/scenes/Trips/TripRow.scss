@@ -1,0 +1,17 @@
+@use 'sass:math';
+@import '_vars';
+
+.trip-row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #464646;
+    padding-bottom: $default_spacing / 2;
+    margin-bottom: $default_spacing / 2;
+
+    .col {
+        flex-grow: 1;
+        text-align: right;
+        padding: 0 math.div($default_spacing, 2);
+    }
+}

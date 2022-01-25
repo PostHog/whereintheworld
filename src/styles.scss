@@ -61,6 +61,10 @@ button {
 .main-layout {
     height: calc(100vh - 42px); // height of top bar
     width: 100%;
+
+    &:not(.map-scene) {
+        padding: 0 $default_spacing * 2;
+    }
 }
 
 .flex-center {
@@ -70,6 +74,10 @@ button {
 
 .mt {
     margin-top: $default_spacing;
+}
+
+.mb {
+    margin-bottom: $default_spacing;
 }
 
 .text-right {
