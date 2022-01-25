@@ -176,87 +176,8 @@ a {
     }
 }
 
-.location-avatar {
-    display: inline-block;
-    margin-left: $default_spacing;
-    text-align: center;
-    .location-text {
-        @extend .text-muted;
-        font-weight: bold;
-        font-size: 0.7em;
-    }
-}
-
-.trip-view-wrapper {
-    background-color: white;
-    @extend .mixin-elevated;
-    position: fixed;
-    border-radius: $radius;
-    width: 320px;
-    height: 85vh;
-    z-index: 380;
-    min-height: 500px;
-    top: 10vh;
-    left: 320px - $default_spacing; // 320px (width of .main-overlay) - position adjustment
-    transition: all 0.5s ease-out;
-    &.hidden {
-        left: 0;
-    }
-}
-
-.trip-view {
-    // Full trip page to add/edit trip
-    display: flex;
-    flex-direction: column;
-    padding: $default_spacing;
-    padding-left: $default_spacing * 2;
-    height: 100%;
-}
-
-.trip-card {
-    // Trip representation when listing
-    &.highlighted {
-        border-radius: $radius;
-        background-color: $primary;
-    }
-
-    .trip-card-inner {
-        background-color: white;
-        border-radius: $radius;
-        padding: 8px $default_spacing;
-        z-index: 950;
-
-        .trip-card-header {
-            border-bottom: 1px solid red;
-            display: flex;
-            align-items: center;
-            font-weight: bold;
-            padding-bottom: 8px;
-            font-size: 0.85em;
-
-            div {
-                flex-grow: 1;
-            }
-        }
-    }
-
-    .highlighter {
-        padding: $default_spacing * 0.33 $default_spacing * 0.5;
-        color: white;
-        display: flex;
-        align-items: center;
-        font-size: 0.85em;
-        font-weight: bold;
-        .avatar-highlight {
-            border-radius: $radius_sm;
-            width: 24px;
-            height: 24px;
-            margin-right: math.div($default_spacing, 2);
-        }
-    }
-}
-
 // Date range picker
+
 .react-daterange-picker {
     width: 100%;
     .react-daterange-picker__wrapper {
