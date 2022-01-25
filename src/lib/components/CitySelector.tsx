@@ -38,6 +38,7 @@ export function CitySelector({ onValueSelect, errored }: CitySelectorProps): JSX
                     </div>
                 )
             }}
+            placeholder="Type a city name to search..."
             getOptionValue={(option: CityType) => option.id}
             className={clsx({ 'react-select__errored': errored })}
             classNamePrefix="react-select"

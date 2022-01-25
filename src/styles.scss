@@ -261,12 +261,24 @@ a {
     width: 100%;
     .react-daterange-picker__wrapper {
         border-radius: $radius_sm;
-        border-color: red;
         padding: 8px;
         font-size: 0.85em;
     }
     .react-daterange-picker__inputGroup__month {
         width: 44px;
+    }
+
+    .react-daterange-picker__inputGroup {
+        color: white;
+        input,
+        select {
+            color: white;
+        }
+    }
+
+    .react-daterange-picker__range-divider {
+        flex-grow: 1;
+        display: flex;
     }
 
     &.errored {
@@ -280,7 +292,12 @@ a {
     @extend .mixin-elevated;
     margin-top: $default_spacing * 0.5;
     border-radius: $radius_sm;
-    border-color: red;
+    background-color: $bg_input;
+
+    .react-calendar__navigation__arrow,
+    .react-calendar__navigation__label {
+        color: white;
+    }
 
     .react-calendar__tile {
         border-radius: $radius_sm;
@@ -294,6 +311,7 @@ a {
 
         &.react-calendar__tile--hover {
             border-radius: 0;
+            background-color: lighten($bg_alt, 50%);
         }
 
         &.react-calendar__tile--rangeStart {
@@ -320,13 +338,17 @@ a {
 
 .react-select__control {
     font-size: 0.85em;
-    border-color: red !important;
+    background-color: $bg_input !important;
+
     .react-select__placeholder {
         color: $text_muted;
     }
 
+    .react-select__single-value {
+        color: white !important;
+    }
+
     &.react-select__control--is-focused {
-        border-color: darken(red, 20%) !important;
         box-shadow: none !important;
     }
 
@@ -336,10 +358,17 @@ a {
     }
 
     .react-select__indicator-separator {
-        background-color: red;
+        background-color: $border;
     }
 }
 
+.react-select__menu {
+    background-color: $bg_alt !important;
+
+    .react-select__option:hover {
+        background-color: $bg_input !important;
+    }
+}
 .react-select__errored {
     .react-select__control {
         border-color: $danger !important;
