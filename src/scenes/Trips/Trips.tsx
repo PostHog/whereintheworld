@@ -5,6 +5,7 @@ import React from 'react'
 import { TripRow } from './TripRow'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons'
+import { urls } from 'logics/sceneLogic'
 
 export default function Trips(): JSX.Element {
     const { myTrips } = useValues(tripLogic)
@@ -12,9 +13,11 @@ export default function Trips(): JSX.Element {
         <div className="scene trips-scene">
             <h1 className="flex-center">
                 <span style={{ flexGrow: 1 }}>My trips</span>
-                <Button size="lg">
-                    <FontAwesomeIcon icon={faPlusCircle} /> New trip
-                </Button>
+                <a href={urls.newTrip()}>
+                    <Button size="lg">
+                        <FontAwesomeIcon icon={faPlusCircle} /> New trip
+                    </Button>
+                </a>
             </h1>
             <div style={{ marginBottom: 32 }}>A journey of a thousand miles begins with a single step.</div>
 
