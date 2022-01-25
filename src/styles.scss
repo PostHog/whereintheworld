@@ -62,7 +62,7 @@ button {
     height: calc(100vh - 42px); // height of top bar
     width: 100%;
 
-    &:not(.map-scene) {
+    .scene:not(.home-scene) {
         padding: $default_spacing $default_spacing * 2;
     }
 }

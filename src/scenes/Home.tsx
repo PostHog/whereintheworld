@@ -17,7 +17,7 @@ export default function Home(): JSX.Element {
     }
 
     return (
-        <div className="home-scene map-scene">
+        <div className="scene home-scene">
             <GoogleMapReact
                 bootstrapURLKeys={{
                     // TODO: Type `window` properly

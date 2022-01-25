@@ -23,6 +23,10 @@ $radius_lg: 50%;
 $radius_sm: 4px;
 $default_spacing: 16px;
 
+// Z Indices
+$z_sidebar: 4000;
+$z_overlay_on_sidebar: 4053;
+
 .mixin-elevated {
     box-shadow: 0px 4px 8px 0px #00000040;
 }

@@ -19,7 +19,7 @@ export default function Welcome(): JSX.Element {
     }
 
     return (
-        <div className="welcome-scene">
+        <div className="scene welcome-scene">
             <div className="welcome-inner">
                 <h1>Welcome to #whereintheworld!</h1>
                 <p className="text-center">Select your home location to get started</p>

@@ -1,7 +1,7 @@
 @use 'sass:math';
 @import '_vars';
 
-.navigation {
+.top-navigation {
     background-color: $bg;
     height: 42px;
     display: flex;
@@ -13,6 +13,10 @@
         cursor: pointer;
     }
 
+    .menu-and-logo {
+        z-index: $z_overlay_on_sidebar;
+    }
+
     .logo-main {
         font-size: 1.2em;
     }
@@ -21,5 +25,29 @@
         flex-grow: 1;
         display: flex;
         align-items: center;
+    }
+
+    a {
+        color: white;
+    }
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    background-color: $bg_alt;
+    width: 200px;
+    left: -200px;
+    transition: all 0.3s ease-in-out;
+    padding: $default_spacing * 2 $default_spacing;
+    z-index: $z_sidebar;
+
+    &.open {
+        left: 0;
+    }
+
+    a {
+        color: white;
     }
 }

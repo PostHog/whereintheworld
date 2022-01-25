@@ -2,7 +2,6 @@ import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons'
 import { LocationAvatar } from '../LocationAvatar'
-import { TripCard } from '../TripCard'
 import { Button } from '../Button'
 import { useActions, useValues } from 'kea'
 import { tripLogic } from 'logics/tripLogic'
@@ -68,9 +67,7 @@ export function MainOverlay(): JSX.Element {
                     </div>
                     {myTrips.length === 0 && "You don't have any upcoming trips."}
                     {myTrips.map((trip) => (
-                        <React.Fragment key={trip.id}>
-                            <TripCard trip={trip} />
-                        </React.Fragment>
+                        <React.Fragment key={trip.id}>{/* <TripCard trip={trip} /> */}</React.Fragment>
                     ))}
                 </div>
             </div>

@@ -9,7 +9,7 @@ import { faPlusCircle } from '@fortawesome/free-solid-svg-icons'
 export default function Trips(): JSX.Element {
     const { myTrips } = useValues(tripLogic)
     return (
-        <div className="trips-scene">
+        <div className="scene trips-scene">
             <h1 className="flex-center">
                 <span style={{ flexGrow: 1 }}>My trips</span>
                 <Button size="lg">
