@@ -63,7 +63,7 @@ button {
     width: 100%;
 
     &:not(.map-scene) {
-        padding: 0 $default_spacing * 2;
+        padding: $default_spacing $default_spacing * 2;
     }
 }
 
@@ -105,9 +105,13 @@ a {
     text-decoration: none;
 }
 
+.cursor-pointer {
+    cursor: pointer;
+}
+
 // Button styles
 .btn {
-    border-radius: $radius_sm;
+    border-radius: $radius;
     background-color: $primary;
     color: white;
     font-weight: bold;
@@ -152,7 +156,7 @@ a {
 
     &.lg {
         padding: 8px 16px;
-        font-size: 0.95em;
+        font-size: 1rem;
     }
 }
 
