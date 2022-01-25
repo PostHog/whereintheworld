@@ -1,6 +1,7 @@
 import { useValues } from 'kea'
 import { sceneLogic, scenes } from 'logics/sceneLogic'
 import React, { Suspense } from 'react'
+import { Navigation } from './_Navigation'
 
 export function Scene(): JSX.Element {
     const { scene, params } = useValues(sceneLogic)
@@ -9,7 +10,10 @@ export function Scene(): JSX.Element {
 
     return (
         <Suspense fallback={<div>Loading...</div>}>
-            <Scene {...params} />
+            <Navigation />
+            <div className="main-layout">
+                <Scene {...params} />
+            </div>
         </Suspense>
     )
 }

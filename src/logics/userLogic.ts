@@ -1,14 +1,19 @@
 import { kea } from 'kea'
-import { UserTravelingType, UserType } from '../types'
+import { CityType, UserTravelingType, UserType } from '../types'
 import { userLogicType } from './userLogicType'
 import api from 'lib/api'
 import dayjs from 'dayjs'
+import { authLogic } from './authLogic'
 
 export const userLogic = kea<userLogicType>({
     actions: {
         setCurrentDate: (date: Date) => ({ date }),
     },
+    connect: {
+        values: [authLogic, ['user']],
+    },
     reducers: {
+        /** Date used for map time travelling */
         currentDate: [
             new Date(),
             {
@@ -42,6 +47,19 @@ export const userLogic = kea<userLogicType>({
                     }
                 }
                 return output
+            },
+        ],
+        myLocationToday: [
+            (s) => [s.user, s.users],
+            (user, users): CityType | null => {
+                return (
+                    users
+                        .find((_u) => user.id === _u.id)
+                        ?.trips?.find((trip) => dayjs(trip.start) <= dayjs() && dayjs(trip.end) >= dayjs().endOf('day'))
+                        ?.city ||
+                    user.home_city ||
+                    null
+                )
             },
         ],
     },

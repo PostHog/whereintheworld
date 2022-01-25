@@ -1,0 +1,67 @@
+@use 'sass:math';
+@import '_vars';
+
+.map-pin {
+    transform: translate(-50%, -50%);
+    z-index: 10000;
+    cursor: pointer;
+
+    &.available {
+        .avatar-img,
+        .fallback-img {
+            border-color: $success;
+        }
+    }
+
+    &.unavailable {
+        .avatar-img,
+        .fallback-img {
+            border-color: $danger;
+        }
+    }
+
+    .avatar-img,
+    .fallback-img {
+        border: 2px solid #4b4b4b;
+    }
+}
+
+.map-pin-overlay {
+    font-size: 0.75rem;
+    background-color: $bg_alt;
+    border-radius: $radius;
+    padding: $default_spacing * 0.5 $default_spacing;
+    line-height: 2em;
+    border: 2px solid #4b4b4b;
+
+    &.available {
+        border-color: $success;
+    }
+
+    &.unavailable {
+        border-color: $danger;
+    }
+
+    b {
+        font-size: 1.2em;
+    }
+
+    .svg-inline--fa {
+        color: rgba(#fff, 0.8);
+        font-size: 1.3em;
+        margin-right: 4px;
+    }
+
+    .online-indicator {
+        width: 1.1em;
+        height: 1.1em;
+        display: inline-block;
+        border-radius: 50%;
+        background-color: $danger;
+        margin-right: 2px;
+
+        &.available {
+            background-color: $success;
+        }
+    }
+}

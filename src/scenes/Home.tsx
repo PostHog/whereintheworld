@@ -1,21 +1,12 @@
 import React from 'react'
 import GoogleMapReact from 'google-map-react'
-import { MapPin } from 'lib/components/MapPin'
-import { MainOverlay } from 'lib/components/MainOverlay/MainOverlay'
-import { TripView } from 'lib/components/TripView'
-import { tripLogic } from 'logics/tripLogic'
+import { MapPin } from 'lib/components/MapPin/MapPin'
 import { useValues } from 'kea'
-import clsx from 'clsx'
-import { WhoAmI } from 'lib/components/WhoAmI'
-import { TimeTravel } from 'lib/components/TimeTravel'
+import { TimeTravel } from 'lib/components/TimeTravel/TimeTravel'
 import { userLogic } from 'logics/userLogic'
-
-{
-    /* TODO: Handle no home_city properly */
-}
+import './Home.scss'
 
 export default function Home(): JSX.Element {
-    const { openTrip } = useValues(tripLogic)
     const { users, travelingAtDate } = useValues(userLogic)
     const defaultProps = {
         center: {
@@ -26,12 +17,7 @@ export default function Home(): JSX.Element {
     }
 
     return (
-        <div className="map-container">
-            <WhoAmI />
-            <MainOverlay />
-            <TimeTravel />
-            <div className={clsx('trip-view-wrapper', { hidden: !openTrip })}>{openTrip && <TripView />}</div>
-
+        <div className="scene home-scene">
             <GoogleMapReact
                 bootstrapURLKeys={{
                     // TODO: Type `window` properly
@@ -39,25 +25,26 @@ export default function Home(): JSX.Element {
                 }}
                 defaultCenter={defaultProps.center}
                 defaultZoom={defaultProps.zoom}
-                //fullscreenControl={false}
                 options={{ fullscreenControl: false }}
             >
                 {users.map((user) => {
                     const travelRecord = travelingAtDate.find((item) => item.user.id === user.id)
-                    const location = travelRecord ? travelRecord.trip.city.location : user.home_city?.location
+                    const city = travelRecord ? travelRecord.trip.city : user.home_city
+                    const location = city?.location
                     // TODO: Handle multiple people at the same location
                     return location ? (
                         <MapPin
                             lat={location[1]}
                             lng={location[0]}
-                            userName={user.first_name}
-                            avatarUrl={user.avatar_url}
+                            user={user}
+                            city={city}
                             travelState={travelRecord ? 'away' : 'home'}
                             key={user.id}
                         />
                     ) : null
                 })}
             </GoogleMapReact>
+            <TimeTravel />
         </div>
     )
 }

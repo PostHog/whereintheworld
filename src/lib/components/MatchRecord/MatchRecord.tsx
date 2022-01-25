@@ -2,12 +2,13 @@ import dayjs from 'dayjs'
 import { useValues } from 'kea'
 import { authLogic } from 'logics/authLogic'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlaneDeparture, faPlaneArrival } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import React from 'react'
 import Flag from 'react-flagkit'
 import { MatchType } from '~/types'
 import { Avatar } from '../Avatar/Avatar'
 import './MatchRecord.scss'
+import { formatCity } from 'utils'
 
 export function MatchRecord({ match }: { match: MatchType }): JSX.Element | null {
     const { user } = useValues(authLogic)
@@ -23,19 +24,20 @@ export function MatchRecord({ match }: { match: MatchType }): JSX.Element | null
         <div className="match-record">
             <Avatar
                 avatarUrl={otherParty.avatar_url}
-                size="sm"
                 icon={<Flag country={matchCity.country.code} size={8} />}
                 userName={otherParty.first_name}
             />
-            <div>
+            <div className="metadata">
                 <div>{otherParty.first_name}</div>
+                <div>{formatCity(matchCity)}</div>
                 <div className="dates">
                     {dayjs(match.overlap_start).format('MMM D')} - {dayjs(match.overlap_end).format('MMM D')}
                 </div>
-            </div>
-            <div className="match-location">
-                <FontAwesomeIcon icon={myRelatedTrip ? faPlaneDeparture : faPlaneArrival} style={{ marginRight: 4 }} />
-                {matchCity.name}
+                <div style={{ marginTop: 3 }}>
+                    <a href="#">
+                        Meet <FontAwesomeIcon icon={faArrowRight} />
+                    </a>
+                </div>
             </div>
         </div>
     )

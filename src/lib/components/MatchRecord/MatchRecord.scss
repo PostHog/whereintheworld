@@ -4,16 +4,23 @@
 .match-record {
     margin-top: $default_spacing;
     display: flex;
-    background-color: white;
-    border-radius: $radius;
-    padding: 8px $default_spacing;
+    flex-direction: column;
+    align-items: center;
+    width: fit-content;
+    margin-right: $default_spacing * 2;
 
     .avatar {
         margin-right: $default_spacing / 2;
+        width: fit-content;
+    }
+
+    .metadata {
+        font-size: 0.85em;
+        text-align: center;
+        margin-top: $default_spacing / 2;
     }
 
     .dates {
-        font-size: 0.85em;
         font-weight: bold;
         color: $text_muted;
     }

@@ -1,16 +1,16 @@
-import React, { useState } from 'react'
+import dayjs from 'dayjs'
 import { useActions } from 'kea'
+import { CitySelector } from 'lib/components/CitySelector'
 import { tripLogic } from 'logics/tripLogic'
-import { Button } from './Button'
+import React, { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 // @ts-ignore
 import DateRangePicker from '@wojtekmaj/react-daterange-picker/dist/entry.nostyle'
 import clsx from 'clsx'
-import dayjs from 'dayjs'
-import { CitySelector } from './CitySelector'
+import { Button } from 'lib/components/Button'
 
-export function TripView(): JSX.Element {
+export default function Trip(): JSX.Element {
     const { createTrip } = useActions(tripLogic)
     const [formValues, setFormValues] = useState({
         dates: [new Date(), new Date()],
@@ -36,10 +36,9 @@ export function TripView(): JSX.Element {
         formState === 'submitted' && (!formValues.dates?.length || !formValues.dates[0] || !formValues.dates[1])
 
     return (
-        <div className="trip-view">
-            <h2>New trip</h2>
-
-            <form style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }} onSubmit={handleSubmit}>
+        <div className="scene trip-scene">
+            <h1 className="text-center">New Trip</h1>
+            <form style={{ maxWidth: 400, margin: '0 auto' }} onSubmit={handleSubmit}>
                 <div style={{ flexGrow: 1 }}>
                     <div className="form-group">
                         <label htmlFor="destination">Destination</label>
@@ -68,7 +67,7 @@ export function TripView(): JSX.Element {
                         {datesErrored && <div className="help-text text-danger">This field is required.</div>}
                     </div>
                 </div>
-                <div className="mt flex-center">
+                <div className="mt text-right">
                     <Button type="submit" size="lg">
                         Save
                     </Button>

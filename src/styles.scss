@@ -1,5 +1,6 @@
 @use 'sass:math';
 @import '_vars';
+@import 'fonts';
 @import '../node_modules/@wojtekmaj/react-daterange-picker/dist/DateRangePicker.css';
 @import '../node_modules/react-calendar/dist/Calendar.css';
 @import '../node_modules/rc-slider/assets/index.css';
@@ -12,6 +13,7 @@
     --danger: #{$danger};
     --text-default: #{$text_default};
     --text-muted: #{$text_muted};
+    --text-muted-light: #{$text_muted_light};
 }
 
 // Reset styles
@@ -30,9 +32,8 @@ body {
     margin: 0;
     padding: 0;
     font-size: 16px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
-        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
-    background: rgba(0, 0, 0, 0.05);
+    font-family: 'Merriweather', serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+    background: $bg;
     overflow: hidden;
     height: 100%;
     color: $text_default;
@@ -44,6 +45,7 @@ h1 {
 
 h2 {
     font-size: 1.1em;
+    color: $text_muted_light;
 }
 
 input,
@@ -56,9 +58,13 @@ button {
 }
 
 // General styles
-.map-container {
-    height: 100vh;
+.main-layout {
+    height: calc(100vh - 42px); // height of top bar
     width: 100%;
+
+    .scene:not(.home-scene) {
+        padding: $default_spacing $default_spacing * 2;
+    }
 }
 
 .flex-center {
@@ -68,6 +74,10 @@ button {
 
 .mt {
     margin-top: $default_spacing;
+}
+
+.mb {
+    margin-bottom: $default_spacing;
 }
 
 .text-right {
@@ -82,13 +92,26 @@ button {
     color: $text_muted;
 }
 
+.text-muted-light {
+    color: $text_muted_light;
+}
+
 .text-danger {
     color: $danger;
 }
 
+a {
+    color: $primary;
+    text-decoration: none;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
 // Button styles
 .btn {
-    border-radius: $radius_sm;
+    border-radius: $radius;
     background-color: $primary;
     color: white;
     font-weight: bold;
@@ -133,7 +156,7 @@ button {
 
     &.lg {
         padding: 8px 16px;
-        font-size: 0.95em;
+        font-size: 1rem;
     }
 }
 
@@ -153,135 +176,30 @@ button {
     }
 }
 
-.location-avatar {
-    display: inline-block;
-    margin-left: $default_spacing;
-    text-align: center;
-    .location-text {
-        @extend .text-muted;
-        font-weight: bold;
-        font-size: 0.7em;
-    }
-}
-
-.map-pin {
-    transform: translate(-50%, -50%);
-    z-index: 10000;
-
-    .avatar {
-        .icon-wrapper {
-            width: 14px;
-            height: 14px;
-            font-size: 0.75em;
-            border-color: $secondary;
-            background-color: $secondary;
-        }
-    }
-
-    &.away {
-        .icon-wrapper {
-            background-color: $orange;
-            border-color: $orange;
-        }
-
-        .avatar-img {
-            border-color: $orange;
-        }
-    }
-
-    .avatar-img {
-        border: 2px solid $secondary;
-    }
-}
-
-.trip-view-wrapper {
-    background-color: white;
-    @extend .mixin-elevated;
-    position: fixed;
-    border-radius: $radius;
-    width: 320px;
-    height: 85vh;
-    z-index: 380;
-    min-height: 500px;
-    top: 10vh;
-    left: 320px - $default_spacing; // 320px (width of .main-overlay) - position adjustment
-    transition: all 0.5s ease-out;
-    &.hidden {
-        left: 0;
-    }
-}
-
-.trip-view {
-    // Full trip page to add/edit trip
-    display: flex;
-    flex-direction: column;
-    padding: $default_spacing;
-    padding-left: $default_spacing * 2;
-    height: 100%;
-}
-
-.trip-card {
-    // Trip representation when listing
-    &.highlighted {
-        border-radius: $radius;
-        background-color: $primary;
-    }
-
-    .trip-card-inner {
-        background-color: white;
-        border-radius: $radius;
-        padding: 8px $default_spacing;
-        z-index: 950;
-
-        .trip-card-header {
-            border-bottom: 1px solid $border_default;
-            display: flex;
-            align-items: center;
-            font-weight: bold;
-            padding-bottom: 8px;
-            font-size: 0.85em;
-
-            div {
-                flex-grow: 1;
-            }
-        }
-    }
-
-    .highlighter {
-        padding: $default_spacing * 0.33 $default_spacing * 0.5;
-        color: white;
-        display: flex;
-        align-items: center;
-        font-size: 0.85em;
-        font-weight: bold;
-        .avatar-highlight {
-            border-radius: $radius_sm;
-            width: 24px;
-            height: 24px;
-            margin-right: math.div($default_spacing, 2);
-        }
-    }
-}
-
-.time-travel-wrapper {
-    position: fixed;
-    bottom: $default_spacing * 2;
-    width: calc(100% - 320px - 48px - 60px);
-    left: 320 + $default_spacing * 3;
-    z-index: 360;
-}
-
 // Date range picker
+
 .react-daterange-picker {
     width: 100%;
     .react-daterange-picker__wrapper {
         border-radius: $radius_sm;
-        border-color: $border_default;
         padding: 8px;
         font-size: 0.85em;
     }
     .react-daterange-picker__inputGroup__month {
         width: 44px;
+    }
+
+    .react-daterange-picker__inputGroup {
+        color: white;
+        input,
+        select {
+            color: white;
+        }
+    }
+
+    .react-daterange-picker__range-divider {
+        flex-grow: 1;
+        display: flex;
     }
 
     &.errored {
@@ -295,7 +213,12 @@ button {
     @extend .mixin-elevated;
     margin-top: $default_spacing * 0.5;
     border-radius: $radius_sm;
-    border-color: $border_default;
+    background-color: $bg_input;
+
+    .react-calendar__navigation__arrow,
+    .react-calendar__navigation__label {
+        color: white;
+    }
 
     .react-calendar__tile {
         border-radius: $radius_sm;
@@ -309,6 +232,7 @@ button {
 
         &.react-calendar__tile--hover {
             border-radius: 0;
+            background-color: lighten($bg_alt, 50%);
         }
 
         &.react-calendar__tile--rangeStart {
@@ -335,13 +259,17 @@ button {
 
 .react-select__control {
     font-size: 0.85em;
-    border-color: $border_default !important;
+    background-color: $bg_input !important;
+
     .react-select__placeholder {
         color: $text_muted;
     }
 
+    .react-select__single-value {
+        color: white !important;
+    }
+
     &.react-select__control--is-focused {
-        border-color: darken($border_default, 20%) !important;
         box-shadow: none !important;
     }
 
@@ -351,47 +279,19 @@ button {
     }
 
     .react-select__indicator-separator {
-        background-color: $border_default;
+        background-color: $border;
     }
 }
 
+.react-select__menu {
+    background-color: $bg_alt !important;
+
+    .react-select__option:hover {
+        background-color: $bg_input !important;
+    }
+}
 .react-select__errored {
     .react-select__control {
         border-color: $danger !important;
-    }
-}
-
-.whoami {
-    background-color: white;
-    border-radius: $radius_sm;
-    position: fixed;
-    top: 16px;
-    right: 16px;
-    z-index: 450;
-    padding: $default_spacing * 0.5;
-    display: flex;
-    align-items: center;
-    font-size: 0.85em;
-    @extend .mixin-elevated;
-
-    .avatar {
-        margin-right: $default_spacing;
-        .avatar-img {
-            width: 32px;
-            height: 32px;
-        }
-    }
-}
-
-// Slider
-
-.rc-slider {
-    .rc-slider-track,
-    .rc-slider-rail {
-        background-color: white;
-    }
-    .rc-slider-handle {
-        border-color: $primary;
-        background-color: $primary;
     }
 }

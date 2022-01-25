@@ -3,14 +3,20 @@ import Slider, { Handle, SliderTooltip } from 'rc-slider'
 import { userLogic } from 'logics/userLogic'
 import { useActions } from 'kea'
 import dayjs from 'dayjs'
+import './TimeTravel.scss'
 
-// TODO: Type props properly
-const handle = (props: any) => {
+interface HandleProps extends Record<string, any> {
+    value: number
+    dragging?: boolean
+    index: number
+}
+
+const handle = (props: HandleProps) => {
     const { value, dragging, index, ...restProps } = props
     return (
         <SliderTooltip
             prefixCls="rc-slider-tooltip"
-            overlay={`${dayjs().add(value, 'days').format('YYYY-MM-DD')} `}
+            overlay={value ? `${dayjs().add(value, 'days').format('MMM DD, YYYY')} ` : 'Today'}
             visible={true}
             placement="top"
             defaultVisible={true}

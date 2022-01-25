@@ -4,6 +4,8 @@ import { tripLogicType } from './tripLogicType'
 import api from 'lib/api'
 import { matchLogic } from './matchLogic'
 import { userLogic } from './userLogic'
+import { router } from 'kea-router'
+import { urls } from './sceneLogic'
 
 interface TripPayload extends Pick<TripType, 'start' | 'end'> {
     city: number
@@ -64,6 +66,7 @@ export const tripLogic = kea<tripLogicType<TripPayload>>({
         createTripSuccess: async () => {
             actions.loadMatches()
             actions.loadUsers()
+            router.actions.push(urls.trips())
         },
         deleteTripSuccess: async () => {
             actions.loadMatches()

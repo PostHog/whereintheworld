@@ -1,4 +1,6 @@
-# #whereintheworld
+# WITW
+
+> 🚧 This app is still in alpha development and we don't recommend using it yet.
 
 ## Development server
 
@@ -30,27 +32,23 @@ export GEOS_LIBRARY_PATH=/opt/homebrew/lib/libgeos_c.dylib
 psql
 CREATE DATABASE whereintheworld;
 CREATE USER whereintheworld WITH PASSWORD 'whereintheworld';
-GRANT ALL PRIVILEGES ON DATABASE whereintheworld TO whereintheworld;
 ALTER ROLE whereintheworld SUPERUSER;
 ```
 
-**Migrate the database and start the server**
+**Migrate the database
 
 ```
 python manage.py migrate
 python manage.py cities --import=all
-python manage.py runserver
 ```
 
-The server is now running at [`http://localhost:8000/`](http://localhost:8000/).
 
-### 3. Start the frontend
 
-The code for the frontend is located in the [`src`](./src) directory. Once you launched the server, you can start it as follows:
+### 3. Start the app
+
+The code for the frontend is located in the [`src`](./src) directory. You can start the entire app (frontend & backend) as follows:
 
 ```
-yarn
-yarn start
+./bin/start
 ```
-
-The app is now running, navigate to [`http://localhost:3000/`](http://localhost:3000/) in your browser to explore its UI.
+The server is now running at [`http://localhost:8000/`](http://localhost:8000/). **Warning:** Don't visit `localhost:3000` as the raw frontend will not work as expected.

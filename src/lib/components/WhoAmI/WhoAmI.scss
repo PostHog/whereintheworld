@@ -1,0 +1,17 @@
+@use 'sass:math';
+@import '_vars';
+
+.whoami {
+    padding-right: 0;
+    display: flex;
+    align-items: center;
+    font-size: 0.85em;
+
+    .avatar {
+        margin-left: $default_spacing * 0.5;
+        .avatar-img {
+            width: 28px;
+            height: 28px;
+        }
+    }
+}

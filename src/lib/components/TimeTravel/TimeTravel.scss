@@ -1,0 +1,38 @@
+@use 'sass:math';
+@import '_vars';
+
+.time-travel-wrapper {
+    position: absolute;
+    bottom: $default_spacing;
+    width: 80%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 360;
+    background-color: rgba($bg, 0.6);
+    backdrop-filter: blur(10px);
+    padding: $default_spacing / 2 $default_spacing * 2;
+    border-radius: $radius;
+}
+
+// Slider
+
+.rc-slider {
+    .rc-slider-track,
+    .rc-slider-rail {
+        background-color: #eaeaea;
+    }
+    .rc-slider-handle {
+        border-color: $primary;
+        background-color: $primary;
+    }
+}
+
+.rc-slider-tooltip {
+    .rc-slider-tooltip-inner {
+        padding: 8px 12px;
+        height: 28px;
+        background-color: rgba($bg, 0.6);
+        backdrop-filter: blur(10px);
+        box-shadow: none;
+    }
+}

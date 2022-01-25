@@ -8,23 +8,31 @@ export enum Scene {
     Error404 = 'notFound',
     Home = 'home',
     Welcome = 'welcome',
+    Trips = 'trips',
+    Trip = 'trip',
 }
 
 export const urls = {
     default: () => '/',
     welcome: () => '/welcome',
+    trips: () => '/trips',
+    newTrip: () => '/trips/new',
     notFound: () => '/404',
 }
 
 export const routes: Record<string, Scene> = {
     [urls.default()]: Scene.Home,
     [urls.welcome()]: Scene.Welcome,
+    [urls.trips()]: Scene.Trips,
+    [urls.newTrip()]: Scene.Trip,
     [urls.notFound()]: Scene.Error404,
 }
 
 export const scenes: Record<Scene, LazyExoticComponent<() => JSX.Element> | (() => JSX.Element)> = {
     home: lazy(() => import('../scenes/Home')),
     welcome: lazy(() => import('../scenes/Welcome')),
+    trips: lazy(() => import('../scenes/Trips/Trips')),
+    trip: lazy(() => import('../scenes/Trips/Trip')),
     notFound: lazy(() => import('../scenes/NotFound')),
 }
 

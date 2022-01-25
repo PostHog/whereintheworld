@@ -38,6 +38,11 @@ export interface CityType {
     timezone: string
 }
 
+export interface WorkHoursType {
+    start?: string
+    end?: string
+}
+
 export interface UserType {
     id: string
     first_name: string
@@ -45,6 +50,7 @@ export interface UserType {
     avatar_url: string
     home_city?: CityType
     trips?: Omit<TripType, 'user' | 'notes'>[]
+    work_hours: WorkHoursType
 }
 
 export interface UserTravelingType {
