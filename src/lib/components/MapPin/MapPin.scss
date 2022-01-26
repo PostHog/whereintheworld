@@ -1,19 +1,22 @@
 @use 'sass:math';
 @import '_vars';
 
+
 .map-pin {
     transform: translate(-50%, -50%);
     z-index: 10000;
     cursor: pointer;
+    width: 100%;
+    height: 100%;
 
-    &.available {
+    & .available {
         .avatar-img,
         .fallback-img {
             border-color: $success;
         }
     }
 
-    &.unavailable {
+    & .unavailable {
         .avatar-img,
         .fallback-img {
             border-color: $danger;
@@ -64,4 +67,36 @@
             background-color: $success;
         }
     }
+}
+
+.multiple-map-pin {
+    transform: translate(-50%, -50%);
+    width: 48px;
+    height: 48px;
+    background-color: $primary;
+    border: 2px solid $secondary;
+    border-radius: 100%;
+    text-align: center;
+    line-height: 48px;
+    cursor: pointer;
+}
+
+.multiple-map-pin-container {
+    cursor: pointer;
+    .map-pin {
+        transform: none;
+    }
+    & > .multiple-map-pin {
+        transform: none;
+    }
+}
+
+
+.map-pin-multiple {
+	position: absolute;
+	top: 0; 
+    // margin: -49px;
+	border-radius: 50%;
+	background: silver;
+	text-align: center;
 }

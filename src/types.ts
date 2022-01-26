@@ -51,6 +51,8 @@ export interface UserType {
     home_city?: CityType
     trips?: Omit<TripType, 'user' | 'notes'>[]
     work_hours: WorkHoursType
+    current_location?: CityType
+    travelRecord?: boolean
 }
 
 export interface UserTravelingType {

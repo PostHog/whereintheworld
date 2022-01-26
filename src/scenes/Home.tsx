@@ -1,13 +1,14 @@
 import React from 'react'
 import GoogleMapReact from 'google-map-react'
-import { MapPin } from 'lib/components/MapPin/MapPin'
+import { MapPin, MultipleMapPin } from 'lib/components/MapPin/MapPin'
 import { useValues } from 'kea'
 import { TimeTravel } from 'lib/components/TimeTravel/TimeTravel'
 import { userLogic } from 'logics/userLogic'
 import './Home.scss'
 
 export default function Home(): JSX.Element {
-    const { users, travelingAtDate } = useValues(userLogic)
+    // const { users, travelingAtDate } = useValues(userLogic)
+    const { locationsForUsers } = useValues(userLogic)
     const defaultProps = {
         center: {
             lat: 51.5,
@@ -27,22 +28,30 @@ export default function Home(): JSX.Element {
                 defaultZoom={defaultProps.zoom}
                 options={{ fullscreenControl: false }}
             >
-                {users.map((user) => {
-                    const travelRecord = travelingAtDate.find((item) => item.user.id === user.id)
-                    const city = travelRecord ? travelRecord.trip.city : user.home_city
-                    const location = city?.location
-                    // TODO: Handle multiple people at the same location
-                    return location ? (
-                        <MapPin
-                            lat={location[1]}
-                            lng={location[0]}
-                            user={user}
-                            city={city}
-                            travelState={travelRecord ? 'away' : 'home'}
-                            key={user.id}
-                        />
-                    ) : null
-                })}
+                {Object.entries(locationsForUsers).map(([_, users]) => {
+                                if(users.length === 0) {
+                                    return null
+                                }
+                                if(users.length === 1) {
+                                    let user = users[0]
+                                    return user.current_location ? (
+                                        <MapPin
+                                            lat={user.current_location.location[1]}
+                                            lng={user.current_location.location[0]}
+                                            city={user.current_location}
+                                            user={user}
+                                            key={user.id}
+                                        />) : null
+                                } else {
+                                    let user = users[0]
+                                    return user.current_location ? <MultipleMapPin
+                                            lat={user.current_location.location[1]}
+                                            lng={user.current_location.location[0]}
+                                            users={users}
+                                            key={user.id}
+                                            /> : null
+                                }
+                            })}
             </GoogleMapReact>
             <TimeTravel />
         </div>
