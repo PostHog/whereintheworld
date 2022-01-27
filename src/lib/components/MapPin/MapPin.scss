@@ -1,13 +1,14 @@
 @use 'sass:math';
 @import '_vars';
 
-
 .map-pin {
     transform: translate(-50%, -50%);
     z-index: 10000;
     cursor: pointer;
     width: 100%;
     height: 100%;
+    transition: all 0.5s ease-in-out;
+    font-family: $font_family;
 
     & .available {
         .avatar-img,
@@ -74,11 +75,19 @@
     width: 48px;
     height: 48px;
     background-color: $primary;
-    border: 2px solid $secondary;
+    border: 2px solid $border;
     border-radius: 100%;
-    text-align: center;
     line-height: 48px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-family: $font_family;
+
+    &.expanded {
+        border-color: $secondary;
+    }
 }
 
 .multiple-map-pin-container {
@@ -91,12 +100,9 @@
     }
 }
 
-
 .map-pin-multiple {
-	position: absolute;
-	top: 0; 
-    // margin: -49px;
-	border-radius: 50%;
-	background: silver;
-	text-align: center;
+    position: absolute;
+    top: 0;
+    border-radius: 50%;
+    text-align: center;
 }

@@ -51,8 +51,12 @@ export interface UserType {
     home_city?: CityType
     trips?: Omit<TripType, 'user' | 'notes'>[]
     work_hours: WorkHoursType
-    current_location?: CityType
-    travelRecord?: boolean
+}
+
+// Where the user is located at a given point in time
+export interface UserAtDateType extends UserType {
+    current_location: CityType
+    travelling: boolean
 }
 
 export interface UserTravelingType {

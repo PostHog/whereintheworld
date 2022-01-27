@@ -1,23 +1,9 @@
 import { kea } from 'kea'
-import { CityType, UserTravelingType, UserType } from '../types'
+import { CityType, UserAtDateType, UserTravelingType, UserType } from '../types'
 import { userLogicType } from './userLogicType'
 import api from 'lib/api'
 import dayjs from 'dayjs'
 import { authLogic } from './authLogic'
-
-const travelingAtDate = (users: UserType[], currentDate: Date): UserTravelingType[] => {
-        const output: UserTravelingType[] = []
-        const date = dayjs(currentDate).startOf('day')
-        for (const user of users) {
-            const trip = user.trips?.find(
-                (trip) => dayjs(trip.start) <= date && dayjs(trip.end) >= date.endOf('day')
-            )
-            if (trip) {
-                output.push({ user, trip })
-            }
-        }
-        return output
-    }
 
 export const userLogic = kea<userLogicType>({
     actions: {
@@ -49,27 +35,37 @@ export const userLogic = kea<userLogicType>({
     selectors: {
         travelingAtDate: [
             (s) => [s.users, s.currentDate],
-            (users, currentDate) => travelingAtDate(users, currentDate)
+            (users, currentDate): UserTravelingType[] => {
+                const output: UserTravelingType[] = []
+                const date = dayjs(currentDate).startOf('day')
+                for (const user of users) {
+                    const trip = user.trips?.find(
+                        (trip) => dayjs(trip.start) <= date && dayjs(trip.end) >= date.endOf('day')
+                    )
+                    if (trip) {
+                        output.push({ user, trip })
+                    }
+                }
+                return output
+            },
         ],
         locationsForUsers: [
-            (s) => [s.users, s.currentDate],
-            (users, currentDate): Record<any, UserType[]> => {
-                const travelingAt = travelingAtDate(users, currentDate)
-                const locations = {}
-                for(const user of users) {
+            (s) => [s.users, s.travelingAtDate],
+            (users, travelingAt): Record<string, UserAtDateType[]> => {
+                // For each city (by ID), we store the users who are travelling at that date
+                const locations: Record<string, UserAtDateType[]> = {}
+                for (const user of users) {
                     const travelRecord = travelingAt.find((item) => item.user.id === user.id)
-                    const location = travelRecord
-                        ? travelRecord.trip.city
-                        : user.home_city
-                    if(location) {
-                        if(!locations[location.id]) {
+                    const location = travelRecord ? travelRecord.trip.city : user.home_city
+                    if (location) {
+                        if (!locations[location.id]) {
                             locations[location.id] = []
                         }
-                        locations[location.id].push({...user, current_location: location, travelRecord})
+                        locations[location.id].push({ ...user, current_location: location, travelling: !!travelRecord })
                     }
                 }
                 return locations
-            }
+            },
         ],
         myLocationToday: [
             (s) => [s.user, s.users],

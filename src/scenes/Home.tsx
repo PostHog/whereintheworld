@@ -28,30 +28,32 @@ export default function Home(): JSX.Element {
                 defaultZoom={defaultProps.zoom}
                 options={{ fullscreenControl: false }}
             >
-                {Object.entries(locationsForUsers).map(([_, users]) => {
-                                if(users.length === 0) {
-                                    return null
-                                }
-                                if(users.length === 1) {
-                                    let user = users[0]
-                                    return user.current_location ? (
-                                        <MapPin
-                                            lat={user.current_location.location[1]}
-                                            lng={user.current_location.location[0]}
-                                            city={user.current_location}
-                                            user={user}
-                                            key={user.id}
-                                        />) : null
-                                } else {
-                                    let user = users[0]
-                                    return user.current_location ? <MultipleMapPin
-                                            lat={user.current_location.location[1]}
-                                            lng={user.current_location.location[0]}
-                                            users={users}
-                                            key={user.id}
-                                            /> : null
-                                }
-                            })}
+                {Object.entries(locationsForUsers).map(([cityId, users]) => {
+                    if (users.length === 0) {
+                        return null
+                    }
+                    if (users.length === 1) {
+                        const user = users[0]
+                        return user.current_location ? (
+                            <MapPin
+                                lat={user.current_location.location[1]}
+                                lng={user.current_location.location[0]}
+                                user={user}
+                                key={user.id}
+                            />
+                        ) : null
+                    } else {
+                        const user = users[0]
+                        return user.current_location ? (
+                            <MultipleMapPin
+                                lat={user.current_location.location[1]}
+                                lng={user.current_location.location[0]}
+                                users={users}
+                                key={`mult_${cityId}`}
+                            />
+                        ) : null
+                    }
+                })}
             </GoogleMapReact>
             <TimeTravel />
         </div>
