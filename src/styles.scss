@@ -32,7 +32,7 @@ body {
     margin: 0;
     padding: 0;
     font-size: 16px;
-    font-family: 'Merriweather', serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+    font-family: $font_family;
     background: $bg;
     overflow: hidden;
     height: 100%;

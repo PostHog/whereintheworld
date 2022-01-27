@@ -1,5 +1,5 @@
 import { kea } from 'kea'
-import { CityType, UserTravelingType, UserType } from '../types'
+import { CityType, UserAtDateType, UserTravelingType, UserType } from '../types'
 import { userLogicType } from './userLogicType'
 import api from 'lib/api'
 import dayjs from 'dayjs'
@@ -47,6 +47,24 @@ export const userLogic = kea<userLogicType>({
                     }
                 }
                 return output
+            },
+        ],
+        locationsForUsers: [
+            (s) => [s.users, s.travelingAtDate],
+            (users, travelingAt): Record<string, UserAtDateType[]> => {
+                // For each city (by ID), we store the users who are travelling at that date
+                const locations: Record<string, UserAtDateType[]> = {}
+                for (const user of users) {
+                    const travelRecord = travelingAt.find((item) => item.user.id === user.id)
+                    const location = travelRecord ? travelRecord.trip.city : user.home_city
+                    if (location) {
+                        if (!locations[location.id]) {
+                            locations[location.id] = []
+                        }
+                        locations[location.id].push({ ...user, current_location: location, travelling: !!travelRecord })
+                    }
+                }
+                return locations
             },
         ],
         myLocationToday: [

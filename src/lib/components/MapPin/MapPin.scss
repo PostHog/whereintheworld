@@ -5,15 +5,19 @@
     transform: translate(-50%, -50%);
     z-index: 10000;
     cursor: pointer;
+    width: 100%;
+    height: 100%;
+    transition: all 0.5s ease-in-out;
+    font-family: $font_family;
 
-    &.available {
+    & .available {
         .avatar-img,
         .fallback-img {
             border-color: $success;
         }
     }
 
-    &.unavailable {
+    & .unavailable {
         .avatar-img,
         .fallback-img {
             border-color: $danger;
@@ -64,4 +68,41 @@
             background-color: $success;
         }
     }
+}
+
+.multiple-map-pin {
+    transform: translate(-50%, -50%);
+    width: 48px;
+    height: 48px;
+    background-color: $primary;
+    border: 2px solid $border;
+    border-radius: 100%;
+    line-height: 48px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-family: $font_family;
+
+    &.expanded {
+        border-color: $secondary;
+    }
+}
+
+.multiple-map-pin-container {
+    cursor: pointer;
+    .map-pin {
+        transform: none;
+    }
+    & > .multiple-map-pin {
+        transform: none;
+    }
+}
+
+.map-pin-multiple {
+    position: absolute;
+    top: 0;
+    border-radius: 50%;
+    text-align: center;
 }
