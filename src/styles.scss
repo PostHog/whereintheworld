@@ -34,7 +34,6 @@ body {
     font-size: 16px;
     font-family: $font_family;
     background: $bg;
-    overflow: hidden;
     height: 100%;
     color: $text_default;
 }
@@ -109,8 +108,17 @@ a {
     cursor: pointer;
 }
 
+// Card styles
+.card {
+    @extend .mixin-elevated;
+    border-radius: $radius;
+    background-color: $bg_alt;
+    padding: $default_spacing;
+}
+
 // Button styles
 .btn {
+    @extend .mixin-elevated;
     border-radius: $radius;
     background-color: $primary;
     color: white;
@@ -121,8 +129,8 @@ a {
     border: 2px solid $primary;
 
     &:hover {
-        background-color: darken($primary, 10%);
-        border-color: darken($primary, 10%);
+        background-color: lighten($primary, 10%);
+        border-color: lighten($primary, 10%);
     }
 
     &.inverse {
@@ -158,6 +166,10 @@ a {
         padding: 8px 16px;
         font-size: 1rem;
     }
+
+    &.block {
+        width: 100%;
+    }
 }
 
 // Form styles
@@ -181,7 +193,7 @@ a {
 .react-daterange-picker {
     width: 100%;
     .react-daterange-picker__wrapper {
-        border-radius: $radius_sm;
+        border-radius: $radius;
         padding: 8px;
         font-size: 0.85em;
     }
@@ -212,37 +224,42 @@ a {
 .react-calendar {
     @extend .mixin-elevated;
     margin-top: $default_spacing * 0.5;
-    border-radius: $radius_sm;
-    background-color: $bg_input;
+    border-radius: $radius;
+    background-color: $bg_elevated;
 
     .react-calendar__navigation__arrow,
     .react-calendar__navigation__label {
-        color: white;
+        color: $text_default;
     }
 
     .react-calendar__tile {
-        border-radius: $radius_sm;
+        border-radius: $radius;
         color: $text_default;
 
         &.react-calendar__tile--active {
             border-radius: 0;
             background-color: $primary;
-            color: white;
+            color: $text_default;
+        }
+
+        &.react-calendar__tile:hover {
+            border-radius: $radius;
+            background-color: lighten($bg_alt, 12%);
         }
 
         &.react-calendar__tile--hover {
             border-radius: 0;
-            background-color: lighten($bg_alt, 50%);
+            background-color: lighten($bg_alt, 12%);
         }
 
         &.react-calendar__tile--rangeStart {
-            border-top-left-radius: $radius_sm;
-            border-bottom-left-radius: $radius_sm;
+            border-top-left-radius: $radius;
+            border-bottom-left-radius: $radius;
         }
 
         &.react-calendar__tile--rangeEnd {
-            border-top-right-radius: $radius_sm;
-            border-bottom-right-radius: $radius_sm;
+            border-top-right-radius: $radius;
+            border-bottom-right-radius: $radius;
         }
 
         &.react-calendar__month-view__days__day--weekend {
@@ -250,23 +267,28 @@ a {
         }
 
         &.react-calendar__tile--now {
-            background-color: $bg;
+            background-color: lighten($secondary, 10%);
+            color: #000;
+            &:hover {
+                background-color: lighten($secondary, 10%);
+            }
         }
     }
 }
 
-// React select
-
+// Select (react-select overrides)
 .react-select__control {
+    @extend .mixin-elevated;
     font-size: 0.85em;
     background-color: $bg_input !important;
+    border: 0 !important;
 
     .react-select__placeholder {
         color: $text_muted;
     }
 
     .react-select__single-value {
-        color: white !important;
+        color: $text_default !important;
     }
 
     &.react-select__control--is-focused {
@@ -281,13 +303,21 @@ a {
     .react-select__indicator-separator {
         background-color: $border;
     }
+
+    .react-select__input {
+        color: $text_default !important;
+    }
 }
 
 .react-select__menu {
-    background-color: $bg_alt !important;
+    background-color: $bg_elevated !important;
 
-    .react-select__option:hover {
-        background-color: $bg_input !important;
+    .react-select__option {
+        background-color: unset !important;
+        cursor: pointer;
+        &:hover {
+            background-color: lighten($bg_elevated, 10%) !important;
+        }
     }
 }
 .react-select__errored {

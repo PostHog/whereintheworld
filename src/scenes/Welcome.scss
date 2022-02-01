@@ -10,14 +10,6 @@
     form {
         max-width: 460px;
         margin: 0 auto;
-        background-color: white;
-
-        padding: $default_spacing;
         padding-top: $default_spacing * 2;
-        border-radius: $radius;
-
-        button {
-            margin-top: $default_spacing;
-        }
     }
 }

@@ -24,12 +24,21 @@ export default function Welcome(): JSX.Element {
                 <h1>Welcome to #whereintheworld!</h1>
                 <p className="text-center">Select your home location to get started</p>
                 <form onSubmit={handleSubmit}>
-                    <CitySelector onValueSelect={(city) => setHomeCity(city?.id ?? null)} errored={formErrored} />
+                    <div className="card" style={{ paddingTop: 32, paddingBottom: 32 }}>
+                        <div className="form-group">
+                            <label>Home Location</label>
+                            <CitySelector
+                                onValueSelect={(city) => setHomeCity(city?.id ?? null)}
+                                errored={formErrored}
+                                autoFocus
+                            />
+                        </div>
 
-                    <div className="text-right">
-                        <Button type="submit" size="lg" disabled={formErrored}>
-                            Save
-                        </Button>
+                        <div className="text-right">
+                            <Button type="submit" size="lg" disabled={formErrored} block>
+                                Save
+                            </Button>
+                        </div>
                     </div>
                 </form>
             </div>

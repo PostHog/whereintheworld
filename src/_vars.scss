@@ -1,15 +1,16 @@
 // Main colors
-$primary: #4381c1;
+$primary: #4764f4;
 $secondary: #ec9ded;
 $orange: #e39805; // Restricted use
 
 // Background colors
-$bg: #272f3b;
-$bg_alt: #101419;
-$bg_input: #3c4b5d;
+$bg: #101419;
+$bg_alt: #272f3b;
+$bg_elevated: rgba(56, 56, 61);
+$bg_input: rgba(#fff, 0.15);
 
 // Text colors
-$text_default: #fff;
+$text_default: rgba(#fff, 0.95);
 $text_muted_light: #d0d0d0;
 $text_muted: #adadad;
 
@@ -19,9 +20,8 @@ $warning: #e3b505;
 $success: #49dcb1;
 
 // Borders & radius
-$radius: 8px;
+$radius: 4px;
 $radius_lg: 50%;
-$radius_sm: 4px;
 $default_spacing: 16px;
 $border: #464646;
 
@@ -30,7 +30,10 @@ $z_sidebar: 4000;
 $z_overlay_on_sidebar: 4053;
 
 .mixin-elevated {
-    box-shadow: 0px 4px 8px 0px #00000040;
+    // Generated via https://shadows.brumm.af/
+    box-shadow: 2.8px 2.8px 2.2px rgba(0, 0, 0, 0.02), 6.7px 6.7px 5.3px rgba(0, 0, 0, 0.028),
+        12.5px 12.5px 10px rgba(0, 0, 0, 0.035), 22.3px 22.3px 17.9px rgba(0, 0, 0, 0.042),
+        41.8px 41.8px 33.4px rgba(0, 0, 0, 0.05), 100px 100px 80px rgba(0, 0, 0, 0.07);
 }
 
 // Fonts

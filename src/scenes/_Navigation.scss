@@ -33,6 +33,7 @@
 }
 
 .sidebar {
+    @extend .mixin-elevated;
     position: fixed;
     top: 0;
     bottom: 0;

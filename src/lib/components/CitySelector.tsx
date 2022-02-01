@@ -8,11 +8,12 @@ import { CityType, PaginatedResponse } from '~/types'
 import { formatCity } from 'utils'
 
 interface CitySelectorProps {
+    autoFocus?: boolean
     onValueSelect: (city: CityType | null) => void
     errored?: boolean
 }
 
-export function CitySelector({ onValueSelect, errored }: CitySelectorProps): JSX.Element {
+export function CitySelector({ onValueSelect, errored, autoFocus }: CitySelectorProps): JSX.Element {
     // TODO: Can we do this seamlessly with Kea?
     // TODO: Debounce
     const loadCities = async (searchQuery: string, callback: (response: CityType[]) => void) => {
@@ -44,6 +45,7 @@ export function CitySelector({ onValueSelect, errored }: CitySelectorProps): JSX
             classNamePrefix="react-select"
             escapeClearsValue
             isClearable
+            autoFocus={autoFocus}
         />
     )
 }
