@@ -120,6 +120,11 @@ This file contains overrides to vendor packages
     font-size: 0.85em;
     background-color: $bg_input !important;
     border: 0 !important;
+    cursor: pointer !important;
+
+    .react-select__value-container {
+        cursor: text !important;
+    }
 
     .react-select__placeholder {
         color: $text_muted;
@@ -139,7 +144,7 @@ This file contains overrides to vendor packages
     }
 
     .react-select__indicator-separator {
-        background-color: $border;
+        background-color: $text_muted;
     }
 
     .react-select__input {

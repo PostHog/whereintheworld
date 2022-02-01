@@ -51,6 +51,7 @@ h2 {
 input,
 textarea {
     font-size: 16px;
+    font-family: $font_family;
 }
 
 button {
@@ -78,6 +79,10 @@ button {
 
 .mb {
     margin-bottom: $default_spacing;
+}
+
+.mt-05 {
+    margin-top: math.div($default_spacing, 2);
 }
 
 .text-right {

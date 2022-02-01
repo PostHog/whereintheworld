@@ -4,11 +4,16 @@
 .welcome-scene {
     padding: $default_spacing * 2;
     display: flex;
-    align-items: center;
     justify-content: center;
-    height: 100vh;
+
+    .welcome-inner {
+        max-width: 500px;
+        h1 {
+            text-align: center;
+        }
+    }
+
     form {
-        max-width: 460px;
         margin: 0 auto;
         padding-top: $default_spacing * 2;
     }

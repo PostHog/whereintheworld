@@ -6,6 +6,8 @@ import Flag from 'react-flagkit'
 import AsyncSelect from 'react-select/async'
 import { CityType, PaginatedResponse } from '~/types'
 import { formatCity } from 'utils'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faHeartBroken } from '@fortawesome/free-solid-svg-icons'
 
 interface CitySelectorProps {
     autoFocus?: boolean
@@ -39,13 +41,26 @@ export function CitySelector({ onValueSelect, errored, autoFocus }: CitySelector
                     </div>
                 )
             }}
-            placeholder="Type a city name to search..."
+            placeholder="Type a city name to start..."
             getOptionValue={(option: CityType) => option.id}
             className={clsx({ 'react-select__errored': errored })}
             classNamePrefix="react-select"
             escapeClearsValue
-            isClearable
             autoFocus={autoFocus}
+            noOptionsMessage={({ inputValue }: { inputValue?: string }) => {
+                console.log(inputValue)
+                return (
+                    <small>
+                        {inputValue ? (
+                            <>
+                                <FontAwesomeIcon icon={faHeartBroken} /> We could not find any matching cities.
+                            </>
+                        ) : (
+                            'Start typing to search for cities...'
+                        )}
+                    </small>
+                )
+            }}
         />
     )
 }

@@ -2,7 +2,8 @@
 @import '_vars';
 
 .top-navigation {
-    background-color: $bg;
+    @extend .mixin-elevated;
+    background-color: $bg_alt;
     height: 42px;
     display: flex;
     padding: 0 $default_spacing;
@@ -48,7 +49,26 @@
         left: 0;
     }
 
+    .sidebar-item {
+        display: block;
+        margin-bottom: $default_spacing * 2;
+    }
+
     a {
-        color: white;
+        color: $text_default;
+    }
+}
+
+.sidebar-overlay {
+    transition: background-color 0.3s ease-in-out;
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    &.open {
+        background-color: rgba(#000, 0.5);
+        bottom: 0;
+        left: 0;
+        cursor: pointer;
     }
 }

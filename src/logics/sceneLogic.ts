@@ -17,6 +17,7 @@ export const urls = {
     welcome: () => '/welcome',
     trips: () => '/trips',
     newTrip: () => '/trips/new',
+    profile: () => '/profile',
     notFound: () => '/404',
 }
 

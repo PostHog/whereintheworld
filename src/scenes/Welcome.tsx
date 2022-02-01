@@ -21,12 +21,14 @@ export default function Welcome(): JSX.Element {
     return (
         <div className="scene welcome-scene">
             <div className="welcome-inner">
-                <h1>Welcome to #whereintheworld!</h1>
-                <p className="text-center">Select your home location to get started</p>
+                <h1>Welcome to WITW!</h1>
+                <p className="text-center">
+                    #whereintheworld is the best way to connect with your teammates. Just a few details to get started.
+                </p>
                 <form onSubmit={handleSubmit}>
                     <div className="card" style={{ paddingTop: 32, paddingBottom: 32 }}>
                         <div className="form-group">
-                            <label>Home Location</label>
+                            <label>What is your home city?</label>
                             <CitySelector
                                 onValueSelect={(city) => setHomeCity(city?.id ?? null)}
                                 errored={formErrored}
@@ -36,7 +38,7 @@ export default function Welcome(): JSX.Element {
 
                         <div className="text-right">
                             <Button type="submit" size="lg" disabled={formErrored} block>
-                                Save
+                                Save and continue
                             </Button>
                         </div>
                     </div>
