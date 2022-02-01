@@ -36,7 +36,7 @@ export default function Welcome(): JSX.Element {
                             />
                         </div>
 
-                        <div className="text-right">
+                        <div>
                             <Button type="submit" size="lg" disabled={formErrored} block>
                                 Save and continue
                             </Button>

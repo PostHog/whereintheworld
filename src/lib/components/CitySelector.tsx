@@ -47,20 +47,17 @@ export function CitySelector({ onValueSelect, errored, autoFocus }: CitySelector
             classNamePrefix="react-select"
             escapeClearsValue
             autoFocus={autoFocus}
-            noOptionsMessage={({ inputValue }: { inputValue?: string }) => {
-                console.log(inputValue)
-                return (
-                    <small>
-                        {inputValue ? (
-                            <>
-                                <FontAwesomeIcon icon={faHeartBroken} /> We could not find any matching cities.
-                            </>
-                        ) : (
-                            'Start typing to search for cities...'
-                        )}
-                    </small>
-                )
-            }}
+            noOptionsMessage={({ inputValue }: { inputValue?: string }) => (
+                <small>
+                    {inputValue ? (
+                        <>
+                            <FontAwesomeIcon icon={faHeartBroken} /> We could not find any matching cities.
+                        </>
+                    ) : (
+                        'Start typing to search for cities...'
+                    )}
+                </small>
+            )}
         />
     )
 }

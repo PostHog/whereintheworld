@@ -7,7 +7,7 @@ import posthog from 'posthog-js'
 
 const ENV = window.location.href.indexOf('localhost') >= 0 ? 'development' : 'production'
 
-interface UserUpdatePayload {
+export interface UserUpdatePayload {
     home_city: number
 }
 

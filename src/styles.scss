@@ -50,8 +50,18 @@ h2 {
 
 input,
 textarea {
-    font-size: 16px;
+    font-size: 14px;
     font-family: $font_family;
+    background-color: $bg_input;
+    border-radius: $radius;
+    border: 0;
+    padding: math.div($default_spacing, 2);
+    color: $text_default;
+    width: 100%;
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
 }
 
 button {
@@ -130,7 +140,7 @@ a {
     color: white;
     font-weight: bold;
     border: 0;
-    padding: 5px 10px;
+    padding: 6px 10px;
     transition: all 0.3s ease-out;
     border: 2px solid $primary;
 
@@ -179,7 +189,6 @@ a {
 }
 
 // Form styles
-
 .form-group {
     margin-bottom: $default_spacing;
     label {
@@ -191,5 +200,17 @@ a {
     .help-text {
         padding-top: 4px;
         font-size: 0.75em;
+    }
+}
+
+// Grid styles
+.grid {
+    display: flex;
+    .col-12 {
+        width: 50%;
+        margin-right: $default_spacing;
+        &:last-of-type {
+            margin-right: 0;
+        }
     }
 }

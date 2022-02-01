@@ -1,0 +1,30 @@
+@use 'sass:math';
+@import '_vars';
+
+.flag-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: rgba($primary, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    .flag-container {
+        border: 1px solid transparent;
+        border-radius: $radius;
+        max-height: 40px;
+        max-width: 40px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    @supports ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
+        background-color: rgba($primary, 0.4);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+    }
+}
