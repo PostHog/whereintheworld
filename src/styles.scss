@@ -5,6 +5,7 @@
 @import '../node_modules/@wojtekmaj/react-daterange-picker/dist/DateRangePicker.css';
 @import '../node_modules/react-calendar/dist/Calendar.css';
 @import '../node_modules/rc-slider/assets/index.css';
+@import '../node_modules/react-toastify/dist/ReactToastify.min.css';
 
 // Root styles
 :root {
@@ -15,6 +16,13 @@
     --text-default: #{$text_default};
     --text-muted: #{$text_muted};
     --text-muted-light: #{$text_muted_light};
+
+    // Override Toastify
+    --toastify-color-dark: #{$bg_elevated};
+    --toastify-color-success: #{$success};
+    --toastify-color-warning: #{$warning};
+    --toastify-color-error: #{$danger};
+    --toastify-font-family: #{$font_family};
 }
 
 // Reset styles

@@ -4,6 +4,8 @@ import api from 'lib/api'
 import { UserType } from '~/types'
 import type { authLogicType } from './authLogicType'
 import posthog from 'posthog-js'
+import { urls } from './sceneLogic'
+import { toast } from 'react-toastify'
 
 const ENV = window.location.href.indexOf('localhost') >= 0 ? 'development' : 'production'
 
@@ -23,7 +25,10 @@ export const authLogic = kea<authLogicType<UserUpdatePayload>>({
     },
     listeners: {
         updateUserSuccess: async () => {
-            window.location.href = '/'
+            if (router.values.location.pathname === urls.welcome()) {
+                window.location.href = '/'
+            }
+            toast.success('Your preferences have been saved!')
         },
         loadUserSuccess: async ({ user }) => {
             if (user && !user.home_city) {

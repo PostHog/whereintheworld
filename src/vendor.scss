@@ -168,3 +168,8 @@ This file contains overrides to vendor packages
         border-color: $danger !important;
     }
 }
+
+// react-toastify
+.Toastify__toast {
+    @extend .mixin-elevated;
+}

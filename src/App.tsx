@@ -3,6 +3,7 @@ import React from 'react'
 import 'styles.scss'
 import { authLogic } from './logics/authLogic'
 import { Scene } from 'scenes/Scene'
+import { ToastContainer } from 'react-toastify'
 
 export function App(): JSX.Element {
     const { userLoading, user } = useValues(authLogic)
@@ -10,5 +11,10 @@ export function App(): JSX.Element {
         // TODO: Nicer loading state
         return <>Loading ...</>
     }
-    return <Scene />
+    return (
+        <>
+            <Scene />
+            <ToastContainer position="top-center" theme="dark" />
+        </>
+    )
 }
