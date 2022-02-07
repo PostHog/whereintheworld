@@ -63,13 +63,21 @@ textarea {
     font-family: $font_family;
     background-color: $bg_input;
     border-radius: $radius;
-    border: 0;
+    border: 1px solid $bg_input;
     padding: math.div($default_spacing, 2);
     color: $text_default;
     width: 100%;
+
     &:disabled {
         opacity: 0.5;
         cursor: not-allowed;
+    }
+
+    &.errored {
+        border-color: $danger;
+        &:focus {
+            outline: none;
+        }
     }
 }
 
@@ -171,8 +179,13 @@ a {
 
     &:disabled {
         cursor: not-allowed;
-        background-color: lighten($primary, 10%);
-        border-color: lighten($primary, 10%);
+        opacity: 0.7;
+        background-color: lighten($primary, 5%);
+        border-color: lighten($primary, 5%);
+        &:hover {
+            background-color: lighten($primary, 5%);
+            border-color: lighten($primary, 5%);
+        }
     }
 
     &.link {
@@ -209,6 +222,11 @@ a {
     .help-text {
         padding-top: 4px;
         font-size: 0.75em;
+    }
+    .error-text {
+        margin-top: math.div($default_spacing, 4);
+        font-size: 0.85em;
+        color: $danger;
     }
 }
 

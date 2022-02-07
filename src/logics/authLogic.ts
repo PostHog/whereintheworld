@@ -1,7 +1,7 @@
 import { kea } from 'kea'
 import { router } from 'kea-router'
 import api from 'lib/api'
-import { UserType } from '~/types'
+import { UserType, WorkHoursType } from '~/types'
 import type { authLogicType } from './authLogicType'
 import posthog from 'posthog-js'
 import { urls } from './sceneLogic'
@@ -11,6 +11,7 @@ const ENV = window.location.href.indexOf('localhost') >= 0 ? 'development' : 'pr
 
 export interface UserUpdatePayload {
     home_city?: number
+    work_hours?: WorkHoursType
 }
 
 export const authLogic = kea<authLogicType<UserUpdatePayload>>({
