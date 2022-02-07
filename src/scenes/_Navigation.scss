@@ -8,6 +8,10 @@
     display: flex;
     padding: 0 $default_spacing;
     align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
 
     .menu-toggle {
         margin-right: $default_spacing / 2;

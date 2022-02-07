@@ -13,9 +13,10 @@ interface CitySelectorProps {
     autoFocus?: boolean
     onValueSelect: (city: CityType | null) => void
     errored?: boolean
+    value?: CityType | null // Passing this will make it a controlled input
 }
 
-export function CitySelector({ onValueSelect, errored, autoFocus }: CitySelectorProps): JSX.Element {
+export function CitySelector({ onValueSelect, errored, autoFocus, value }: CitySelectorProps): JSX.Element {
     // TODO: Can we do this seamlessly with Kea?
     // TODO: Debounce
     const loadCities = async (searchQuery: string, callback: (response: CityType[]) => void) => {
@@ -32,6 +33,7 @@ export function CitySelector({ onValueSelect, errored, autoFocus }: CitySelector
             loadOptions={loadCities}
             defaultOptions
             onChange={onValueSelect}
+            value={value}
             getOptionLabel={(option: CityType) => {
                 const cityName = formatCity(option)
                 return (

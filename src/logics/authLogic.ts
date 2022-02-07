@@ -8,7 +8,7 @@ import posthog from 'posthog-js'
 const ENV = window.location.href.indexOf('localhost') >= 0 ? 'development' : 'production'
 
 export interface UserUpdatePayload {
-    home_city: number
+    home_city?: number
 }
 
 export const authLogic = kea<authLogicType<UserUpdatePayload>>({

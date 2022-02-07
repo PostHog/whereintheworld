@@ -3,23 +3,33 @@ import { Avatar } from 'lib/components/Avatar/Avatar'
 import { Button } from 'lib/components/Button'
 import { CitySelector } from 'lib/components/CitySelector'
 import { FlagAvatar } from 'lib/components/Flags/FlagAvatar'
-import { authLogic, UserUpdatePayload } from 'logics/authLogic'
-import React, { useState } from 'react'
+import { authLogic } from 'logics/authLogic'
+import React, { useEffect, useState } from 'react'
+import { CityType } from '~/types'
 import './Profile.scss'
+
+interface FormInterface {
+    home_city: CityType | null
+}
 
 export default function Profile(): JSX.Element {
     const { user, userLoading } = useValues(authLogic)
-    const [formValues, setFormValues] = useState({} as UserUpdatePayload)
+    const [formValues, setFormValues] = useState({ home_city: null } as FormInterface)
     const { updateUser } = useActions(authLogic)
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        updateUser(formValues)
+        updateUser({ home_city: formValues.home_city?.id })
     }
+
+    useEffect(() => {
+        setFormValues({ home_city: user.home_city ?? null })
+    }, [user.home_city])
+
     return (
         <div className="scene profile-scene">
             <h1 className="flex-center">My profile</h1>
-            <div style={{ marginBottom: 32 }}>A cool quote is coming here soon.</div>
+            <div style={{ marginBottom: 32 }}>Set your preferences and profile here.</div>
             <div className="grid" style={{ maxWidth: 1080, margin: '0 auto' }}>
                 <div className="col-12">
                     <div className="card" style={{ height: '100%' }}>
@@ -35,7 +45,7 @@ export default function Profile(): JSX.Element {
                                 </div>
                                 <div className="form-group">
                                     <label>Your email</label>
-                                    <input type="text" value={user.email} />
+                                    <input type="text" value={user.email} disabled />
                                 </div>
                             </div>
                         </div>
@@ -53,8 +63,9 @@ export default function Profile(): JSX.Element {
                                     <div className="form-group">
                                         <label>Your home city</label>
                                         <CitySelector
-                                            onValueSelect={(city) => city && setFormValues({ home_city: city.id })}
+                                            onValueSelect={(city) => city && setFormValues({ home_city: city })}
                                             autoFocus
+                                            value={formValues.home_city}
                                         />
                                     </div>
                                     <div className="form-group">
