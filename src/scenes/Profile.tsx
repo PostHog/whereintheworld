@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import dayjs from 'dayjs'
 import { useActions, useValues } from 'kea'
 import { Avatar } from 'lib/components/Avatar/Avatar'
 import { Button } from 'lib/components/Button'
@@ -16,37 +17,58 @@ interface FormInterface {
     work_hours: WorkHoursType
 }
 
-// TODO: Move to react-hook-form or something more scalable
+// TODO: Move to react-hook-form or something more scalable and less convoluted
 interface ControlInterface {
-    valid: boolean
+    invalid: boolean
     errorMessage: string
+}
+
+const validateStartEndTime = (start: string, end: string): boolean => {
+    const [startHour, startMin] = start.split(':')
+    const [endHour, endMin] = end.split(':')
+    if (
+        dayjs().hour(parseInt(startHour)).minute(parseInt(startMin)) <=
+        dayjs().hour(parseInt(endHour)).minute(parseInt(endMin))
+    ) {
+        return true
+    }
+    return false
 }
 
 export default function Profile(): JSX.Element {
     const { user, userLoading } = useValues(authLogic)
     const [formValues, setFormValues] = useState({ work_hours: { start: '', end: '' } } as FormInterface)
-    const [controlsState, setControlsState] = useState({ start: {}, end: {} } as Record<
-        'start' | 'end',
+    const [controlsState, setControlsState] = useState({ start: {}, end: {}, work_hours: {} } as Record<
+        'start' | 'end' | 'work_hours',
         ControlInterface
     >)
     const [formState, setFormState] = useState('untouched' as 'untouched' | 'submitted')
     const { updateUser } = useActions(authLogic)
     const workingHoursError = Object.values(controlsState).find((i) => !!i.errorMessage)?.errorMessage
-    const isFormValid = !Object.values(controlsState).filter((val) => !val.valid).length
+    const isFormValid = !Object.values(controlsState).filter((val) => val.invalid).length
 
     const handleWorkHourChange = (attr: 'start' | 'end', value: string): void => {
-        setFormValues({ ...formValues, work_hours: { ...formValues.work_hours, [attr]: value } })
+        const _controlsState = { ...controlsState }
+        const _formValues = { ...formValues, work_hours: { ...formValues.work_hours, [attr]: value } }
+        setFormValues(_formValues)
+
         if (!TIME_REGEX.test(value)) {
-            setControlsState({
-                ...controlsState,
-                [attr]: { errorMessage: `Please enter a valid ${attr} time (00:00)`, valid: false },
-            })
+            _controlsState[attr] = { errorMessage: `Please enter a valid ${attr} time (00:00)`, invalid: true }
         } else {
-            setControlsState({
-                ...controlsState,
-                [attr]: { errorMessage: '', valid: true },
-            })
+            _controlsState[attr] = { errorMessage: '', invalid: false }
+
+            // Now validate that start time is before than end time
+            if (
+                !_formValues.work_hours.start ||
+                !_formValues.work_hours.end ||
+                !validateStartEndTime(_formValues.work_hours.start, _formValues.work_hours.end)
+            ) {
+                _controlsState.work_hours = { errorMessage: 'End time must be after start time', invalid: true }
+            } else {
+                _controlsState.work_hours = { errorMessage: '', invalid: false }
+            }
         }
+        setControlsState(_controlsState)
     }
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -117,7 +139,9 @@ export default function Profile(): JSX.Element {
                                                 value={formValues.work_hours.start}
                                                 onChange={(e) => handleWorkHourChange('start', e.target.value)}
                                                 className={clsx(
-                                                    formState === 'submitted' && !controlsState.start.valid && 'errored'
+                                                    formState === 'submitted' &&
+                                                        controlsState.start.invalid &&
+                                                        'errored'
                                                 )}
                                             />
                                             <span style={{ marginRight: 8, marginLeft: 8 }}>to</span>
@@ -127,7 +151,7 @@ export default function Profile(): JSX.Element {
                                                 value={formValues.work_hours.end}
                                                 onChange={(e) => handleWorkHourChange('end', e.target.value)}
                                                 className={clsx(
-                                                    formState === 'submitted' && !controlsState.end.valid && 'errored'
+                                                    formState === 'submitted' && controlsState.end.invalid && 'errored'
                                                 )}
                                             />
                                         </div>
