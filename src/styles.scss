@@ -220,8 +220,9 @@ a {
         padding-bottom: math.div($default_spacing, 2);
     }
     .help-text {
-        padding-top: 4px;
+        padding-bottom: 8px;
         font-size: 0.75em;
+        color: $text_muted;
     }
     .error-text {
         margin-top: math.div($default_spacing, 4);

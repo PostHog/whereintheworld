@@ -1,0 +1,12 @@
+@use 'sass:math';
+@import '_vars';
+
+.announcement-toast {
+    font-size: 0.85em;
+    font-weight: bold;
+    p {
+        color: $text_muted;
+        font-weight: normal;
+        font-size: 0.9em;
+    }
+}

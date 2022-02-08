@@ -5,10 +5,12 @@ import { useValues } from 'kea'
 import { TimeTravel } from 'lib/components/TimeTravel/TimeTravel'
 import { userLogic } from 'logics/userLogic'
 import './Home.scss'
+import { Announcements } from 'lib/components/Announcements/Announcements'
+import { authLogic } from 'logics/authLogic'
 
 export default function Home(): JSX.Element {
-    // const { users, travelingAtDate } = useValues(userLogic)
     const { locationsForUsers } = useValues(userLogic)
+    const { userLoading } = useValues(authLogic)
     const defaultProps = {
         center: {
             lat: 51.5,
@@ -56,6 +58,7 @@ export default function Home(): JSX.Element {
                 })}
             </GoogleMapReact>
             <TimeTravel />
+            {!userLoading && <Announcements />}
         </div>
     )
 }

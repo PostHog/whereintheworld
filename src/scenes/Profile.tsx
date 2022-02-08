@@ -52,15 +52,15 @@ export default function Profile(): JSX.Element {
         const _formValues = { ...formValues, work_hours: { ...formValues.work_hours, [attr]: value } }
         setFormValues(_formValues)
 
-        if (!TIME_REGEX.test(value)) {
+        if (value && !TIME_REGEX.test(value)) {
             _controlsState[attr] = { errorMessage: `Please enter a valid ${attr} time (00:00)`, invalid: true }
         } else {
             _controlsState[attr] = { errorMessage: '', invalid: false }
 
             // Now validate that start time is before than end time
             if (
-                !_formValues.work_hours.start ||
-                !_formValues.work_hours.end ||
+                _formValues.work_hours.start &&
+                _formValues.work_hours.end &&
                 !validateStartEndTime(_formValues.work_hours.start, _formValues.work_hours.end)
             ) {
                 _controlsState.work_hours = { errorMessage: 'End time must be after start time', invalid: true }
@@ -133,6 +133,9 @@ export default function Profile(): JSX.Element {
                                     </div>
                                     <div className="form-group">
                                         <label>Your usual work hours</label>
+                                        <div className="help-text">
+                                            This will display your availability in the world map.
+                                        </div>
                                         <div className="flex-center">
                                             <input
                                                 placeholder="08:00"
