@@ -13,7 +13,14 @@ interface AvatarProps {
 export function Avatar({ avatarUrl, className, icon, size, userName }: AvatarProps): JSX.Element {
     const [didImageError, setDidImageError] = useState(false)
 
-    const remoteImage = <img className="avatar-img" src={avatarUrl} onError={() => setDidImageError(true)} />
+    const remoteImage = (
+        <img
+            className="avatar-img"
+            alt={`Profile picture for ${userName}`}
+            src={avatarUrl}
+            onError={() => setDidImageError(true)}
+        />
+    )
     const fallbackImage = <div className="fallback-img">{userName ? userName[0].toUpperCase() : 'U'}</div>
 
     return (

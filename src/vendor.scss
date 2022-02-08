@@ -1,0 +1,175 @@
+@use 'sass:math';
+@import '_vars';
+
+/** 
+This file contains overrides to vendor packages
+*/
+
+// @wojtekmaj/react-daterange-picker
+
+.react-daterange-picker {
+    width: 100%;
+    .react-daterange-picker__wrapper {
+        border-radius: $radius;
+        padding: 8px;
+        font-size: 0.85em;
+    }
+    .react-daterange-picker__inputGroup__month {
+        width: 44px;
+    }
+
+    .react-daterange-picker__inputGroup {
+        color: white;
+        input,
+        select {
+            color: white;
+        }
+    }
+
+    .react-daterange-picker__range-divider {
+        flex-grow: 1;
+        display: flex;
+    }
+
+    &.errored {
+        .react-daterange-picker__wrapper {
+            border-color: $danger;
+        }
+    }
+}
+
+.react-calendar {
+    @extend .mixin-elevated;
+    margin-top: $default_spacing * 0.5;
+    border-radius: $radius;
+    background-color: $bg_elevated;
+    border: 1px solid $bg_elevated;
+    font-family: $font_family;
+
+    abbr,
+    .react-calendar__navigation__label__labelText {
+        font-family: $font_family;
+    }
+
+    .react-calendar__navigation {
+        background-color: $bg_elevated !important;
+    }
+
+    .react-calendar__navigation__arrow,
+    .react-calendar__navigation__label {
+        color: $text_default;
+        background-color: $bg_elevated !important;
+        &:hover {
+            background-color: lighten($bg_alt, 12%) !important;
+        }
+    }
+
+    .react-calendar__tile {
+        color: $text_default;
+
+        &.react-calendar__tile--active {
+            border-radius: 0;
+            background-color: $primary !important;
+            color: $text_default !important;
+        }
+
+        &.react-calendar__tile:hover {
+            background-color: lighten($bg_alt, 12%);
+            &:not(.react-calendar__tile--hover) {
+                border-radius: $radius;
+            }
+        }
+
+        &.react-calendar__tile--hover {
+            // when you have certain days in your selection
+            border-radius: 0;
+            background-color: $primary !important;
+        }
+
+        &.react-calendar__tile--rangeStart,
+        &.react-calendar__tile--hoverStart {
+            border-top-left-radius: $radius;
+            border-bottom-left-radius: $radius;
+        }
+
+        &.react-calendar__tile--rangeEnd,
+        &.react-calendar__tile--hoverEnd {
+            border-top-right-radius: $radius;
+            border-bottom-right-radius: $radius;
+        }
+
+        &.react-calendar__month-view__days__day--weekend {
+            color: rgba($text_default, 0.6);
+        }
+
+        &.react-calendar__tile--now {
+            background-color: lighten($secondary, 10%);
+            color: #000;
+            border-radius: $radius;
+            &:hover,
+            &.react-calendar__tile--hover {
+                background-color: lighten($secondary, 10%);
+            }
+        }
+    }
+}
+
+// react-select
+.react-select__control {
+    @extend .mixin-elevated;
+    font-size: 0.85em;
+    background-color: $bg_input !important;
+    border: 0 !important;
+    cursor: pointer !important;
+
+    .react-select__value-container {
+        cursor: text !important;
+    }
+
+    .react-select__placeholder {
+        color: $text_muted;
+    }
+
+    .react-select__single-value {
+        color: $text_default !important;
+    }
+
+    &.react-select__control--is-focused {
+        box-shadow: none !important;
+    }
+
+    .react-select__clear-indicator {
+        color: $text_muted;
+        cursor: pointer;
+    }
+
+    .react-select__indicator-separator {
+        background-color: $text_muted;
+    }
+
+    .react-select__input {
+        color: $text_default !important;
+    }
+}
+
+.react-select__menu {
+    background-color: $bg_elevated !important;
+
+    .react-select__option {
+        background-color: unset !important;
+        cursor: pointer;
+        &:hover {
+            background-color: lighten($bg_elevated, 10%) !important;
+        }
+    }
+}
+.react-select__errored {
+    .react-select__control {
+        border-color: $danger !important;
+    }
+}
+
+// react-toastify
+.Toastify__toast {
+    @extend .mixin-elevated;
+}

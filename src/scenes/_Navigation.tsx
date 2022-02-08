@@ -29,6 +29,7 @@ export function Navigation(): JSX.Element {
     const { user } = useValues(authLogic)
     return (
         <>
+            <div className={clsx('sidebar-overlay', sidebarOpen && 'open')} onClick={toggleSidebar} />
             <div className="top-navigation">
                 <div className="nav-section menu-and-logo">
                     <span className="menu-toggle" onClick={toggleSidebar}>
@@ -49,6 +50,7 @@ export function Navigation(): JSX.Element {
                 </h2>
                 <div>
                     <SidebarItem label="My trips" destination={urls.trips()} />
+                    <SidebarItem label="My profile" destination={urls.profile()} />
                 </div>
             </div>
         </>

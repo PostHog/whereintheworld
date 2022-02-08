@@ -39,6 +39,7 @@
         "react-scripts": "5.0.0",
         "react-select": "^4.3.1",
         "react-tiny-popover": "^7.0.1",
+        "react-toastify": "^8.1.1",
         "redux": "^4.1.1",
         "reselect": "^4.0.0",
         "sass": "^1.45.1",

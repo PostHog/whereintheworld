@@ -20,27 +20,27 @@ export function computeMultiplePinLocation(count: number, index: number): Multip
     const size = Math.min(r * 2, 60)
 
     if (count === 2) {
-        if (index == 0) {
+        if (index === 0) {
             cx = 25
             cy = -30
         }
-        if (index == 1) {
+        if (index === 1) {
             cx = -85
             cy = -30
         }
     }
     if (count === 3) {
-        if (index == 0) {
+        if (index === 0) {
             cx = 25
             cy = -30
         }
-        if (index == 1) {
+        if (index === 1) {
             cx = -56
             cy = 19
         }
         // translate(-35.641px, 33.282px)
         // translate(-34.641px, 23.282px)
-        if (index == 2) {
+        if (index === 2) {
             cx = -53
             cy = -80
         }

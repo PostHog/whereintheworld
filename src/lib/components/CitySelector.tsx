@@ -6,13 +6,17 @@ import Flag from 'react-flagkit'
 import AsyncSelect from 'react-select/async'
 import { CityType, PaginatedResponse } from '~/types'
 import { formatCity } from 'utils'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faHeartBroken } from '@fortawesome/free-solid-svg-icons'
 
 interface CitySelectorProps {
+    autoFocus?: boolean
     onValueSelect: (city: CityType | null) => void
     errored?: boolean
+    value?: CityType | null // Passing this will make it a controlled input
 }
 
-export function CitySelector({ onValueSelect, errored }: CitySelectorProps): JSX.Element {
+export function CitySelector({ onValueSelect, errored, autoFocus, value }: CitySelectorProps): JSX.Element {
     // TODO: Can we do this seamlessly with Kea?
     // TODO: Debounce
     const loadCities = async (searchQuery: string, callback: (response: CityType[]) => void) => {
@@ -29,6 +33,7 @@ export function CitySelector({ onValueSelect, errored }: CitySelectorProps): JSX
             loadOptions={loadCities}
             defaultOptions
             onChange={onValueSelect}
+            value={value}
             getOptionLabel={(option: CityType) => {
                 const cityName = formatCity(option)
                 return (
@@ -38,12 +43,23 @@ export function CitySelector({ onValueSelect, errored }: CitySelectorProps): JSX
                     </div>
                 )
             }}
-            placeholder="Type a city name to search..."
+            placeholder="Type a city name to start..."
             getOptionValue={(option: CityType) => option.id}
             className={clsx({ 'react-select__errored': errored })}
             classNamePrefix="react-select"
             escapeClearsValue
-            isClearable
+            autoFocus={autoFocus}
+            noOptionsMessage={({ inputValue }: { inputValue?: string }) => (
+                <small>
+                    {inputValue ? (
+                        <>
+                            <FontAwesomeIcon icon={faHeartBroken} /> We could not find any matching cities.
+                        </>
+                    ) : (
+                        'Start typing to search for cities...'
+                    )}
+                </small>
+            )}
         />
     )
 }

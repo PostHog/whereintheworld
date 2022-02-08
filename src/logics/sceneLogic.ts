@@ -10,6 +10,7 @@ export enum Scene {
     Welcome = 'welcome',
     Trips = 'trips',
     Trip = 'trip',
+    Profile = 'profile',
 }
 
 export const urls = {
@@ -17,6 +18,7 @@ export const urls = {
     welcome: () => '/welcome',
     trips: () => '/trips',
     newTrip: () => '/trips/new',
+    profile: () => '/profile',
     notFound: () => '/404',
 }
 
@@ -25,6 +27,7 @@ export const routes: Record<string, Scene> = {
     [urls.welcome()]: Scene.Welcome,
     [urls.trips()]: Scene.Trips,
     [urls.newTrip()]: Scene.Trip,
+    [urls.profile()]: Scene.Profile,
     [urls.notFound()]: Scene.Error404,
 }
 
@@ -33,6 +36,7 @@ export const scenes: Record<Scene, LazyExoticComponent<() => JSX.Element> | (() 
     welcome: lazy(() => import('../scenes/Welcome')),
     trips: lazy(() => import('../scenes/Trips/Trips')),
     trip: lazy(() => import('../scenes/Trips/Trip')),
+    profile: lazy(() => import('../scenes/Profile')),
     notFound: lazy(() => import('../scenes/NotFound')),
 }
 

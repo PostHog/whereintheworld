@@ -1,0 +1,16 @@
+@use 'sass:math';
+@import '_vars';
+
+.profile-scene {
+    h2 {
+        margin-top: 0;
+    }
+    .avatar {
+        .avatar-img,
+        .fallback-img {
+            width: 80px;
+            height: 80px;
+            font-size: 2em;
+        }
+    }
+}

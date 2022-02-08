@@ -9,7 +9,8 @@
 
     .avatar {
         margin-left: $default_spacing * 0.5;
-        .avatar-img {
+        .avatar-img,
+        .fallback-img {
             min-width: unset;
             min-height: unset;
             width: 28px;
