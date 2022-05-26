@@ -52,6 +52,11 @@ python manage.py cities --import=all
 ```
 
 
+### 3. Get Google Oauth configs
+
+https://console.cloud.google.com/apis/credentials
+
+
 
 ### 3. Start the app
 
