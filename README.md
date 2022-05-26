@@ -14,7 +14,14 @@ The code for the server is located in the [`backend`](./backend) directory.
 
 3. Install the OS & pip dependencies.
 ```
+# On MacOS with brew
 brew install gdal libgeoip
+# On Ubuntu
+sudo add-apt-repository ppa:ubuntugis/ppa
+sudo apt-get update
+sudo apt-get install libgeoip-dev libgdal-dev gdal-bin
+sudo apt-get install postgresql-12-postgis-3
+# On everything
 pip install -r requirements-test.txt
 pip install -r requirements.txt
 ```
