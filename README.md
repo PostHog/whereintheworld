@@ -16,11 +16,13 @@ The code for the server is located in the [`backend`](./backend) directory.
 ```
 # On MacOS with brew
 brew install gdal libgeoip
+
 # On Ubuntu
 sudo add-apt-repository ppa:ubuntugis/ppa
 sudo apt-get update
 sudo apt-get install libgeoip-dev libgdal-dev gdal-bin
 sudo apt-get install postgresql-12-postgis-3
+
 # On everything
 pip install -r requirements-test.txt
 pip install -r requirements.txt
@@ -56,6 +58,7 @@ python manage.py cities --import=all
 The code for the frontend is located in the [`src`](./src) directory. You can start the entire app (frontend & backend) as follows:
 
 ```
+yarn
 ./bin/start
 ```
 The server is now running at [`http://localhost:8000/`](http://localhost:8000/). **Warning:** Don't visit `localhost:3000` as the raw frontend will not work as expected.
