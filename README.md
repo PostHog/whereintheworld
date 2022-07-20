@@ -67,3 +67,25 @@ yarn
 ./bin/start
 ```
 The server is now running at [`http://localhost:8000/`](http://localhost:8000/). **Warning:** Don't visit `localhost:3000` as the raw frontend will not work as expected.
+
+## Docker Build and Delivery
+
+### 1. Create a Docker Hub Repo
+[Visit Dockerhub](https://hub.docker.com/) and create a repository for the image
+If you don't have a Dockerhub account setup, follow the [Docker Hub Quick Start Guide](https://docs.docker.com/docker-hub/) then return here.
+
+### 2. Authenticate To Docker Hub
+Run `docker login` and follow the prompts
+
+### 3. Build and Deliver
+After you've authenticated successfully build, tag, and push the image to docker hub
+subtitute the values in `<>` in the command below with your actual parameters
+
+*Please Note:* For the purposes of this excersize we are using a floating `latest` tag.
+In any other scenario we would want to consider a more robust tagging strategy, using git commit hashses, sementatic versioning, or both to more explicitly
+identify the version of the application built in the container.
+
+```bash
+docker build . -t <your-dockerhub-username>/<your-repo-name>:latest
+docker push <your-dockerhub-username>/<your-repo-name>:latest
+```
