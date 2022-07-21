@@ -5,7 +5,7 @@ kind: PersistentVolume
 metadata:
   name: postgresql-pv
   labels:
-    type: local
+    role: postgres
 spec:
   storageClassName: manual
   capacity:
@@ -14,5 +14,17 @@ spec:
     - ReadWriteOnce
   hostPath:
     path: "/mnt/data"
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: task-pv-claim
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .volumeSize | default "10gi" }}
 {{- end }}
 {{- end }}

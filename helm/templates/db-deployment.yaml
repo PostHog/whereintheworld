@@ -12,6 +12,10 @@ spec:
   selector:
     matchLabels:
       role: postgres-db
+  volumes:
+    - name: postgres-storage
+      persistentVolumeClaim:
+        claimName: postgres
   template:
     metadata:
       labels:
@@ -33,8 +37,11 @@ spec:
             exec:
               command:
               - pg_isready
-          
           resources:
             {{- toYaml .resources | nindent 12 }}
+          volumeMounts:
+          - name: vol
+            mountPath: /var/lib/pgsql/data
 {{- end }}  
 {{- end }}
+

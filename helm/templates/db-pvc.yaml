@@ -1,18 +1,17 @@
 {{- if .Values.postgres.enabled }}
 {{- with .Values.postgres }}
 apiVersion: v1
-kind: PersistentVolume
+kind: PersistentVolumeClaim
 metadata:
-  name: postgresql-pv
+  name: postgres
   labels:
-    type: local
+    role: postgress
 spec:
   storageClassName: manual
-  capacity:
-    storage: {{ .volumeSize | default "10gi" }}
   accessModes:
     - ReadWriteOnce
-  hostPath:
-    path: "/mnt/data"
+  resources:
+    requests:
+      storage: {{ .volumeSize | default "10gi" }}
 {{- end }}
 {{- end }}
