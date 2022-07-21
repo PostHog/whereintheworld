@@ -1,0 +1,48 @@
+{{- $fullName := include "helm.fullname" . -}}
+{{- $labels := include "helm.labels" . -}}
+{{- $selectorLabels := include "helm.selectorLabels" . -}}
+{{- with .Values.app }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $fullName }}-app
+  labels:
+    {{ $labels | nindent 4 }}
+spec:
+  {{- if not .autoscaling.enabled }}
+  replicas: {{ .replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{ $selectorLabels | nindent 6 }}
+  template:
+    metadata:
+      {{- with .podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{ $selectorLabels | nindent 8 }}
+    spec:
+      {{- with .image.pullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: witw-app
+          image: "{{ .image.repository }}:{{ .image.tag | default "latest" }}"
+          imagePullPolicy: {{ .image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            exec:
+              command:
+              - python
+              - manage.py
+              - check
+          resources:
+            {{- toYaml .resources | nindent 12 }}
+{{- end }}
+

@@ -1,0 +1,18 @@
+{{- if .Values.postgres.enabled }}
+{{- with .Values.postgres }}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgresql-pv
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: {{ .volumeSize | default "10gi" }}
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+{{- end }}
+{{- end }}
