@@ -1,0 +1,19 @@
+{{- $labels := include "helm.labels" . -}}
+{{- $selectorLabels := include "helm.selectorLabels" . -}}
+{{- with .Values.app }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: witw-app
+  labels:
+    {{ $labels | nindent 4 }}
+spec:
+  selector:
+    {{ $selectorLabels | nindent 4 }}
+  type: NodePort
+  ports:
+  - port: {{ .service.port }}
+    targetPort: {{ .service.targetPort }}
+    protocol: TCP
+    name: witw-app
+{{- end }}

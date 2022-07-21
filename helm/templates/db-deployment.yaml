@@ -1,0 +1,47 @@
+{{- if .Values.postgres.enabled }}
+{{- with .Values.postgres }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-db
+  metadata:
+    labels:
+      role: postgres-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: postgres-db
+  volumes:
+    - name: postgres-storage
+      persistentVolumeClaim:
+        claimName: postgres
+  template:
+    metadata:
+      labels:
+        role: postgres-db
+    spec:
+      {{- with .image.PullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: postgres-db
+          image: "{{ .image.repository }}:{{ .image.tag | default "latest" }}"
+          imagePullPolicy: {{ .image.pullPolicy }}
+          ports:
+            - name: postgres
+              containerPort: 5432
+              protocol: TCP
+          livenessProbe:
+            exec:
+              command:
+              - pg_isready
+          resources:
+            {{- toYaml .resources | nindent 12 }}
+          volumeMounts:
+          - name: vol
+            mountPath: /var/lib/pgsql/data
+{{- end }}  
+{{- end }}
+
