@@ -3,16 +3,17 @@
 # Declare variables to be passed into your templates.
 app:
   autoscaling:
+    # -- Enable or disable the HPA
     enabled: false
     minReplicas: 1
     maxReplicas: 100
     targetCPUUtilizationPercentage: 80
   image:
-    image:
     pullSecrets: []
     repository: corbancloud/ph-witw
     pullPolicy: IfNotPresent
     tag: "latest"
+  # -- No. of replicas to use if autoscaling is disabled
   replicaCount: 1
   service:
     type: ClusterIP
@@ -20,6 +21,7 @@ app:
     targetPort: 8000
 
 postgres:
+  # -- Enable or disable built-in Postgres instance
   enabled: true
   image:
     pullSecrets: []
@@ -29,8 +31,10 @@ postgres:
   resources: {}
   service:
     port: 5432
+  # -- Size of volume, PV will create a volume of this size, PVC will consume the full amount.
   volumeSize: "10gi"
 
+# -- Boiler Plate Ingress Args
 ingress:
   enabled: true
   className: ""
