@@ -10,7 +10,7 @@ metadata:
 spec:
   selector:
     {{ $selectorLabels | nindent 4 }}
-  type: ClusterIP
+  type: NodePort
   ports:
   - port: {{ .service.port }}
     targetPort: {{ .service.targetPort }}
