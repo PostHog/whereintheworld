@@ -60,6 +60,9 @@ as-is
 - Ingress, mostly boiler plate.
 - Optional DB inclusion, the parameter is there and the DB deployment,pv,pvc, and 
 service are togglable, but some work is needed to define a remote host value that is required when .Values.postgress.enabled is false.
+- Testing, I relied on `helm lint` to make sure that I'm at least handing you all
+correct syntax, but I didn't have a chance to deploy and inspect this chart.
+My assumption was that good documentation would be more beneficial.
 
 
 ## Challenges
