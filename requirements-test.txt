@@ -3,7 +3,7 @@ Faker
 flake8
 isort
 ipdb
-mypy
+mypy==0.971
 pytest
 pytest-django
 types-pytz==2021.3.3

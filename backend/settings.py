@@ -264,7 +264,7 @@ if not TEST and os.getenv("SENTRY_DSN"):
         request_bodies="always",
         send_default_pii=False,
         environment="production",
-    )
+    ) # type: ignore
 
     MIDDLEWARE.append("posthog.sentry.django.PosthogDistinctIdMiddleware")
     POSTHOG_DJANGO = {"distinct_id": lambda request: request.user and request.user.transactional_id}
