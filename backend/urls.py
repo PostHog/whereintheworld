@@ -16,6 +16,7 @@ from rest_framework import decorators, exceptions
 from backend.utils import render_template
 
 from .api.urls import urlpatterns as api_url_patterns
+from .views import health_check
 
 
 @decorators.api_view(["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE"])
@@ -42,6 +43,7 @@ def login_required(view):
 
 
 urlpatterns = [
+    path("_health", health_check),
     path("admin/", admin.site.urls),
     *api_url_patterns,
     path("", include("social_django.urls", namespace="social")),
