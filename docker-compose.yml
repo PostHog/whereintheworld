@@ -1,0 +1,42 @@
+version: "3.4"
+services:
+  web:
+    build:
+      context: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+    - .:/home/whereintheworld/code
+    ports:
+    - 8000:8000
+    environment:
+      DB_HOST: db
+      DEBUG: true
+      SOCIAL_AUTH_GOOGLE_OAUTH2_KEY: $SOCIAL_AUTH_GOOGLE_OAUTH2_KEY
+      SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET: $SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET
+      MAPS_API_KEY: $MAPS_API_KEY
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  db:
+    image: postgis/postgis:13-master
+    environment:
+      POSTGRES_DB: whereintheworld
+      POSTGRES_USER: whereintheworld
+      POSTGRES_PASSWORD: whereintheworld
+
+  migrate:
+    build:
+      context: .
+    entrypoint: ["sh",  "-c"]
+    volumes:
+    - .:/home/whereintheworld/code
+    command:
+    - python manage.py migrate
+    - python manage.py cities --import=all
+    depends_on:
+      db:
+        condition: service_started
+    environment:
+      DB_HOST: db
+      DEBUG: true
