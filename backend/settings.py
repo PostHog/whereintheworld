@@ -251,14 +251,13 @@ SOCIAL_AUTH_GITHUB_SCOPE = ["user:email"]
 
 AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend"]
 
-if SOCIAL_AUTH_GOOGLE_OAUTH2_KEY:
-    AUTHENTICATION_BACKENDS.append("social_core.backends.google.GoogleOAuth2")
-elif SOCIAL_AUTH_GITHUB_KEY:
+if SOCIAL_AUTH_GITHUB_KEY:
     AUTHENTICATION_BACKENDS.append("social_core.backends.github.GithubOAuth2")
+else:
+    AUTHENTICATION_BACKENDS.append("social_core.backends.google.GoogleOAuth2")
 
 
 SOCIAL_AUTH_REDIRECT_IS_HTTPS = not DEBUG
-
 
 # Sentry + PostHog
 # https://docs.sentry.io/platforms/python/guides/django/
