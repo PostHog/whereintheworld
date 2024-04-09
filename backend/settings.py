@@ -20,6 +20,10 @@ from posthog.sentry.posthog_integration import PostHogIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 
 from backend.utils import get_from_env, get_list, str_to_bool
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -103,7 +107,7 @@ DATABASES = {
         "USER": os.getenv("DB_USER", "whereintheworld"),
         "PASSWORD": os.getenv("DB_PASSWORD", "whereintheworld"),
         "HOST": os.getenv("DB_HOST", "localhost"),
-        "PORT": "5432",
+        "PORT": os.getenv("DB_PORT", "5432"),
     }
 }
 
@@ -242,10 +246,18 @@ SOCIAL_AUTH_PIPELINE = (
 )
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.getenv("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY")
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET")
-AUTHENTICATION_BACKENDS = (
-    "social_core.backends.google.GoogleOAuth2",
-    "django.contrib.auth.backends.ModelBackend",
-)
+SOCIAL_AUTH_GITHUB_KEY = os.getenv("SOCIAL_AUTH_GITHUB_KEY")
+SOCIAL_AUTH_GITHUB_SECRET = os.getenv("SOCIAL_AUTH_GITHUB_SECRET")
+SOCIAL_AUTH_GITHUB_SCOPE = ["user:email"]
+
+AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend"]
+
+if SOCIAL_AUTH_GOOGLE_OAUTH2_KEY:
+    AUTHENTICATION_BACKENDS.append("social_core.backends.google.GoogleOAuth2")
+elif SOCIAL_AUTH_GITHUB_KEY:
+    AUTHENTICATION_BACKENDS.append("social_core.backends.github.GithubOAuth2")
+
+
 SOCIAL_AUTH_REDIRECT_IS_HTTPS = not DEBUG
 
 

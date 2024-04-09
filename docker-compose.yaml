@@ -1,0 +1,28 @@
+services:
+    postgres:
+        image: postgis/postgis:14-master
+        restart: on-failure
+        environment:
+            POSTGRES_USER: whereintheworld
+            POSTGRES_PASSWORD: whereintheworld
+            POSTGRES_DB: whereintheworld
+        ports:
+            - "5433:5432"
+    app:
+        build: .
+        environment:
+            DB_HOST: postgres
+            DEBUG: "1"
+            ALLOWED_HOSTS: "*"
+        ports:
+            - "8000:8000"
+        links:
+        - "postgres:postgres"
+
+    setup:
+        build: .
+        environment:
+            DB_HOST: postgres
+        command: python manage.py migrate && python manage.py cities --import=all
+        links:
+        - "postgres:postgres"

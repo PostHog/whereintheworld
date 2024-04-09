@@ -6,6 +6,7 @@ The `urlpatterns` list routes URLs to views. For more information please see:
 
 from functools import wraps
 
+from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required as base_login_required
@@ -36,7 +37,12 @@ def login_required(view):
     @wraps(view)
     def handler(request, *args, **kwargs):
         if not request.user or not request.user.is_authenticated:
-            return redirect("/login/google-oauth2/")
+            if settings.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY:
+                return redirect("/login/google-oauth2/")
+            if settings.SOCIAL_AUTH_GITHUB_KEY:
+                return redirect("/login/github/")
+            return redirect("/login/")
+        
         return base_handler(request, *args, **kwargs)
 
     return handler
