@@ -1,6 +1,5 @@
 from unittest import mock
 
-import pytest
 from rest_framework import status
 
 from backend.models import User
@@ -13,7 +12,6 @@ MOCK_SOCIAL_RESPONSE = {
 }
 
 
-@pytest.mark.skip
 class TestSocialAuthentication(APIBaseTest):
     @mock.patch("social_core.backends.base.BaseAuth.request")
     def test_api_can_use_social_login_to_signup(self, mock_request):
