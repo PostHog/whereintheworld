@@ -16,12 +16,11 @@ from pathlib import Path
 from typing import List
 
 import sentry_sdk
+from dotenv import load_dotenv
 from posthog.sentry.posthog_integration import PostHogIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 
 from backend.utils import get_from_env, get_list, str_to_bool
-from dotenv import load_dotenv
-
 
 load_dotenv()
 
