@@ -37,11 +37,9 @@ def login_required(view):
     @wraps(view)
     def handler(request, *args, **kwargs):
         if not request.user or not request.user.is_authenticated:
-            if settings.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY:
-                return redirect("/login/google-oauth2/")
             if settings.SOCIAL_AUTH_GITHUB_KEY:
                 return redirect("/login/github/")
-            return redirect("/login/")
+            return redirect("/login/google-oauth2/")
         return base_handler(request, *args, **kwargs)
 
     return handler
