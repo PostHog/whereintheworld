@@ -42,7 +42,6 @@ def login_required(view):
             if settings.SOCIAL_AUTH_GITHUB_KEY:
                 return redirect("/login/github/")
             return redirect("/login/")
-        
         return base_handler(request, *args, **kwargs)
 
     return handler
