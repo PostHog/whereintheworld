@@ -286,3 +286,5 @@ if not TEST and os.getenv("SENTRY_DSN"):
 
 DISTANCE_THRESHOLD = 1.8  # 1.8 degrees is approximately 200km
 MAPS_API_KEY = os.getenv("MAPS_API_KEY")
+
+MULTI_TENANCY = False
