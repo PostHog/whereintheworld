@@ -24,7 +24,7 @@ sudo apt-get install libgeoip-dev libgdal-dev gdal-bin
 sudo apt-get install postgresql-12-postgis-3
 
 # On everything
-pip install -r requirements-test.txt
+pip install -r requirements-dev.txt
 pip install -r requirements.txt
 ```
 

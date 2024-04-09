@@ -1,6 +1,7 @@
 from typing import Any, ClassVar, Dict, Optional
 
 from cities.models import City
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from rest_framework import filters, permissions, serializers, status
@@ -127,7 +128,11 @@ def social_create_user(
 
     # TODO: whereintheworld is intended for internal use only just yet, multitenancy NOT YET supported
     # team must be assigned based on email's TLD.
-    user = User.objects.create(email=email, first_name=name, team=Team.objects.first(), avatar_url=avatar_url)
+    if settings.MULTI_TENANCY:
+        team = Team.objects.get_or_create(name=email.split("@")[-1])[0]
+    else:
+        team = Team.objects.first()
+    user = User.objects.create(email=email, first_name=name, team=team, avatar_url=avatar_url)
 
     report_user_signed_up(user)
 

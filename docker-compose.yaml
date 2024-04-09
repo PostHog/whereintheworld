@@ -1,0 +1,44 @@
+version: "3.4"
+services:
+    postgres:
+        image: postgis/postgis:14-master
+        restart: on-failure
+        environment:
+            POSTGRES_USER: whereintheworld
+            POSTGRES_PASSWORD: whereintheworld
+            POSTGRES_DB: whereintheworld
+        ports:
+            - "5433:5432"
+    app:
+        build: .
+        command: python manage.py runserver 0.0.0.0:8000
+        volumes:
+            - .:/home/whereintheworld/code
+        environment:
+            DB_HOST: postgres
+            DEBUG: "1"
+            ALLOWED_HOSTS: "*"
+            SOCIAL_AUTH_GOOGLE_OAUTH2_KEY: $SOCIAL_AUTH_GOOGLE_OAUTH2_KEY
+            SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET: $SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET
+            MAPS_API_KEY: $MAPS_API_KEY
+            MULTI_TENANCY: "1"
+        ports:
+            - "8000:8000"
+        links:
+            - "postgres:postgres"
+        depends_on:
+            migrate:
+                condition: service_completed_successfully
+
+    migrate:
+        build:
+            context: .
+        entrypoint: ["sh",  "-c"]
+        command:
+            - python manage.py migrate
+        depends_on:
+            postgres:
+                condition: service_started
+        environment:
+            DB_HOST: postgres
+            DEBUG: true
