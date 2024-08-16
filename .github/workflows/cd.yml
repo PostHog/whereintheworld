@@ -35,6 +35,7 @@ jobs:
           tags: |
             # set latest tag for main branch
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            type=sha
 
       - name: Build and push Docker image
         id: push
