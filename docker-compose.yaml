@@ -10,8 +10,10 @@ services:
         ports:
             - "5433:5432"
     app:
+        ## Uncomment below to use remote image
+        # image: ghcr.io/posthog/whereintheworld
+        ## or below to use local image
         build: .
-        command: python manage.py runserver 0.0.0.0:8000
         volumes:
             - .:/home/whereintheworld/code
         environment:
