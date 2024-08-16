@@ -10,6 +10,9 @@ services:
         ports:
             - "5433:5432"
     app:
+        ## Uncomment below to use remote image
+        # image: ghcr.io/posthog/whereintheworld
+        ## or below to use local image
         build: .
         volumes:
             - .:/home/whereintheworld/code
