@@ -1,4 +1,4 @@
-black==22.6.0
+ruff==0.6.3
 Faker
 flake8
 isort

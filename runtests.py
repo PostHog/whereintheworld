@@ -17,7 +17,7 @@ FLAKE8_ARGS = PROJECT
 
 ISORT_ARGS = ["--check-only", "--diff"] + PROJECT
 
-BLACK_ARGS = ["--check"] + PROJECT
+BLACK_ARGS = ["check"] + PROJECT
 
 MYPY_ARGS = PROJECT
 
@@ -48,8 +48,8 @@ def isort_main(args):
 
 def black_main(args):
     print("Running black format checking")
-    ret = subprocess.call(["black"] + args)
-    print("❗️ black failed") if ret else print("✅ black passed")
+    ret = subprocess.call(["ruff"] + args)
+    print("❗️ ruff failed") if ret else print("✅ black passed")
     return ret
 
 
