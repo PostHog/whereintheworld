@@ -41,6 +41,8 @@ TEST = (
     "test" in sys.argv or sys.argv[0].endswith("pytest") or get_from_env("TEST", False, type_cast=str_to_bool)
 )  # type: bool
 
+SUPERDAY = get_from_env("SUPERDAY", False, type_cast=str_to_bool)
+
 ALLOWED_HOSTS: List[str] = get_list(os.getenv("ALLOWED_HOSTS", ""))
 
 
@@ -197,14 +199,24 @@ REST_FRAMEWORK = {
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 100,
-    "EXCEPTION_HANDLER": "exceptions_hog.exception_handler",
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication",
-    ],
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticated",
-    ],
+    "EXCEPTION_HANDLER": "exceptions_hog.exception_handler"
 }
+
+
+# Authentication and permissions
+# Disable auth if superday
+if not SUPERDAY:
+    REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"] = [
+        "rest_framework.authentication.SessionAuthentication",
+    ]
+
+    REST_FRAMEWORK["DEFAULT_PERMISSION_CLASSES"] = [
+        "rest_framework.permissions.IsAuthenticated",
+    ]
+else:
+    REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"] = []
+    REST_FRAMEWORK["DEFAULT_PERMISSION_CLASSES"] = []
+
 
 # CORS
 # https://github.com/adamchainz/django-cors-headers
