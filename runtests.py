@@ -81,7 +81,7 @@ if __name__ == "__main__":
     except ValueError:
         run_flake8 = True
         run_isort = True
-        run_ruff= True
+        run_ruff = True
         run_mypy = True
     else:
         run_flake8 = False
