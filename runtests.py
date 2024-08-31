@@ -86,7 +86,7 @@ if __name__ == "__main__":
     else:
         run_flake8 = False
         run_isort = False
-        run_ruff= False
+        run_ruff = False
         run_mypy = False
 
     try:
