@@ -32,6 +32,9 @@ def frontend(request, *args, **kwargs):
 
 
 def login_required(view):
+    if settings.SUPERDAY:
+        return view
+
     base_handler = base_login_required(view)
 
     @wraps(view)

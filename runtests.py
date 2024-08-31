@@ -17,7 +17,7 @@ FLAKE8_ARGS = PROJECT
 
 ISORT_ARGS = ["--check-only", "--diff"] + PROJECT
 
-BLACK_ARGS = ["--check"] + PROJECT
+RUFF_ARGS = ["check"] + PROJECT
 
 MYPY_ARGS = PROJECT
 
@@ -46,10 +46,10 @@ def isort_main(args):
     return ret
 
 
-def black_main(args):
-    print("Running black format checking")
-    ret = subprocess.call(["black"] + args)
-    print("❗️ black failed") if ret else print("✅ black passed")
+def ruff_main(args):
+    print("Running ruff format checking")
+    ret = subprocess.call(["ruff"] + args)
+    print("❗️ ruff failed") if ret else print("✅ ruff passed")
     return ret
 
 
@@ -81,12 +81,12 @@ if __name__ == "__main__":
     except ValueError:
         run_flake8 = True
         run_isort = True
-        run_black = True
+        run_ruff = True
         run_mypy = True
     else:
         run_flake8 = False
         run_isort = False
-        run_black = False
+        run_ruff = False
         run_mypy = False
 
     try:
@@ -120,8 +120,8 @@ if __name__ == "__main__":
     if run_isort:
         exit_on_failure(isort_main(ISORT_ARGS))
 
-    if run_black:
-        exit_on_failure(black_main(BLACK_ARGS))
+    if run_ruff:
+        exit_on_failure(ruff_main(RUFF_ARGS))
 
     if run_mypy:
         exit_on_failure(mypy_main(MYPY_ARGS))

@@ -1,12 +1,12 @@
 version: "3.4"
 services:
     postgres:
-        image: postgis/postgis:14-master
+        image: kartoza/postgis:16
         restart: on-failure
         environment:
             POSTGRES_USER: whereintheworld
-            POSTGRES_PASSWORD: whereintheworld
-            POSTGRES_DB: whereintheworld
+            POSTGRES_PASS: whereintheworld
+            POSTGRES_DBNAME: whereintheworld
         ports:
             - "5433:5432"
     app:
@@ -25,9 +25,11 @@ services:
             SOCIAL_AUTH_GITHUB_KEY: $SOCIAL_AUTH_GITHUB_KEY
             SOCIAL_AUTH_GITHUB_SECRET: $SOCIAL_AUTH_GITHUB_SECRET
             MAPS_API_KEY: $MAPS_API_KEY
+            SUPERDAY: "1"
             MULTI_TENANCY: "1"
         ports:
             - "8000:8000"
+            - "3000:3000"
         links:
             - "postgres:postgres"
         depends_on:
@@ -39,7 +41,13 @@ services:
             context: .
         entrypoint: ["sh",  "-c"]
         command:
-            - python manage.py migrate
+            - |
+                echo "Waiting for postgres..."
+                while ! nc -z postgres 5432; do
+                    sleep 0.1
+                done
+                echo "PostgreSQL started"
+                python manage.py migrate
         depends_on:
             postgres:
                 condition: service_started
